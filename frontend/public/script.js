@@ -415,10 +415,10 @@ uploadPdfButton.addEventListener(
       }
 
       originalPdfPreview.src =
-        `${data.originalPdfUrl}?t=${Date.now()}`;
+  `${API_BASE_URL}${data.originalPdfUrl}?t=${Date.now()}`;
 
-      maskedPdfPreview.src =
-        `${data.maskedPdfUrl}?t=${Date.now()}`;
+maskedPdfPreview.src =
+  `${API_BASE_URL}${data.maskedPdfUrl}?t=${Date.now()}`;
 
       originalPdfText.textContent =
         data.originalText ||
