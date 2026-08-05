@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Privacy Preserving Data Anonymization
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+</head>
+
+<body>
+
+  <main class="container">
+
+    <header class="page-header">
+      <h1>
+        🔐 Privacy Preserving Data Anonymization System
+      </h1>
+
+      <p>
+        Process structured CSV data or PDF documents using
+        masking, redaction, random salt generation, salted hashing,
+        and local SQLite storage.
+      </p>
+    </header>
+
+    <!-- MODE SELECTION -->
+
+    <section class="mode-selector">
+      <button
+        id="csvModeButton"
+        class="mode-button active"
+        type="button"
+      >
+        📊 CSV Processing
+      </button>
+
+      <button
+        id="pdfModeButton"
+        class="mode-button"
+        type="button"
+      >
+        📄 PDF Processing
+      </button>
+    </section>
+
+    <!-- SHARED ALGORITHM SECTION -->
+
+    <section class="card algorithm-card">
+      <h2>Select Hashing Algorithm</h2>
+
+      <div class="algorithm-buttons">
+
+        <button
+          type="button"
+          class="algorithm-button active"
+          data-algorithm="SHA-256"
+        >
+          SHA-256
+        </button>
+
+        <button
+          type="button"
+          class="algorithm-button"
+          data-algorithm="SHA3-256"
+        >
+          SHA3-256
+        </button>
+
+        <button
+          type="button"
+          class="algorithm-button"
+          data-algorithm="BLAKE3"
+        >
+          BLAKE3
+        </button>
+
+      </div>
+    </section>
+
+    <!-- CSV MODE -->
+
+    <section
+      id="csvSection"
+      class="processing-section"
+    >
+
+      <section class="card upload-card">
+
+        <div class="upload-block">
+          <h2>Upload CSV Dataset</h2>
+
+          <p>
+            Required columns:
+            <strong>name, email, phone</strong>
+          </p>
+
+          <input
+            id="csvFile"
+            type="file"
+            accept=".csv,text/csv"
+          >
+
+          <button
+            id="uploadCsvButton"
+            type="button"
+            class="primary-button"
+          >
+            Upload & Process CSV
+          </button>
+        </div>
+
+        <div class="database-actions">
+
+          <button
+            id="viewHistoryButton"
+            type="button"
+          >
+            View Database Records
+          </button>
+
+          <button
+            id="clearHistoryButton"
+            type="button"
+            class="danger-button"
+          >
+            Clear Database
+          </button>
+
+        </div>
+
+      </section>
+
+      <section class="summary-grid">
+
+        <article class="summary-card">
+          <h3>Total CSV Rows</h3>
+          <p id="totalRecords">0</p>
+        </article>
+
+        <article class="summary-card">
+          <h3>Sensitive Fields</h3>
+          <p id="totalFields">0</p>
+        </article>
+
+        <article class="summary-card">
+          <h3>Selected Algorithm</h3>
+          <p id="algorithmName">SHA-256</p>
+        </article>
+
+      </section>
+
+      <section class="card table-card">
+
+        <h2>Processed / Database Records</h2>
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Original</th>
+                <th>Masked</th>
+                <th>Redacted</th>
+                <th>Salt</th>
+                <th>Algorithm</th>
+                <th>Salted Hash</th>
+              </tr>
+            </thead>
+
+            <tbody id="resultBody">
+              <tr>
+                <td colspan="7">
+                  No records available.
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+    </section>
+
+    <!-- PDF MODE -->
+
+    <section
+      id="pdfSection"
+      class="processing-section hidden"
+    >
+
+      <section class="card pdf-upload-card">
+
+        <div>
+          <h2>Upload PDF Document</h2>
+
+          <p>
+            The system extracts readable text, masks sensitive data,
+            generates a salted hash, and creates an anonymized PDF.
+          </p>
+        </div>
+
+        <input
+          id="pdfFile"
+          type="file"
+          accept=".pdf,application/pdf"
+        >
+
+        <button
+          id="uploadPdfButton"
+          type="button"
+          class="primary-button"
+        >
+          Upload & Process PDF
+        </button>
+
+      </section>
+
+      <section class="pdf-summary-grid">
+
+        <article class="summary-card">
+          <h3>Selected Algorithm</h3>
+          <p id="pdfAlgorithmName">SHA-256</p>
+        </article>
+
+        <article class="summary-card">
+          <h3>Salt</h3>
+          <p
+            id="pdfSalt"
+            class="small-summary-value"
+          >
+            Not generated
+          </p>
+        </article>
+
+        <article class="summary-card">
+          <h3>Salted Hash</h3>
+          <p
+            id="pdfHash"
+            class="small-summary-value"
+          >
+            Not generated
+          </p>
+        </article>
+
+      </section>
+
+      <section class="pdf-preview-grid">
+
+        <article class="card preview-card">
+          <h2>Original PDF</h2>
+
+          <iframe
+            id="originalPdfPreview"
+            title="Original PDF preview"
+          ></iframe>
+
+          <pre id="originalPdfText">
+Original extracted text will appear here.
+          </pre>
+        </article>
+
+        <article class="card preview-card">
+          <h2>Masked PDF</h2>
+
+          <iframe
+            id="maskedPdfPreview"
+            title="Masked PDF preview"
+          ></iframe>
+
+          <pre id="maskedPdfText">
+Masked PDF text will appear here.
+          </pre>
+        </article>
+
+      </section>
+
+    </section>
+
+    <!-- STATUS MESSAGE -->
+
+    <div
+      id="messageBox"
+      class="message-box"
+      hidden
+      aria-live="polite"
+    ></div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
