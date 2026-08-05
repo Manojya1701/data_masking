@@ -293,7 +293,7 @@ uploadCsvButton.addEventListener(
       );
 
       const response = await fetch(
-        "${API_BASE_URL}/api/upload-csv",
+      `${API_BASE_URL}/api/upload-csv`,
         {
           method: "POST",
           body: formData
@@ -397,7 +397,7 @@ uploadPdfButton.addEventListener(
       );
 
       const response = await fetch(
-        "${API_BASE_URL}/api/upload-pdf",
+        `${API_BASE_URL}/api/upload-pdf`,
         {
           method: "POST",
           body: formData
@@ -477,7 +477,7 @@ async function loadDatabaseHistory() {
     );
 
     const response =
-      await fetch("${API_BASE_URL}/api/history");
+      await fetch(`${API_BASE_URL}/api/history`);
 
     const data =
       await response.json();
@@ -568,7 +568,7 @@ clearHistoryButton.addEventListener(
 
     try {
       const response = await fetch(
-        "${API_BASE_URL}/api/history",
+        `${API_BASE_URL}/api/history`,
         {
           method: "DELETE"
         }
