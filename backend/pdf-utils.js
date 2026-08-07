@@ -170,6 +170,106 @@ async function createPdfFromText(
     pdfBytes
   );
 }
+/* ==============================
+EXTRACT TEXT WITH POSITIONS
+================================ */
+
+async function extractPdfItemsWithPositions(
+  filePath
+) {
+  const pdfBuffer =
+    fs.readFileSync(filePath);
+
+  // pdfjs-dist is ESM, so dynamic import
+  // works safely inside our CommonJS project.
+  const pdfjsLib =
+    await import(
+      "pdfjs-dist/legacy/build/pdf.mjs"
+    );
+
+  const loadingTask =
+    pdfjsLib.getDocument({
+      data: new Uint8Array(pdfBuffer)
+    });
+
+  const pdf =
+    await loadingTask.promise;
+
+  const pages = [];
+
+  for (
+    let pageNumber = 1;
+    pageNumber <= pdf.numPages;
+    pageNumber++
+  ) {
+    const page =
+      await pdf.getPage(pageNumber);
+
+    const viewport =
+      page.getViewport({
+        scale: 1
+      });
+
+    const textContent =
+      await page.getTextContent();
+
+    const items = [];
+
+    for (
+      const item of textContent.items
+    ) {
+      if (
+        !item.str ||
+        !item.str.trim()
+      ) {
+        continue;
+      }
+
+      const transform =
+        item.transform;
+
+      const x =
+        transform[4];
+
+      const y =
+        transform[5];
+
+      const fontSize =
+        Math.abs(transform[3]) || 10;
+
+      items.push({
+        text: item.str,
+
+        x,
+
+        y,
+
+        width:
+          item.width || 0,
+
+        height:
+          item.height ||
+          fontSize,
+
+        fontSize
+      });
+    }
+
+    pages.push({
+      pageNumber,
+
+      width:
+        viewport.width,
+
+      height:
+        viewport.height,
+
+      items
+    });
+  }
+
+  return pages;
+}
 
 /* ==============================
    EXPORT FUNCTIONS
@@ -177,5 +277,6 @@ async function createPdfFromText(
 
 module.exports = {
   extractPdfText,
-  createPdfFromText
+  createPdfFromText,
+  extractPdfItemsWithPositions
 };

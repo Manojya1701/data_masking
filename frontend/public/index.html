@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
 
@@ -9,7 +10,7 @@
   >
 
   <title>
-    Privacy Preserving Data Anonymization
+    Privacy Preserving Data Protection System
   </title>
 
   <link
@@ -22,21 +23,34 @@
 
   <main class="container">
 
-    <header class="page-header">
-      <h1>
-        🔐 Privacy Preserving Data Anonymization System
-      </h1>
+    <!-- =========================
+         HEADER
+    ========================== -->
 
-      <p>
-        Process structured CSV data or PDF documents using
-        masking, redaction, random salt generation, salted hashing,
-        and local SQLite storage.
-      </p>
+    <header class="page-header">
+
+      <div class="header-icon">🔐</div>
+
+      <div>
+        <h1>
+          Privacy Preserving Data Protection System
+        </h1>
+
+        <p>
+          Protect sensitive CSV and PDF data using
+          masking, redaction, hashing and encryption.
+        </p>
+      </div>
+
     </header>
 
-    <!-- MODE SELECTION -->
+
+    <!-- =========================
+         MODE SELECTION
+    ========================== -->
 
     <section class="mode-selector">
+
       <button
         id="csvModeButton"
         class="mode-button active"
@@ -52,143 +66,489 @@
       >
         📄 PDF Processing
       </button>
+
     </section>
 
-    <!-- SHARED ALGORITHM SECTION -->
 
-    <section class="card algorithm-card">
-      <h2>Select Hashing Algorithm</h2>
-
-      <div class="algorithm-buttons">
-
-        <button
-          type="button"
-          class="algorithm-button active"
-          data-algorithm="SHA-256"
-        >
-          SHA-256
-        </button>
-
-        <button
-          type="button"
-          class="algorithm-button"
-          data-algorithm="SHA3-256"
-        >
-          SHA3-256
-        </button>
-
-        <button
-          type="button"
-          class="algorithm-button"
-          data-algorithm="BLAKE3"
-        >
-          BLAKE3
-        </button>
-
-      </div>
-    </section>
-
-    <!-- CSV MODE -->
+    <!-- =====================================================
+         CSV MODE
+    ====================================================== -->
 
     <section
       id="csvSection"
       class="processing-section"
     >
 
-      <section class="card upload-card">
+      <!-- CSV TITLE -->
 
-        <div class="upload-block">
-          <h2>Upload CSV Dataset</h2>
+      <div class="workflow-title">
 
-          <p>
-            Required columns:
-            <strong>name, email, phone</strong>
-          </p>
+        <div>
+          <span class="workflow-badge">
+            CSV
+          </span>
 
-          <input
-            id="csvFile"
-            type="file"
-            accept=".csv,text/csv"
-          >
-
-          <button
-            id="uploadCsvButton"
-            type="button"
-            class="primary-button"
-          >
-            Upload & Process CSV
-          </button>
+          <h2>
+            CSV Data Protection
+          </h2>
         </div>
 
-        <div class="database-actions">
+        <p>
+          Detect and protect sensitive information
+          stored in structured datasets.
+        </p>
 
-          <button
-            id="viewHistoryButton"
-            type="button"
-          >
-            View Database Records
-          </button>
+      </div>
 
-          <button
-            id="clearHistoryButton"
-            type="button"
-            class="danger-button"
-          >
-            Clear Database
-          </button>
+
+      <!-- =================================================
+           01 - ANONYMIZATION & HASHING
+      ================================================== -->
+
+      <section class="workflow-section">
+
+        <div class="section-heading">
+
+          <div>
+            <span class="section-number">
+              01
+            </span>
+
+            <div>
+              <h2>
+                Anonymization & Hashing
+              </h2>
+
+              <p class="section-subtitle">
+                Mask, redact and hash sensitive
+                information detected in the CSV.
+              </p>
+            </div>
+          </div>
 
         </div>
+
+
+        <!-- HASHING ALGORITHM -->
+
+        <div class="card algorithm-card">
+
+          <div class="card-title-row">
+
+            <div>
+              <h3>
+                Hashing Algorithm
+              </h3>
+
+              <p>
+                Select the algorithm used for
+                salted hashing.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="algorithm-buttons">
+
+            <button
+              type="button"
+              class="algorithm-button active"
+              data-algorithm="SHA-256"
+            >
+              SHA-256
+            </button>
+
+            <button
+              type="button"
+              class="algorithm-button"
+              data-algorithm="SHA3-256"
+            >
+              SHA3-256
+            </button>
+
+            <button
+              type="button"
+              class="algorithm-button"
+              data-algorithm="BLAKE3"
+            >
+              BLAKE3
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- CSV UPLOAD -->
+
+        <div class="card upload-card csv-upload-modern">
+
+          <div class="upload-info">
+
+            <div class="feature-icon">
+              📁
+            </div>
+
+            <div>
+              <h3>
+                Upload CSV Dataset
+              </h3>
+
+              <p>
+                Sensitive fields such as
+                <strong>
+                  name, email and phone
+                </strong>
+                will be detected automatically.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="upload-controls">
+
+            <input
+              id="csvFile"
+              type="file"
+              accept=".csv,text/csv"
+            >
+
+            <button
+              id="uploadCsvButton"
+              type="button"
+              class="primary-button"
+            >
+              Upload & Process CSV
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- CSV SUMMARY -->
+
+        <section class="summary-grid">
+
+          <article class="summary-card">
+
+            <span class="summary-icon">
+              📊
+            </span>
+
+            <h3>
+              Total CSV Rows
+            </h3>
+
+            <p id="totalRecords">
+              0
+            </p>
+
+          </article>
+
+
+          <article class="summary-card">
+
+            <span class="summary-icon">
+              🛡️
+            </span>
+
+            <h3>
+              Sensitive Fields
+            </h3>
+
+            <p id="totalFields">
+              0
+            </p>
+
+          </article>
+
+
+          <article class="summary-card">
+
+            <span class="summary-icon">
+              #
+            </span>
+
+            <h3>
+              Hash Algorithm
+            </h3>
+
+            <p id="algorithmName">
+              SHA-256
+            </p>
+
+          </article>
+
+        </section>
+
+
+        <!-- DATABASE RECORDS -->
+
+        <section class="card table-card">
+
+          <div class="table-heading-row">
+
+            <div>
+              <h2>
+                Processed / Database Records
+              </h2>
+
+              <p>
+                Compare original, masked,
+                redacted and hashed values.
+              </p>
+            </div>
+
+
+            <div class="database-actions">
+
+              <button
+                id="viewHistoryButton"
+                type="button"
+                class="secondary-button"
+              >
+                View Records
+              </button>
+
+              <button
+                id="clearHistoryButton"
+                type="button"
+                class="danger-button"
+              >
+                Clear Database
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Type</th>
+                  <th>Original</th>
+                  <th>Masked</th>
+                  <th>Redacted</th>
+                  <th>Salt</th>
+                  <th>Algorithm</th>
+                  <th>Salted Hash</th>
+                </tr>
+
+              </thead>
+
+
+              <tbody id="resultBody">
+
+                <tr>
+                  <td colspan="7">
+                    No records available.
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </section>
 
       </section>
 
-      <section class="summary-grid">
 
-        <article class="summary-card">
-          <h3>Total CSV Rows</h3>
-          <p id="totalRecords">0</p>
-        </article>
+      <!-- =================================================
+           02 - REVERSIBLE PROTECTION
+      ================================================== -->
 
-        <article class="summary-card">
-          <h3>Sensitive Fields</h3>
-          <p id="totalFields">0</p>
-        </article>
+      <section class="csv-security-section">
 
-        <article class="summary-card">
-          <h3>Selected Algorithm</h3>
-          <p id="algorithmName">SHA-256</p>
-        </article>
+        <div class="section-heading">
 
-      </section>
+          <div>
 
-      <section class="card table-card">
+            <span class="section-number">
+              02
+            </span>
 
-        <h2>Processed / Database Records</h2>
+            <div>
 
-        <div class="table-wrapper">
+              <h2>
+                Reversible Data Protection
+              </h2>
 
-          <table>
+              <p class="section-subtitle">
+                Encrypt sensitive values and
+                restore them using the same key.
+              </p>
 
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>Original</th>
-                <th>Masked</th>
-                <th>Redacted</th>
-                <th>Salt</th>
-                <th>Algorithm</th>
-                <th>Salted Hash</th>
-              </tr>
-            </thead>
+            </div>
 
-            <tbody id="resultBody">
-              <tr>
-                <td colspan="7">
-                  No records available.
-                </td>
-              </tr>
-            </tbody>
+          </div>
 
-          </table>
+        </div>
+
+
+        <div class="csv-crypto-grid">
+
+
+          <!-- ENCRYPT CSV -->
+
+          <div class="encryption-csv-controls crypto-card">
+
+            <div class="crypto-card-header">
+
+              <span class="crypto-icon">
+                🔒
+              </span>
+
+              <div>
+
+                <h3>
+                  Encrypt CSV
+                </h3>
+
+                <p>
+                  Protect detected sensitive
+                  fields using symmetric encryption.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <label for="csvEncryptionAlgorithm">
+              Encryption Algorithm
+            </label>
+
+            <select id="csvEncryptionAlgorithm">
+
+              <option value="AES">
+                AES-256
+              </option>
+
+              <option value="3DES">
+                3DES
+              </option>
+
+            </select>
+
+
+            <label for="csvEncryptionKey">
+              Secret Key
+            </label>
+
+            <input
+              type="password"
+              id="csvEncryptionKey"
+              placeholder="Enter encryption key"
+            >
+
+
+            <div class="crypto-actions">
+
+              <button
+                type="button"
+                id="encryptCsvButton"
+                class="primary-button"
+              >
+                🔐 Encrypt CSV
+              </button>
+
+
+              <a
+                id="downloadEncryptedCsv"
+                href="#"
+                class="download-link"
+                hidden
+              >
+                ⬇ Download Encrypted CSV
+              </a>
+
+            </div>
+
+          </div>
+
+
+          <!-- DECRYPT CSV -->
+
+          <div class="decrypt-csv-controls crypto-card">
+
+            <div class="crypto-card-header">
+
+              <span class="crypto-icon">
+                🔓
+              </span>
+
+              <div>
+
+                <h3>
+                  Decrypt CSV
+                </h3>
+
+                <p>
+                  Restore encrypted fields
+                  using the original secret key.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <label for="encryptedCsvFile">
+              Encrypted CSV File
+            </label>
+
+            <input
+              type="file"
+              id="encryptedCsvFile"
+              accept=".csv"
+            >
+
+
+            <label for="csvDecryptionKey">
+              Secret Key
+            </label>
+
+            <input
+              type="password"
+              id="csvDecryptionKey"
+              placeholder="Enter same encryption key"
+            >
+
+
+            <div class="crypto-actions">
+
+              <button
+                type="button"
+                id="decryptCsvButton"
+                class="primary-button"
+              >
+                🔓 Decrypt CSV
+              </button>
+
+
+              <a
+                id="downloadDecryptedCsv"
+                href="#"
+                class="download-link"
+                hidden
+              >
+                ⬇ Download Restored CSV
+              </a>
+
+            </div>
+
+          </div>
 
         </div>
 
@@ -196,102 +556,470 @@
 
     </section>
 
-    <!-- PDF MODE -->
+
+    <!-- =====================================================
+         PDF MODE
+    ====================================================== -->
 
     <section
       id="pdfSection"
       class="processing-section hidden"
     >
 
-      <section class="card pdf-upload-card">
+      <div class="workflow-title">
 
         <div>
-          <h2>Upload PDF Document</h2>
 
-          <p>
-            The system extracts readable text, masks sensitive data,
-            generates a salted hash, and creates an anonymized PDF.
-          </p>
+          <span class="workflow-badge">
+            PDF
+          </span>
+
+          <h2>
+            PDF Data Protection
+          </h2>
+
         </div>
 
-        <input
-          id="pdfFile"
-          type="file"
-          accept=".pdf,application/pdf"
-        >
+        <p>
+          Anonymize or encrypt PDF documents
+          containing sensitive information.
+        </p>
 
-        <button
-          id="uploadPdfButton"
-          type="button"
-          class="primary-button"
-        >
-          Upload & Process PDF
-        </button>
+      </div>
 
-      </section>
 
-      <section class="pdf-summary-grid">
+      <!-- =================================================
+           PDF ANONYMIZATION
+      ================================================== -->
 
-        <article class="summary-card">
-          <h3>Selected Algorithm</h3>
-          <p id="pdfAlgorithmName">SHA-256</p>
-        </article>
+      <section class="workflow-section">
 
-        <article class="summary-card">
-          <h3>Salt</h3>
-          <p
-            id="pdfSalt"
-            class="small-summary-value"
-          >
-            Not generated
-          </p>
-        </article>
+        <div class="section-heading">
 
-        <article class="summary-card">
-          <h3>Salted Hash</h3>
-          <p
-            id="pdfHash"
-            class="small-summary-value"
-          >
-            Not generated
-          </p>
-        </article>
+          <div>
 
-      </section>
+            <span class="section-number">
+              01
+            </span>
 
-      <section class="pdf-preview-grid">
+            <div>
 
-        <article class="card preview-card">
-          <h2>Original PDF</h2>
+              <h2>
+                PDF Anonymization
+              </h2>
 
-          <iframe
-            id="originalPdfPreview"
-            title="Original PDF preview"
-          ></iframe>
+              <p class="section-subtitle">
+                Detect sensitive text, mask it
+                and generate integrity hashes.
+              </p>
 
-          <pre id="originalPdfText">
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PDF HASHING ALGORITHM -->
+
+        <div class="card algorithm-card">
+
+          <h3>
+            Select Hashing Algorithm
+          </h3>
+
+
+          <div class="algorithm-buttons">
+
+            <button
+              type="button"
+              class="algorithm-button active"
+              data-algorithm="SHA-256"
+            >
+              SHA-256
+            </button>
+
+            <button
+              type="button"
+              class="algorithm-button"
+              data-algorithm="SHA3-256"
+            >
+              SHA3-256
+            </button>
+
+            <button
+              type="button"
+              class="algorithm-button"
+              data-algorithm="BLAKE3"
+            >
+              BLAKE3
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- PDF UPLOAD -->
+
+        <section class="card pdf-upload-card">
+
+          <div class="upload-info">
+
+            <div class="feature-icon">
+              📄
+            </div>
+
+            <div>
+
+              <h3>
+                Upload PDF Document
+              </h3>
+
+              <p>
+                Extract readable text, detect
+                sensitive information and create
+                an anonymized PDF.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="upload-controls">
+
+            <input
+              id="pdfFile"
+              type="file"
+              accept=".pdf,application/pdf"
+            >
+
+            <button
+              id="uploadPdfButton"
+              type="button"
+              class="primary-button"
+            >
+              Upload & Process PDF
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- PDF HASH SUMMARY -->
+
+        <section class="pdf-summary-grid">
+
+          <article class="summary-card">
+
+            <h3>
+              Selected Algorithm
+            </h3>
+
+            <p id="pdfAlgorithmName">
+              SHA-256
+            </p>
+
+          </article>
+
+
+          <article class="summary-card">
+
+            <h3>
+              Salt
+            </h3>
+
+            <p
+              id="pdfSalt"
+              class="small-summary-value"
+            >
+              Not generated
+            </p>
+
+          </article>
+
+
+          <article class="summary-card">
+
+            <h3>
+              Salted Hash
+            </h3>
+
+            <p
+              id="pdfHash"
+              class="small-summary-value"
+            >
+              Not generated
+            </p>
+
+          </article>
+
+        </section>
+
+
+        <!-- PDF PREVIEWS -->
+
+        <section class="pdf-preview-grid">
+
+          <article class="card preview-card">
+
+            <div class="preview-title">
+
+              <span>📄</span>
+
+              <h2>
+                Original PDF
+              </h2>
+
+            </div>
+
+
+            <iframe
+              id="originalPdfPreview"
+              title="Original PDF preview"
+            ></iframe>
+
+
+            <pre id="originalPdfText">
 Original extracted text will appear here.
-          </pre>
-        </article>
+            </pre>
 
-        <article class="card preview-card">
-          <h2>Masked PDF</h2>
+          </article>
 
-          <iframe
-            id="maskedPdfPreview"
-            title="Masked PDF preview"
-          ></iframe>
 
-          <pre id="maskedPdfText">
+          <article class="card preview-card">
+
+            <div class="preview-title">
+
+              <span>🛡️</span>
+
+              <h2>
+                Masked PDF
+              </h2>
+
+            </div>
+
+
+            <iframe
+              id="maskedPdfPreview"
+              title="Masked PDF preview"
+            ></iframe>
+
+
+            <pre id="maskedPdfText">
 Masked PDF text will appear here.
-          </pre>
-        </article>
+            </pre>
+
+          </article>
+
+        </section>
+
+      </section>
+
+
+      <!-- =================================================
+           PDF ENCRYPTION
+      ================================================== -->
+
+      <section class="csv-security-section">
+
+        <div class="section-heading">
+
+          <div>
+
+            <span class="section-number">
+              02
+            </span>
+
+            <div>
+
+              <h2>
+                PDF Encryption & Recovery
+              </h2>
+
+              <p class="section-subtitle">
+                Encrypt the complete PDF file
+                and restore the exact original
+                document using the correct key.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="csv-crypto-grid">
+
+
+          <!-- ENCRYPT PDF -->
+
+          <div class="pdf-encryption-controls crypto-card">
+
+            <div class="crypto-card-header">
+
+              <span class="crypto-icon">
+                🔒
+              </span>
+
+              <div>
+
+                <h3>
+                  Encrypt PDF
+                </h3>
+
+                <p>
+                  Convert the PDF into an
+                  unreadable encrypted binary file.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <label for="pdfEncryptionAlgorithm">
+              Encryption Algorithm
+            </label>
+
+
+            <select id="pdfEncryptionAlgorithm">
+
+              <option value="AES">
+                AES-256
+              </option>
+
+              <option value="3DES">
+                3DES
+              </option>
+
+            </select>
+
+
+            <label for="pdfEncryptionKey">
+              Secret Key
+            </label>
+
+
+            <input
+              type="password"
+              id="pdfEncryptionKey"
+              placeholder="Enter encryption key"
+            >
+
+
+            <div class="crypto-actions">
+
+              <button
+                type="button"
+                id="encryptPdfButton"
+                class="primary-button"
+              >
+                🔐 Encrypt PDF
+              </button>
+
+
+              <a
+                id="downloadEncryptedPdf"
+                href="#"
+                class="download-link"
+                hidden
+              >
+                ⬇ Download Encrypted File
+              </a>
+
+            </div>
+
+          </div>
+
+
+          <!-- DECRYPT PDF -->
+
+          <div class="pdf-decryption-controls crypto-card">
+
+            <div class="crypto-card-header">
+
+              <span class="crypto-icon">
+                🔓
+              </span>
+
+              <div>
+
+                <h3>
+                  Restore PDF
+                </h3>
+
+                <p>
+                  Upload the encrypted file and
+                  recover the original PDF.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <label for="encryptedPdfFile">
+              Encrypted File
+            </label>
+
+
+            <input
+              type="file"
+              id="encryptedPdfFile"
+              accept=".bin,.enc"
+            >
+
+
+            <label for="pdfDecryptionKey">
+              Secret Key
+            </label>
+
+
+            <input
+              type="password"
+              id="pdfDecryptionKey"
+              placeholder="Enter same encryption key"
+            >
+
+
+            <div class="crypto-actions">
+
+              <button
+                type="button"
+                id="decryptPdfButton"
+                class="primary-button"
+              >
+                🔓 Restore PDF
+              </button>
+
+
+              <a
+                id="downloadDecryptedPdf"
+                href="#"
+                class="download-link"
+                hidden
+              >
+                ⬇ Download Restored PDF
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
 
       </section>
 
     </section>
 
-    <!-- STATUS MESSAGE -->
+
+    <!-- =========================
+         STATUS MESSAGE
+    ========================== -->
 
     <div
       id="messageBox"
@@ -302,6 +1030,9 @@ Masked PDF text will appear here.
 
   </main>
 
+
   <script src="script.js"></script>
+
 </body>
+
 </html>

@@ -1,5 +1,7 @@
 const API_BASE_URL =
   "https://data-masking-2tai.onrender.com";
+// const API_BASE_URL =
+//   "http://localhost:3000";
 const csvModeButton =
   document.getElementById("csvModeButton");
 
@@ -607,6 +609,594 @@ clearHistoryButton.addEventListener(
         error.message,
         "error"
       );
+    }
+  }
+);
+
+
+/* ==============================
+   CSV ENCRYPTION
+================================ */
+
+const csvEncryptionAlgorithm =
+  document.getElementById(
+    "csvEncryptionAlgorithm"
+  );
+
+const csvEncryptionKey =
+  document.getElementById(
+    "csvEncryptionKey"
+  );
+
+const encryptCsvButton =
+  document.getElementById(
+    "encryptCsvButton"
+  );
+
+const downloadEncryptedCsv =
+  document.getElementById(
+    "downloadEncryptedCsv"
+  );
+
+encryptCsvButton.addEventListener(
+  "click",
+  async () => {
+    const selectedFile =
+      csvFileInput.files[0];
+
+    const algorithm =
+      csvEncryptionAlgorithm.value;
+
+    const password =
+      csvEncryptionKey.value;
+
+    if (!selectedFile) {
+      showMessage(
+        "Please choose a CSV file first.",
+        "error"
+      );
+
+      return;
+    }
+
+    if (!password) {
+      showMessage(
+        "Please enter an encryption key.",
+        "error"
+      );
+
+      return;
+    }
+
+    try {
+      encryptCsvButton.disabled = true;
+
+      encryptCsvButton.textContent =
+        "Encrypting CSV...";
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        "csvFile",
+        selectedFile
+      );
+
+      formData.append(
+        "algorithm",
+        algorithm
+      );
+
+      formData.append(
+        "password",
+        password
+      );
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/encrypt-csv`,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+      const data =
+  await response.json();
+
+console.log(
+  "ENCRYPT CSV RESPONSE:",
+  data
+);
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Unable to encrypt CSV."
+        );
+      }
+
+     const fileResponse = await fetch(
+  `${API_BASE_URL}${data.encryptedFileUrl}`
+);
+
+if (!fileResponse.ok) {
+  throw new Error(
+    "Encrypted CSV was created, but download failed."
+  );
+}
+
+const fileBlob =
+  await fileResponse.blob();
+
+const blobUrl =
+  URL.createObjectURL(fileBlob);
+
+downloadEncryptedCsv.href =
+  blobUrl;
+
+downloadEncryptedCsv.download =
+  `encrypted-${Date.now()}.csv`;
+
+downloadEncryptedCsv.hidden =
+  false;
+
+downloadEncryptedCsv.textContent =
+  "Download Encrypted CSV";
+      showMessage(
+        `${data.encryptedValues} sensitive values encrypted using ${data.algorithm}.`,
+        "success"
+      );
+
+    } catch (error) {
+      console.error(error);
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+    } finally {
+      encryptCsvButton.disabled =
+        false;
+
+      encryptCsvButton.textContent =
+        "Encrypt CSV";
+    }
+  }
+);
+/* ==============================
+   CSV DECRYPTION
+================================ */
+
+const encryptedCsvFile =
+  document.getElementById(
+    "encryptedCsvFile"
+  );
+
+const csvDecryptionKey =
+  document.getElementById(
+    "csvDecryptionKey"
+  );
+
+const decryptCsvButton =
+  document.getElementById(
+    "decryptCsvButton"
+  );
+
+const downloadDecryptedCsv =
+  document.getElementById(
+    "downloadDecryptedCsv"
+  );
+
+decryptCsvButton.addEventListener(
+  "click",
+  async () => {
+
+    const selectedFile =
+      encryptedCsvFile.files[0];
+
+    const password =
+      csvDecryptionKey.value;
+
+    if (!selectedFile) {
+      showMessage(
+        "Please choose an encrypted CSV file.",
+        "error"
+      );
+      return;
+    }
+
+    if (!password) {
+      showMessage(
+        "Please enter the decryption key.",
+        "error"
+      );
+      return;
+    }
+
+    try {
+      decryptCsvButton.disabled = true;
+
+      decryptCsvButton.textContent =
+        "Decrypting CSV...";
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        "csvFile",
+        selectedFile
+      );
+
+      formData.append(
+        "password",
+        password
+      );
+
+      const response =
+        await fetch(
+          `${API_BASE_URL}/api/decrypt-csv`,
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+
+      const data =
+        await response.json();
+
+      console.log(
+        "DECRYPT CSV RESPONSE:",
+        data
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Unable to decrypt CSV."
+        );
+      }
+
+      /*
+       * Fetch the generated CSV and convert it
+       * into a browser-safe Blob download.
+       */
+
+      const fileResponse =
+        await fetch(
+          `${API_BASE_URL}${data.decryptedFileUrl}`
+        );
+
+      if (!fileResponse.ok) {
+        throw new Error(
+          "CSV was decrypted, but download failed."
+        );
+      }
+
+      const fileBlob =
+        await fileResponse.blob();
+
+      const blobUrl =
+        URL.createObjectURL(
+          fileBlob
+        );
+
+      downloadDecryptedCsv.href =
+        blobUrl;
+
+      downloadDecryptedCsv.download =
+        `decrypted-${Date.now()}.csv`;
+
+      downloadDecryptedCsv.hidden =
+        false;
+
+      downloadDecryptedCsv.textContent =
+        "Download Decrypted CSV";
+
+      showMessage(
+        `${data.decryptedValues} encrypted values decrypted successfully.`,
+        "success"
+      );
+
+    } catch (error) {
+      console.error(error);
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+    } finally {
+      decryptCsvButton.disabled =
+        false;
+
+      decryptCsvButton.textContent =
+        "Decrypt CSV";
+    }
+  }
+);
+/* ==============================
+   PDF ENCRYPTION / DECRYPTION
+================================ */
+
+const pdfEncryptionAlgorithm =
+  document.getElementById(
+    "pdfEncryptionAlgorithm"
+  );
+
+const pdfEncryptionKey =
+  document.getElementById(
+    "pdfEncryptionKey"
+  );
+
+const encryptPdfButton =
+  document.getElementById(
+    "encryptPdfButton"
+  );
+
+const downloadEncryptedPdf =
+  document.getElementById(
+    "downloadEncryptedPdf"
+  );
+
+const encryptedPdfFile =
+  document.getElementById(
+    "encryptedPdfFile"
+  );
+
+const pdfDecryptionKey =
+  document.getElementById(
+    "pdfDecryptionKey"
+  );
+
+const decryptPdfButton =
+  document.getElementById(
+    "decryptPdfButton"
+  );
+
+const downloadDecryptedPdf =
+  document.getElementById(
+    "downloadDecryptedPdf"
+  );
+
+
+/* ==============================
+   ENCRYPT PDF
+================================ */
+
+encryptPdfButton.addEventListener(
+  "click",
+  async () => {
+    const selectedFile =
+      pdfFileInput.files[0];
+
+    const algorithm =
+      pdfEncryptionAlgorithm.value;
+
+    const password =
+      pdfEncryptionKey.value;
+
+    if (!selectedFile) {
+      showMessage(
+        "Please choose a PDF file first.",
+        "error"
+      );
+      return;
+    }
+
+    if (!password) {
+      showMessage(
+        "Please enter an encryption key.",
+        "error"
+      );
+      return;
+    }
+
+    try {
+      encryptPdfButton.disabled = true;
+      encryptPdfButton.textContent =
+        "Encrypting PDF...";
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        "pdfFile",
+        selectedFile
+      );
+
+      formData.append(
+        "algorithm",
+        algorithm
+      );
+
+      formData.append(
+        "password",
+        password
+      );
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/encrypt-pdf`,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Unable to encrypt PDF."
+        );
+      }
+
+      const fileResponse =
+        await fetch(
+          `${API_BASE_URL}${data.encryptedFileUrl}`
+        );
+
+      if (!fileResponse.ok) {
+        throw new Error(
+          "PDF encrypted, but download failed."
+        );
+      }
+
+      const fileBlob =
+        await fileResponse.blob();
+
+      const blobUrl =
+        URL.createObjectURL(
+          fileBlob
+        );
+
+      downloadEncryptedPdf.href =
+        blobUrl;
+
+      downloadEncryptedPdf.download =
+        `encrypted-${Date.now()}.bin`;
+
+      downloadEncryptedPdf.hidden =
+        false;
+
+      showMessage(
+        `${data.algorithm} PDF encryption successful.`,
+        "success"
+      );
+
+    } catch (error) {
+      console.error(error);
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+    } finally {
+      encryptPdfButton.disabled =
+        false;
+
+      encryptPdfButton.textContent =
+        "Encrypt PDF";
+    }
+  }
+);
+
+
+/* ==============================
+   DECRYPT PDF
+================================ */
+
+decryptPdfButton.addEventListener(
+  "click",
+  async () => {
+    const selectedFile =
+      encryptedPdfFile.files[0];
+
+    const password =
+      pdfDecryptionKey.value;
+
+    if (!selectedFile) {
+      showMessage(
+        "Please choose the encrypted PDF file.",
+        "error"
+      );
+      return;
+    }
+
+    if (!password) {
+      showMessage(
+        "Please enter the decryption key.",
+        "error"
+      );
+      return;
+    }
+
+    try {
+      decryptPdfButton.disabled = true;
+      decryptPdfButton.textContent =
+        "Decrypting PDF...";
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        "encryptedPdfFile",
+        selectedFile
+      );
+
+      formData.append(
+        "password",
+        password
+      );
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/decrypt-pdf`,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Unable to decrypt PDF."
+        );
+      }
+
+      const fileResponse =
+        await fetch(
+          `${API_BASE_URL}${data.restoredPdfUrl}`
+        );
+
+      if (!fileResponse.ok) {
+        throw new Error(
+          "PDF decrypted, but restored file download failed."
+        );
+      }
+
+      const fileBlob =
+        await fileResponse.blob();
+
+      const blobUrl =
+        URL.createObjectURL(
+          fileBlob
+        );
+
+      downloadDecryptedPdf.href =
+        blobUrl;
+
+      downloadDecryptedPdf.download =
+        `restored-${Date.now()}.pdf`;
+
+      downloadDecryptedPdf.hidden =
+        false;
+
+      showMessage(
+        "PDF decrypted and restored successfully.",
+        "success"
+      );
+
+    } catch (error) {
+      console.error(error);
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+    } finally {
+      decryptPdfButton.disabled =
+        false;
+
+      decryptPdfButton.textContent =
+        "Decrypt PDF";
     }
   }
 );
