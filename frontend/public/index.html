@@ -66,6 +66,13 @@
       >
         📄 PDF Processing
       </button>
+      <button
+  id="otherModeButton"
+  class="mode-button"
+  type="button"
+>
+  🗂️ Other Formats
+</button>
 
     </section>
 
@@ -1015,6 +1022,139 @@ Masked PDF text will appear here.
       </section>
 
     </section>
+    <section
+  id="otherSection"
+  class="processing-section hidden"
+>
+
+  <div class="workflow-title">
+    <div>
+      <span class="workflow-badge">
+        DATA
+      </span>
+
+      <h2>
+        Other File Formats
+      </h2>
+    </div>
+
+    <p>
+      Process structured and semi-structured
+      data formats using privacy protection methods.
+    </p>
+  </div>
+
+
+  <section class="workflow-section">
+
+    <div class="section-heading">
+
+      <div>
+        <span class="section-number">
+          01
+        </span>
+
+        <div>
+          <h2>
+            Choose File Type
+          </h2>
+
+          <p class="section-subtitle">
+            Select the data format you want to process.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <label for="otherFileType">
+        File Format
+      </label>
+
+      <select id="otherFileType">
+
+        <option value="">
+          Select file type
+        </option>
+
+        <option value="json">
+          JSON
+        </option>
+
+        <option value="yaml">
+          YAML
+        </option>
+
+        <option value="xml">
+          XML
+        </option>
+
+        <option value="html">
+          HTML
+        </option>
+
+        <option value="parquet">
+          Parquet
+        </option>
+
+        <option value="avro">
+          Avro
+        </option>
+
+        <option value="orc">
+          ORC
+        </option>
+
+      </select>
+
+
+      <label
+        for="otherFile"
+        style="display:block; margin-top:16px;"
+      >
+        Choose File
+      </label>
+
+      <input
+        id="otherFile"
+        type="file"
+        disabled
+      >
+
+      <p
+        id="otherFileHint"
+        class="section-subtitle"
+        style="margin-top:8px;"
+      >
+        Select a file type first.
+      </p>
+      <button
+  id="processOtherFileButton"
+  type="button"
+  class="primary-button"
+  style="margin-top: 16px;"
+>
+  Process File
+</button>
+
+<a
+  id="downloadProcessedFile"
+  href="#"
+  class="download-link"
+  hidden
+  style="margin-top: 12px;"
+>
+  ⬇ Download Processed File
+</a>
+
+    </div>
+
+  </section>
+
+</section>
 
 
     <!-- =========================
@@ -1032,6 +1172,7 @@ Masked PDF text will appear here.
 
 
   <script src="script.js"></script>
+  <script src="js/other_formats.js"></script>
 
 </body>
 

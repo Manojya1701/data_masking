@@ -33,6 +33,35 @@ const {
   encryptBuffer,
   decryptBuffer
 } = require("./encryption");
+const {
+  parseJson,
+  stringifyJson,
+  walkJson
+} = require("./format-handlers/json-handler");
+const {
+  parseYaml,
+  stringifyYaml,
+  walkYaml
+} = require("./format-handlers/yaml-handler");
+const {
+  parseXml,
+  stringifyXml,
+  walkXml
+} = require("./format-handlers/xml-handler");
+const {
+  processHtml
+} = require("./format-handlers/html-handler");
+const {
+  readParquet,
+  writeParquet,
+  processParquetRows
+} = require("./format-handlers/parquet-handler");
+const {
+  readAvro,
+  writeAvro,
+  processAvroRecords
+} = require("./format-handlers/avro-handler");
+
 
 /* ==============================
    FOLDERS
@@ -90,15 +119,24 @@ const upload = multer({
     file.originalname.toLowerCase();
 
   const allowed =
-    lowerName.endsWith(".csv") ||
-    lowerName.endsWith(".pdf") ||
-    lowerName.endsWith(".bin") ||
-    lowerName.endsWith(".enc");
+  lowerName.endsWith(".csv") ||
+  lowerName.endsWith(".pdf") ||
+  lowerName.endsWith(".bin") ||
+  lowerName.endsWith(".enc") ||
+  lowerName.endsWith(".json")||
+  lowerName.endsWith(".yaml") ||
+  lowerName.endsWith(".yml") ||
+  lowerName.endsWith(".xml") ||
+  lowerName.endsWith(".html") ||
+  lowerName.endsWith(".htm")||
+lowerName.endsWith(".parquet") ||
+lowerName.endsWith(".avro") ||
+lowerName.endsWith(".orc") ;
 
   if (!allowed) {
     return callback(
       new Error(
-        "Only CSV, PDF, BIN and ENC files are allowed."
+        "Only CSV, PDF, BIN, JSON and ENC files are allowed."
       )
     );
   }
@@ -1221,6 +1259,738 @@ app.delete(
   }
 );
 
+
+/* ==============================
+   PROCESS JSON
+================================ */
+
+app.post(
+  "/api/process-json",
+  upload.single("otherFile"),
+
+  async (request, response) => {
+    try {
+      if (!request.file) {
+        return response.status(400).json({
+          error: "Please choose a JSON file."
+        });
+      }
+
+      const jsonText =
+        fs.readFileSync(
+          request.file.path,
+          "utf8"
+        );
+
+      const jsonData =
+        parseJson(jsonText);
+
+      let processedCount = 0;
+
+      const processedData =
+        walkJson(
+          jsonData,
+          (value, keyName) => {
+
+            if (
+              value === null ||
+              value === undefined
+            ) {
+              return value;
+            }
+
+            const stringValue =
+              String(value).trim();
+
+            if (!stringValue) {
+              return value;
+            }
+
+            let detectedType =
+              detectSensitiveType(
+                stringValue
+              );
+
+            if (!detectedType) {
+              const lowerKey =
+                String(
+                  keyName || ""
+                ).toLowerCase();
+
+              if (
+                lowerKey.includes("name")
+              ) {
+                detectedType = "Name";
+              }
+
+              if (
+                lowerKey.includes("email")
+              ) {
+                detectedType = "Email";
+              }
+
+              if (
+                lowerKey.includes("phone") ||
+                lowerKey.includes("mobile") ||
+                lowerKey.includes("contact")
+              ) {
+                detectedType = "Phone";
+              }
+
+              if (
+                lowerKey.includes("aadhaar") ||
+                lowerKey.includes("uid")
+              ) {
+                detectedType = "Aadhaar";
+              }
+
+              if (
+                lowerKey.includes("pan")
+              ) {
+                detectedType = "PAN";
+              }
+            }
+
+            if (!detectedType) {
+              return value;
+            }
+
+            const anonymized =
+              anonymizeValue(
+                stringValue,
+                detectedType
+              );
+
+            processedCount++;
+
+            return anonymized.maskedValue;
+          }
+        );
+
+      const outputText =
+        stringifyJson(
+          processedData
+        );
+
+      const outputFileName =
+        `masked-${Date.now()}.json`;
+
+      const outputPath =
+        path.join(
+          outputDirectory,
+          outputFileName
+        );
+
+      fs.writeFileSync(
+        outputPath,
+        outputText,
+        "utf8"
+      );
+
+      fs.unlinkSync(
+        request.file.path
+      );
+
+      response.json({
+        message:
+          "JSON sensitive data masked successfully.",
+
+        processedValues:
+          processedCount,
+
+        outputFileUrl:
+          `/output/${outputFileName}`,
+
+        preview:
+          processedData
+      });
+
+    } catch (error) {
+      console.error(error);
+
+      response.status(400).json({
+        error:
+          error.message ||
+          "Unable to process JSON."
+      });
+    }
+  }
+);
+/* ==============================
+   PROCESS YAML
+================================ */
+
+app.post(
+  "/api/process-yaml",
+  upload.single("otherFile"),
+
+  async (request, response) => {
+    try {
+
+      if (!request.file) {
+        return response.status(400).json({
+          error: "Please choose a YAML file."
+        });
+      }
+
+      const yamlText =
+        fs.readFileSync(
+          request.file.path,
+          "utf8"
+        );
+
+      const yamlData =
+        parseYaml(yamlText);
+
+      let processedCount = 0;
+
+
+      const processedData =
+        walkYaml(
+          yamlData,
+
+          (value, keyName) => {
+
+            if (
+              value === null ||
+              value === undefined
+            ) {
+              return value;
+            }
+
+            const stringValue =
+              String(value).trim();
+
+            if (!stringValue) {
+              return value;
+            }
+
+
+            /* --------------------------
+               Detect from value
+            -------------------------- */
+
+            let detectedType =
+              detectSensitiveType(
+                stringValue
+              );
+
+
+            /* --------------------------
+               Fallback to YAML key
+            -------------------------- */
+
+            if (!detectedType) {
+
+              const lowerKey =
+                String(
+                  keyName || ""
+                ).toLowerCase();
+
+
+              if (
+                lowerKey.includes("name")
+              ) {
+                detectedType = "Name";
+              }
+
+              else if (
+                lowerKey.includes("email") ||
+                lowerKey.includes("mail")
+              ) {
+                detectedType = "Email";
+              }
+
+              else if (
+                lowerKey.includes("phone") ||
+                lowerKey.includes("mobile") ||
+                lowerKey.includes("contact")
+              ) {
+                detectedType = "Phone";
+              }
+
+              else if (
+                lowerKey.includes("aadhaar") ||
+                lowerKey.includes("uid")
+              ) {
+                detectedType = "Aadhaar";
+              }
+
+              else if (
+                lowerKey === "pan" ||
+                lowerKey.includes("pan_number")
+              ) {
+                detectedType = "PAN";
+              }
+            }
+
+
+            /* --------------------------
+               Not sensitive
+            -------------------------- */
+
+            if (!detectedType) {
+              return value;
+            }
+
+
+            /* --------------------------
+               Mask sensitive value
+            -------------------------- */
+
+            const anonymized =
+              anonymizeValue(
+                stringValue,
+                detectedType
+              );
+
+            processedCount++;
+
+            return anonymized.maskedValue;
+          }
+        );
+
+
+      /* ------------------------------
+         Convert back to YAML
+      ------------------------------ */
+
+      const outputText =
+        stringifyYaml(
+          processedData
+        );
+
+
+      const outputFileName =
+        `masked-${Date.now()}.yaml`;
+
+      const outputPath =
+        path.join(
+          outputDirectory,
+          outputFileName
+        );
+
+
+      fs.writeFileSync(
+        outputPath,
+        outputText,
+        "utf8"
+      );
+
+
+      fs.unlinkSync(
+        request.file.path
+      );
+
+
+      response.json({
+
+        message:
+          "YAML sensitive data masked successfully.",
+
+        processedValues:
+          processedCount,
+
+        outputFileUrl:
+          `/output/${outputFileName}`
+
+      });
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      response.status(400).json({
+        error:
+          error.message ||
+          "Unable to process YAML."
+      });
+
+    }
+  }
+);
+/* ==============================
+   PROCESS XML
+================================ */
+
+app.post(
+  "/api/process-xml",
+  upload.single("otherFile"),
+
+  async (request, response) => {
+    try {
+      if (!request.file) {
+        return response.status(400).json({
+          error: "Please choose an XML file."
+        });
+      }
+
+      const xmlText =
+        fs.readFileSync(
+          request.file.path,
+          "utf8"
+        );
+
+      const xmlData =
+        parseXml(xmlText);
+
+      let processedCount = 0;
+
+      const processedData =
+        walkXml(
+          xmlData,
+
+          (value, keyName) => {
+            if (
+              value === null ||
+              value === undefined
+            ) {
+              return value;
+            }
+
+            const stringValue =
+              String(value).trim();
+
+            if (!stringValue) {
+              return value;
+            }
+
+            let detectedType =
+              detectSensitiveType(
+                stringValue
+              );
+
+            if (!detectedType) {
+              const lowerKey =
+                String(
+                  keyName || ""
+                ).toLowerCase();
+
+              if (
+                lowerKey.includes("name")
+              ) {
+                detectedType = "Name";
+              }
+
+              else if (
+                lowerKey.includes("email") ||
+                lowerKey.includes("mail")
+              ) {
+                detectedType = "Email";
+              }
+
+              else if (
+                lowerKey.includes("phone") ||
+                lowerKey.includes("mobile") ||
+                lowerKey.includes("contact")
+              ) {
+                detectedType = "Phone";
+              }
+
+              else if (
+                lowerKey.includes("aadhaar") ||
+                lowerKey.includes("uid")
+              ) {
+                detectedType = "Aadhaar";
+              }
+
+              else if (
+                lowerKey === "pan" ||
+                lowerKey.includes("pan_number")
+              ) {
+                detectedType = "PAN";
+              }
+            }
+
+            if (!detectedType) {
+              return value;
+            }
+
+            const anonymized =
+              anonymizeValue(
+                stringValue,
+                detectedType
+              );
+
+            processedCount++;
+
+            return anonymized.maskedValue;
+          }
+        );
+
+      const outputText =
+        stringifyXml(
+          processedData
+        );
+
+      const outputFileName =
+        `masked-${Date.now()}.xml`;
+
+      const outputPath =
+        path.join(
+          outputDirectory,
+          outputFileName
+        );
+
+      fs.writeFileSync(
+        outputPath,
+        outputText,
+        "utf8"
+      );
+
+      fs.unlinkSync(
+        request.file.path
+      );
+
+      response.json({
+        message:
+          "XML sensitive data masked successfully.",
+
+        processedValues:
+          processedCount,
+
+        outputFileUrl:
+          `/output/${outputFileName}`
+      });
+
+    } catch (error) {
+      console.error(error);
+
+      response.status(400).json({
+        error:
+          error.message ||
+          "Unable to process XML."
+      });
+    }
+  }
+);
+/* ==============================
+   PROCESS HTML
+================================ */
+
+app.post(
+  "/api/process-html",
+  upload.single("otherFile"),
+
+  async (request, response) => {
+    try {
+      if (!request.file) {
+        return response.status(400).json({
+          error: "Please choose an HTML file."
+        });
+      }
+
+      const htmlText =
+        fs.readFileSync(
+          request.file.path,
+          "utf8"
+        );
+
+      const result =
+        processHtml(
+          htmlText,
+          detectSensitiveType,
+          anonymizeValue
+        );
+
+      const outputFileName =
+        `masked-${Date.now()}.html`;
+
+      const outputPath =
+        path.join(
+          outputDirectory,
+          outputFileName
+        );
+
+      fs.writeFileSync(
+        outputPath,
+        result.html,
+        "utf8"
+      );
+
+      fs.unlinkSync(
+        request.file.path
+      );
+
+      response.json({
+        message:
+          "HTML sensitive data masked successfully.",
+
+        processedValues:
+          result.processedCount,
+
+        outputFileUrl:
+          `/output/${outputFileName}`
+      });
+
+    } catch (error) {
+      console.error(error);
+
+      response.status(400).json({
+        error:
+          error.message ||
+          "Unable to process HTML."
+      });
+    }
+  }
+);
+/* ==============================
+   PROCESS PARQUET
+================================ */
+
+app.post(
+  "/api/process-parquet",
+  upload.single("otherFile"),
+
+  async (request, response) => {
+    try {
+      if (!request.file) {
+        return response.status(400).json({
+          error: "Please choose a Parquet file."
+        });
+      }
+
+      const {
+        rows,
+        schema
+      } = await readParquet(
+        request.file.path
+      );
+
+      if (!rows.length) {
+        return response.status(400).json({
+          error:
+            "Parquet file contains no records."
+        });
+      }
+
+      const result =
+        processParquetRows(
+          rows,
+          detectSensitiveType,
+          anonymizeValue
+        );
+
+      const outputFileName =
+        `masked-${Date.now()}.parquet`;
+
+      const outputPath =
+        path.join(
+          outputDirectory,
+          outputFileName
+        );
+
+      await writeParquet(
+        outputPath,
+        result.rows,
+        schema
+      );
+
+      fs.unlinkSync(
+        request.file.path
+      );
+
+      response.json({
+        message:
+          "Parquet sensitive data masked successfully.",
+
+        processedValues:
+          result.processedCount,
+
+        outputFileUrl:
+          `/output/${outputFileName}`
+      });
+
+    } catch (error) {
+      console.error(error);
+
+      response.status(400).json({
+        error:
+          error.message ||
+          "Unable to process Parquet."
+      });
+    }
+  }
+);
+/* ==============================
+   PROCESS AVRO
+================================ */
+
+app.post(
+  "/api/process-avro",
+  upload.single("otherFile"),
+
+  async (request, response) => {
+    try {
+      if (!request.file) {
+        return response.status(400).json({
+          error: "Please choose an Avro file."
+        });
+      }
+
+      const {
+        records,
+        type
+      } = await readAvro(
+        request.file.path
+      );
+
+      if (!records.length) {
+        return response.status(400).json({
+          error:
+            "Avro file contains no records."
+        });
+      }
+
+      const result =
+        processAvroRecords(
+          records,
+          detectSensitiveType,
+          anonymizeValue
+        );
+
+      const outputFileName =
+        `masked-${Date.now()}.avro`;
+
+      const outputPath =
+        path.join(
+          outputDirectory,
+          outputFileName
+        );
+
+      await writeAvro(
+        outputPath,
+        result.records,
+        type
+      );
+
+      fs.unlinkSync(
+        request.file.path
+      );
+
+      response.json({
+        message:
+          "Avro sensitive data masked successfully.",
+
+        processedValues:
+          result.processedCount,
+
+        outputFileUrl:
+          `/output/${outputFileName}`
+      });
+
+    } catch (error) {
+      console.error(error);
+
+      response.status(400).json({
+        error:
+          error.message ||
+          "Unable to process Avro."
+      });
+    }
+  }
+);
 /* ==============================
    ERROR HANDLER
 ================================ */

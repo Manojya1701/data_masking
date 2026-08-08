@@ -13,6 +13,11 @@ const csvSection =
 
 const pdfSection =
   document.getElementById("pdfSection");
+const otherModeButton =
+  document.getElementById("otherModeButton");
+
+const otherSection =
+  document.getElementById("otherSection");
 
 const algorithmButtons =
   document.querySelectorAll(".algorithm-button");
@@ -78,13 +83,47 @@ let selectedAlgorithm = "SHA-256";
 ========================= */
 
 function activateMode(mode) {
-  const isCsv = mode === "csv";
+  const isCsv =
+    mode === "csv";
 
-  csvModeButton.classList.toggle("active", isCsv);
-  pdfModeButton.classList.toggle("active", !isCsv);
+  const isPdf =
+    mode === "pdf";
 
-  csvSection.classList.toggle("hidden", !isCsv);
-  pdfSection.classList.toggle("hidden", isCsv);
+  const isOther =
+    mode === "other";
+
+
+  csvModeButton.classList.toggle(
+    "active",
+    isCsv
+  );
+
+  pdfModeButton.classList.toggle(
+    "active",
+    isPdf
+  );
+
+  otherModeButton.classList.toggle(
+    "active",
+    isOther
+  );
+
+
+  csvSection.classList.toggle(
+    "hidden",
+    !isCsv
+  );
+
+  pdfSection.classList.toggle(
+    "hidden",
+    !isPdf
+  );
+
+  otherSection.classList.toggle(
+    "hidden",
+    !isOther
+  );
+
 
   hideMessage();
 }
@@ -96,6 +135,10 @@ csvModeButton.addEventListener("click", () => {
 pdfModeButton.addEventListener("click", () => {
   activateMode("pdf");
 });
+otherModeButton.addEventListener(
+  "click",
+  () => activateMode("other")
+);
 
 /* =========================
    ALGORITHM SELECTION

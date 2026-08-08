@@ -1111,3 +1111,6 @@ button:disabled {
     max-width: none;
   }
 }
+[hidden] {
+  display: none !important;
+}
