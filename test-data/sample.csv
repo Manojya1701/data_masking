@@ -1,0 +1,6 @@
+id,name,email,phone,aadhaar,pan,amount
+1,Ram Sharma,ram@example.com,9876543210,1234 5678 9012,ABCDE1234F,5000
+2,Priya Singh,priya.singh@test.in,+919812345678,2345 6789 0123,FGHIJ5678K,12000
+3,John Doe,john.doe@company.com,8765432109,3456 7890 1234,KLMNO9012P,3500
+4,Anita Patel,anita@startup.io,7654321098,4567 8901 2345,QRSTU3456Q,8000
+5,Bob Martin,bob.martin@email.net,6543210987,5678 9012 3456,VWXYZ7890R,25000

@@ -1,0 +1,15 @@
+company: Acme Corp
+contacts:
+  - id: 1
+    name: Ram Sharma
+    email: ram@example.com
+    phone: "9876543210"
+    aadhaar: "1234 5678 9012"
+    pan: ABCDE1234F
+  - id: 2
+    name: Priya Singh
+    email: priya.singh@test.in
+    phone: "+919812345678"
+settings:
+  environment: production
+  debug: false
