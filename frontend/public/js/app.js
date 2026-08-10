@@ -161,7 +161,7 @@ if (scanBtn) {
     formData.append('file', currentFile);
 
     try {
-      const resp = await fetch('${API_BASE_URL}/api/scan-file', { method: 'POST', body: formData });
+      const resp = await fetch(`${API_BASE_URL}/api/scan-file`, { method: 'POST', body: formData });
       const data = await resp.json();
 
       scanLoading.classList.add('hidden');
@@ -244,7 +244,7 @@ async function processFile(file, operation, opts) {
   if (operation === 'encrypt' && opts.password) formData.append('password', opts.password);
 
   try {
-    const resp = await fetch('/api/process-file', { method: 'POST', body: formData });
+    const resp = await fetch(`${API_BASE_URL}/api/process-file`, { method: 'POST', body: formData });
     const data = await resp.json();
 
     if (!resp.ok || !data.success) {
@@ -310,7 +310,7 @@ async function loadFormats() {
   const grid  = document.getElementById('formats-grid');
   const empty = document.getElementById('formats-empty');
   try {
-    const resp = await fetch('${API_BASE_URL}/api/formats');
+    const resp = await fetch(`${API_BASE_URL}/api/formats`);
     const data = await resp.json();
     allFormats = data.formats || [];
     renderFormats(allFormats);
