@@ -1,19 +1,27 @@
 /**
  * download.js
- * Handles result display, file download, and the Restore Encrypted File flow.
- * Exports: initDownload(), showResult(), showRestoreResult()
+ * Handles result display, file download, integrity badge, privacy report, and the Restore Encrypted File flow.
+ * Exports: initDownload()
  */
 
 export function initDownload() {
-  const downloadBtn  = document.getElementById('download-btn');
-  const newFileBtn   = document.getElementById('new-file-btn');
+  const downloadBtn   = document.getElementById('download-btn');
+  const reportBtn     = document.getElementById('report-btn');
+  const newFileBtn    = document.getElementById('new-file-btn');
   const resultSection = document.getElementById('result-section');
 
-  let currentToken = null;
+  let currentToken   = null;
+  let currentReport  = null;
 
   downloadBtn.addEventListener('click', () => {
     if (currentToken) triggerDownload(currentToken);
   });
+
+  if (reportBtn) {
+    reportBtn.addEventListener('click', () => {
+      if (currentReport) downloadReportBlob(currentReport);
+    });
+  }
 
   newFileBtn.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('udps:reset'));
@@ -28,21 +36,35 @@ export function initDownload() {
     document.body.removeChild(a);
   }
 
+  function downloadReportBlob(reportObj) {
+    const json = JSON.stringify(reportObj, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = 'privacy_report.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
   // Restore flow
-  const restoreDropZone   = document.getElementById('restore-drop-zone');
-  const restoreFileInput  = document.getElementById('restore-file-input');
-  const restoreFileInfo   = document.getElementById('restore-file-info');
-  const restoreFileName   = document.getElementById('restore-file-name');
-  const restorePassword   = document.getElementById('restore-password');
-  const restoreBtn        = document.getElementById('restore-btn');
-  const restoreBtnText    = document.getElementById('restore-btn-text');
-  const restoreResult     = document.getElementById('restore-result');
-  const restoreError      = document.getElementById('restore-error');
-  const restoreErrorMsg   = document.getElementById('restore-error-message');
+  const restoreDropZone    = document.getElementById('restore-drop-zone');
+  const restoreFileInput   = document.getElementById('restore-file-input');
+  const restoreFileInfo    = document.getElementById('restore-file-info');
+  const restoreFileName    = document.getElementById('restore-file-name');
+  const restorePassword    = document.getElementById('restore-password');
+  const restoreBtn         = document.getElementById('restore-btn');
+  const restoreBtnText     = document.getElementById('restore-btn-text');
+  const restoreResult      = document.getElementById('restore-result');
+  const restoreError       = document.getElementById('restore-error');
+  const restoreErrorMsg    = document.getElementById('restore-error-message');
   const restoreDownloadBtn = document.getElementById('restore-download-btn');
-  const toggleRestorePw   = document.getElementById('toggle-restore-password');
-  const restoreEyeOpen    = document.getElementById('restore-eye-open');
-  const restoreEyeClosed  = document.getElementById('restore-eye-closed');
+  const toggleRestorePw    = document.getElementById('toggle-restore-password');
+  const restoreEyeOpen     = document.getElementById('restore-eye-open');
+  const restoreEyeClosed   = document.getElementById('restore-eye-closed');
+  const integrityBadge     = document.getElementById('integrity-badge');
 
   let restoreFile  = null;
   let restoreToken = null;
@@ -69,6 +91,7 @@ export function initDownload() {
     restoreFileInfo.classList.remove('hidden');
     restoreResult.classList.add('hidden');
     restoreError.classList.add('hidden');
+    if (integrityBadge) integrityBadge.classList.add('hidden');
   }
 
   // Toggle restore password
@@ -95,6 +118,7 @@ export function initDownload() {
     restoreBtnText.textContent = 'Decrypting…';
     restoreResult.classList.add('hidden');
     restoreError.classList.add('hidden');
+    if (integrityBadge) integrityBadge.classList.add('hidden');
 
     const formData = new FormData();
     formData.append('file', restoreFile);
@@ -104,11 +128,20 @@ export function initDownload() {
       const resp = await fetch('/api/restore-file', { method: 'POST', body: formData });
       const data = await resp.json();
       if (!resp.ok || !data.success) {
-        showRestoreError(data.error || 'Decryption failed.');
+        showRestoreError(data.error || 'Decryption failed. Check your password and try again.');
       } else {
         restoreToken = data.token;
         restoreResult.classList.remove('hidden');
         restorePassword.value = '';
+
+        // Show integrity badge
+        if (integrityBadge) {
+          if (data.integrityVerified === true) {
+            integrityBadge.classList.remove('hidden');
+          } else {
+            integrityBadge.classList.add('hidden');
+          }
+        }
       }
     } catch (e) {
       showRestoreError('Network error: ' + e.message);
@@ -131,18 +164,48 @@ export function initDownload() {
     showResult(data) {
       currentToken = data.token;
 
+      // Build privacy report (no sensitive values — metadata only)
+      currentReport = {
+        fileFormat:     data.formatLabel || data.format,
+        operation:      data.operation,
+        maskingType:    data.maskingType  || null,
+        algorithm:      data.algorithm    || null,
+        encAlgorithm:   data.encAlgorithm || null,
+        hashMode:       data.hashMode     || null,
+        sensitiveValuesProcessed: data.count ?? null,
+        processingTimeSec: data.processingTime || null,
+        outputFile:     data.downloadName || null,
+        generatedAt:    new Date().toISOString(),
+      };
+
       document.getElementById('result-format').textContent    = data.formatLabel || data.format;
       document.getElementById('result-operation').textContent = capitalize(data.operation);
+      document.getElementById('result-time').textContent      = data.processingTime ? data.processingTime + ' s' : '—';
+      document.getElementById('result-output-name').textContent = data.downloadName || '—';
 
+      // Masking type row
+      const maskingRow = document.getElementById('result-masking-row');
+      if (data.operation === 'mask' && data.maskingType) {
+        document.getElementById('result-masking-type').textContent = capitalize(data.maskingType);
+        maskingRow.classList.remove('hidden');
+      } else {
+        maskingRow.classList.add('hidden');
+      }
+
+      // Algorithm row
       const algoRow = document.getElementById('result-algo-row');
       const algoVal = document.getElementById('result-algorithm');
-      if (data.algorithm && data.operation === 'hash') {
-        algoVal.textContent = data.algorithm.toUpperCase();
+      if (data.algorithm && (data.operation === 'hash')) {
+        algoVal.textContent = (data.algorithm || '').toUpperCase();
+        algoRow.classList.remove('hidden');
+      } else if (data.operation === 'encrypt' && data.encAlgorithm) {
+        algoVal.textContent = (data.encAlgorithm || '').toUpperCase();
         algoRow.classList.remove('hidden');
       } else {
         algoRow.classList.add('hidden');
       }
 
+      // Count row
       const countRow = document.getElementById('result-count-row');
       const countVal = document.getElementById('result-count');
       if (data.operation !== 'encrypt') {
@@ -163,20 +226,26 @@ export function initDownload() {
         notesEl.classList.add('hidden');
       }
 
+      // Report button
+      if (reportBtn) reportBtn.classList.remove('hidden');
+
       resultSection.classList.remove('hidden');
       resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 
     reset() {
-      currentToken = null;
+      currentToken  = null;
+      currentReport = null;
       resultSection.classList.add('hidden');
       restoreResult.classList.add('hidden');
       restoreError.classList.add('hidden');
       restoreFileInfo.classList.add('hidden');
-      restoreFile = null;
+      restoreFile  = null;
       restoreToken = null;
-      restoreFileInput.value = '';
-      restorePassword.value = '';
+      restoreFileInput.value  = '';
+      restorePassword.value   = '';
+      if (integrityBadge) integrityBadge.classList.add('hidden');
+      if (reportBtn) reportBtn.classList.add('hidden');
     }
   };
 }
@@ -187,5 +256,9 @@ function capitalize(str) {
 }
 
 function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }

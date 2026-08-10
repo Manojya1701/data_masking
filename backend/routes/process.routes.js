@@ -2,9 +2,11 @@
 
 /**
  * Process Routes
- * POST /api/process-file   — main protection endpoint
- * POST /api/restore-file   — decryption/restore endpoint
+ * POST /api/process-file    — main protection endpoint
+ * POST /api/restore-file    — decryption/restore endpoint
+ * POST /api/scan-file       — pre-scan for sensitive data (no file modification)
  * GET  /api/download/:token — secure file download
+ * GET  /api/formats         — supported formats list
  */
 
 const express = require('express');
@@ -12,8 +14,8 @@ const multer  = require('multer');
 const path    = require('path');
 const fs      = require('fs');
 const { v4: uuidv4 } = require('uuid');
-const { processFile }   = require('../services/privacy-engine');
-const { decrypt }       = require('../services/encryption-service');
+const { processFile, scanFile } = require('../services/privacy-engine');
+const { decrypt }               = require('../services/encryption-service');
 const { detectFormat, formatLabel } = require('../services/file-type-detector');
 const { createToken, redeemToken, revokeToken } = require('../services/token-store');
 
@@ -22,7 +24,6 @@ const router = express.Router();
 const UPLOAD_DIR = path.join(__dirname, '../uploads');
 const OUTPUT_DIR = path.join(__dirname, '../output');
 
-// Ensure directories exist
 [UPLOAD_DIR, OUTPUT_DIR].forEach(d => fs.mkdirSync(d, { recursive: true }));
 
 // ── Multer configuration ──────────────────────────────────────────────────────
@@ -32,7 +33,7 @@ const ALLOWED_EXTENSIONS = new Set([
   '.yaml', '.yml', '.xml', '.html', '.htm',
   '.pdf', '.parquet', '.avro', '.orc',
   '.jpg', '.jpeg', '.png',
-  '.enc',  // for restore
+  '.enc',
 ]);
 
 const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE || '104857600', 10); // 100 MB
@@ -64,8 +65,33 @@ function cleanupUpload(filePath) {
 }
 
 function jsonError(res, status, message) {
+  console.warn(`[Routes] Error ${status}: ${message}`);
   return res.status(status).json({ success: false, error: message });
 }
+
+// ── POST /api/scan-file ───────────────────────────────────────────────────────
+
+router.post('/scan-file', upload.single('file'), async (req, res) => {
+  if (!req.file) return jsonError(res, 400, 'No file uploaded.');
+
+  const uploadedPath = req.file.path;
+  const originalName = req.file.originalname;
+
+  try {
+    const result = await scanFile(uploadedPath, originalName);
+    const { format } = detectFormat(uploadedPath, originalName);
+    return res.json({
+      success: true,
+      format,
+      formatLabel: formatLabel(format),
+      ...result,
+    });
+  } catch (err) {
+    return jsonError(res, 422, err.message);
+  } finally {
+    cleanupUpload(uploadedPath);
+  }
+});
 
 // ── POST /api/process-file ────────────────────────────────────────────────────
 
@@ -74,17 +100,25 @@ router.post('/process-file', upload.single('file'), async (req, res) => {
     return jsonError(res, 400, 'No file uploaded.');
   }
 
-  const { operation, algorithm, password } = req.body;
+  const {
+    operation,
+    algorithm,
+    hashMode,
+    password,
+    encAlgorithm,
+    maskingType,
+  } = req.body;
+
   const uploadedPath  = req.file.path;
   const originalName  = req.file.originalname;
 
-  // Validate operation
+  console.log(`[Routes] process-file: op=${operation} algo=${algorithm} hashMode=${hashMode} encAlgo=${encAlgorithm} maskType=${maskingType} file=${originalName}`);
+
   if (!['mask', 'hash', 'encrypt'].includes(operation)) {
     cleanupUpload(uploadedPath);
     return jsonError(res, 400, 'Invalid operation. Choose mask, hash, or encrypt.');
   }
 
-  // Validate password for encrypt
   if (operation === 'encrypt' && (!password || password.trim() === '')) {
     cleanupUpload(uploadedPath);
     return jsonError(res, 400, 'A password is required for encryption.');
@@ -97,14 +131,31 @@ router.post('/process-file', upload.single('file'), async (req, res) => {
       outputDir:    OUTPUT_DIR,
       operation,
       options: {
-        algorithm: algorithm || 'sha256',
-        // Never log the password
-        password: password || '',
+        algorithm:    algorithm || 'sha256',
+        hashMode:     hashMode  || 'sensitive',
+        password:     password  || '',
+        encAlgorithm: encAlgorithm || 'aes-256-gcm',
+        maskingType:  maskingType  || 'partial',
       },
     });
 
-    // Create a download token
-    const ext = operation === 'encrypt' ? '.enc' : path.extname(originalName);
+    // Verify output file was actually written
+    if (!fs.existsSync(result.outputPath)) {
+      throw new Error('Output file was not created by the handler.');
+    }
+    const outputSize = fs.statSync(result.outputPath).size;
+    console.log(`[Routes] Output: ${path.basename(result.outputPath)} (${outputSize} bytes)`);
+
+    // Determine download extension
+    let ext;
+    if (operation === 'encrypt') {
+      ext = '.enc';
+    } else if (operation === 'hash' && (hashMode === 'file' || result.outputPath.endsWith('.json'))) {
+      ext = result.outputPath.endsWith('.json') ? '.json' : path.extname(originalName);
+    } else {
+      ext = path.extname(originalName);
+    }
+
     const downloadName = path.basename(originalName, path.extname(originalName))
       + '_' + operation + ext;
     const token = createToken(result.outputPath, downloadName);
@@ -112,57 +163,93 @@ router.post('/process-file', upload.single('file'), async (req, res) => {
     cleanupUpload(uploadedPath);
 
     return res.json({
-      success:      true,
+      success:        true,
       token,
-      format:       result.format,
-      formatLabel:  formatLabel(result.format),
+      format:         result.format,
+      formatLabel:    formatLabel(result.format),
       operation,
-      algorithm:    algorithm || null,
-      count:        result.count,
-      notes:        result.notes || [],
+      algorithm:      algorithm || null,
+      hashMode:       hashMode  || 'sensitive',
+      maskingType:    maskingType || 'partial',
+      encAlgorithm:   encAlgorithm || 'aes-256-gcm',
+      count:          result.count,
+      notes:          result.notes || [],
       downloadName,
+      processingTime: result.processingTime,
     });
   } catch (err) {
     cleanupUpload(uploadedPath);
+    console.error('[Routes] processFile error:', err.message);
     return jsonError(res, 422, err.message);
   }
 });
 
-// ── POST /api/restore-file ───────────────────────────────────────────────────
+// ── POST /api/restore-file ────────────────────────────────────────────────────
 
 router.post('/restore-file', upload.single('file'), async (req, res) => {
   if (!req.file) return jsonError(res, 400, 'No file uploaded.');
 
   const { password } = req.body;
   const uploadedPath = req.file.path;
+  const encFileName  = req.file.originalname;
 
   if (!password || password.trim() === '') {
     cleanupUpload(uploadedPath);
     return jsonError(res, 400, 'A password is required to restore an encrypted file.');
   }
 
-  try {
-    const envelope  = fs.readFileSync(uploadedPath);
-    const plaintext = decrypt(envelope, password);
+  console.log(`[Routes] restore-file: encFileName=${encFileName}`);
 
-    // Build a safe output filename
-    const originalEncName = req.file.originalname;
-    // Strip .enc if present to get the original extension
-    const restoredName = originalEncName.replace(/_encrypted\.enc$/, '').replace(/\.enc$/, '');
-    const outFileName  = uuidv4() + '_restored' + path.extname(restoredName);
-    const outPath      = path.join(OUTPUT_DIR, outFileName);
+  try {
+    const envelope = fs.readFileSync(uploadedPath);
+
+    // decrypt() now returns { plaintext, originalName, originalExt, integrityVerified }
+    const decResult = decrypt(envelope, password);
+    const { plaintext, originalName: storedName, originalExt: storedExt, integrityVerified } = decResult;
+
+    console.log(`[Routes] Decrypted: storedName=${storedName} storedExt=${storedExt} integrityVerified=${integrityVerified} size=${plaintext.length}`);
+
+    // Determine restored filename
+    let restoredName;
+    if (storedName && storedExt) {
+      // Use metadata from envelope (most reliable)
+      restoredName = storedName;
+    } else {
+      // Legacy v1 envelope fallback: guess from .enc filename
+      restoredName = encFileName
+        .replace(/_encrypted\.enc$/i, '')
+        .replace(/\.enc$/i, '');
+      if (!path.extname(restoredName)) {
+        restoredName += '.bin'; // unknown extension
+      }
+    }
+
+    const outFileName = uuidv4() + '_restored' + (storedExt || path.extname(restoredName) || '.bin');
+    const outPath = path.join(OUTPUT_DIR, outFileName);
     fs.writeFileSync(outPath, plaintext);
 
-    const token = createToken(outPath, restoredName || 'restored_file');
+    // Verify file was written correctly
+    const writtenSize = fs.statSync(outPath).size;
+    if (writtenSize !== plaintext.length) {
+      throw new Error('Restored file size mismatch — write error.');
+    }
+
+    console.log(`[Routes] Restored: ${outFileName} (${writtenSize} bytes), integrity=${integrityVerified}`);
+
+    const token = createToken(outPath, restoredName);
     cleanupUpload(uploadedPath);
 
     return res.json({
-      success:      true,
+      success:           true,
       token,
-      downloadName: restoredName || 'restored_file',
+      downloadName:      restoredName,
+      integrityVerified,
+      restoredSize:      writtenSize,
     });
   } catch (err) {
     cleanupUpload(uploadedPath);
+    console.error('[Routes] restore-file error:', err.message);
+    // Do NOT return a corrupt file — return clear error
     return jsonError(res, 422, err.message);
   }
 });
@@ -172,7 +259,6 @@ router.post('/restore-file', upload.single('file'), async (req, res) => {
 router.get('/download/:token', (req, res) => {
   const { token } = req.params;
 
-  // Sanitize token: only hex chars
   if (!/^[a-f0-9]{64}$/.test(token)) {
     return jsonError(res, 400, 'Invalid download token.');
   }
@@ -183,8 +269,6 @@ router.get('/download/:token', (req, res) => {
   }
 
   const { filePath, originalName } = entry;
-
-  // Path traversal guard: ensure file is inside OUTPUT_DIR
   const resolved = path.resolve(filePath);
   if (!resolved.startsWith(path.resolve(OUTPUT_DIR))) {
     return jsonError(res, 403, 'Access denied.');
@@ -196,8 +280,9 @@ router.get('/download/:token', (req, res) => {
 
   res.download(resolved, originalName, (err) => {
     if (!err) {
-      // Clean up after successful download
       setTimeout(() => revokeToken(token), 1000);
+    } else {
+      console.error('[Routes] download error:', err.message);
     }
   });
 });
@@ -207,18 +292,19 @@ router.get('/download/:token', (req, res) => {
 router.get('/formats', (req, res) => {
   res.json({
     formats: [
-      { key: 'csv',     label: 'CSV',              ext: ['.csv'] },
-      { key: 'tsv',     label: 'TSV',              ext: ['.tsv'] },
-      { key: 'json',    label: 'JSON',             ext: ['.json'] },
-      { key: 'jsonl',   label: 'JSONL / NDJSON',   ext: ['.jsonl', '.ndjson'] },
-      { key: 'yaml',    label: 'YAML',             ext: ['.yaml', '.yml'] },
-      { key: 'xml',     label: 'XML',              ext: ['.xml'] },
-      { key: 'html',    label: 'HTML',             ext: ['.html', '.htm'] },
-      { key: 'pdf',     label: 'PDF',              ext: ['.pdf'] },
-      { key: 'parquet', label: 'Parquet',          ext: ['.parquet'] },
-      { key: 'avro',    label: 'Avro',             ext: ['.avro'] },
-      { key: 'orc',     label: 'ORC',              ext: ['.orc'], note: 'Requires Python 3 + PyArrow' },
-      { key: 'image',   label: 'Image (JPEG/PNG)', ext: ['.jpg', '.jpeg', '.png'] },
+      { key: 'csv',     label: 'CSV',              category: 'Tabular',    ext: ['.csv'] },
+      { key: 'tsv',     label: 'TSV',              category: 'Tabular',    ext: ['.tsv'] },
+      { key: 'json',    label: 'JSON',             category: 'Structured', ext: ['.json'] },
+      { key: 'jsonl',   label: 'JSONL / NDJSON',   category: 'Structured', ext: ['.jsonl', '.ndjson'] },
+      { key: 'yaml',    label: 'YAML',             category: 'Structured', ext: ['.yaml', '.yml'] },
+      { key: 'xml',     label: 'XML',              category: 'Structured', ext: ['.xml'] },
+      { key: 'html',    label: 'HTML',             category: 'Documents',  ext: ['.html', '.htm'] },
+      { key: 'pdf',     label: 'PDF',              category: 'Documents',  ext: ['.pdf'] },
+      { key: 'parquet', label: 'Parquet',          category: 'Binary Data', ext: ['.parquet'] },
+      { key: 'avro',    label: 'Avro',             category: 'Binary Data', ext: ['.avro'] },
+      { key: 'orc',     label: 'ORC',              category: 'Binary Data', ext: ['.orc'], note: 'Requires Python 3 + PyArrow' },
+      { key: 'jpeg',    label: 'JPEG',             category: 'Images',     ext: ['.jpg', '.jpeg'] },
+      { key: 'png',     label: 'PNG',              category: 'Images',     ext: ['.png'] },
     ],
   });
 });

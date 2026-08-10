@@ -16,8 +16,14 @@ const { makeOutputPath } = require('./handler-utils');
 
 async function process({ filePath, originalName, outputDir, operation, options }) {
   if (operation === 'encrypt') {
+    const path = require('path');
     const plaintext = fs.readFileSync(filePath);
-    const encrypted = encrypt(plaintext, options.password);
+    const ext = path.extname(originalName) || '.avro';
+    const encrypted = encrypt(plaintext, options.password, {
+      algorithm: options.encAlgorithm || 'aes-256-gcm',
+      originalName: path.basename(originalName),
+      originalExt: ext,
+    });
     const outPath = makeOutputPath(outputDir, originalName, 'enc');
     fs.writeFileSync(outPath, encrypted);
     return { outputPath: outPath, count: 0 };
@@ -54,15 +60,18 @@ async function process({ filePath, originalName, outputDir, operation, options }
         collectStringFields(schemaType);
 
         // Process records
+        const pseudoMap = {};
         const processed = records.map(rec => {
           const newRec = { ...rec };
           for (const field of stringFields) {
             const val = newRec[field];
             if (typeof val !== 'string' || val === '') continue;
-            const { protect } = shouldProtect(val, field);
+            const { protect, type } = shouldProtect(val, field);
             if (protect) {
               count++;
-              newRec[field] = operation === 'hash' ? hash(val, options.algorithm) : maskValue(val, field);
+              newRec[field] = operation === 'hash'
+                ? hash(val, options.algorithm)
+                : maskValue(val, field, options.maskingType, pseudoMap, type);
             }
           }
           return newRec;

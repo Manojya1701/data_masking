@@ -15,9 +15,15 @@ const { maskValue } = require('./mask-utils');
 const { makeOutputPath } = require('./handler-utils');
 
 async function process({ filePath, originalName, outputDir, operation, options }) {
+  const path = require('path');
   if (operation === 'encrypt') {
     const plaintext = fs.readFileSync(filePath);
-    const encrypted = encrypt(plaintext, options.password);
+    const ext = path.extname(originalName) || '.parquet';
+    const encrypted = encrypt(plaintext, options.password, {
+      algorithm: options.encAlgorithm || 'aes-256-gcm',
+      originalName: path.basename(originalName),
+      originalExt: ext,
+    });
     const outPath = makeOutputPath(outputDir, originalName, 'enc');
     fs.writeFileSync(outPath, encrypted);
     return { outputPath: outPath, count: 0 };
@@ -56,15 +62,18 @@ async function process({ filePath, originalName, outputDir, operation, options }
     }
   }
 
+  const pseudoMap = {};
   const processed = rows.map(r => {
     const newRow = { ...r };
     for (const field of stringFields) {
       const val = r[field];
       if (typeof val !== 'string' || val === '') continue;
-      const { protect } = shouldProtect(val, field);
+      const { protect, type } = shouldProtect(val, field);
       if (protect) {
         count++;
-        newRow[field] = operation === 'hash' ? hash(val, options.algorithm) : maskValue(val, field);
+        newRow[field] = operation === 'hash'
+          ? hash(val, options.algorithm)
+          : maskValue(val, field, options.maskingType, pseudoMap, type);
       }
     }
     return newRow;

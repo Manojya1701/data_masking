@@ -3,10 +3,10 @@
 /**
  * Image Handler (JPEG/PNG)
  *
- * - encrypt: AES-256-GCM on raw image bytes.
- * - hash:    SHA-256/3/BLAKE3 of raw image bytes → returns a text file with the hash.
- * - mask:    OCR with tesseract.js → bounding boxes → blur sensitive regions with sharp.
- *            Falls back gracefully if OCR fails.
+ * - encrypt: AES-256-GCM (or selected cipher) on raw image bytes.
+ * - hash:    Whole-file hash of raw image bytes → returns a .txt report.
+ * - mask:    OCR with tesseract.js → bounding boxes → draw black rectangles over sensitive regions with sharp.
+ *            Falls back gracefully if OCR fails — reports limitation honestly.
  */
 
 const fs = require('fs');
@@ -21,47 +21,64 @@ async function process({ filePath, originalName, outputDir, operation, options }
   const rawBytes = fs.readFileSync(filePath);
 
   if (operation === 'encrypt') {
-    const encrypted = encrypt(rawBytes, options.password);
+    const ext = path.extname(originalName) || '.jpg';
+    const encrypted = encrypt(rawBytes, options.password, {
+      algorithm:    options.encAlgorithm || 'aes-256-gcm',
+      originalName: path.basename(originalName),
+      originalExt:  ext,
+    });
     const outPath = makeOutputPath(outputDir, originalName, 'enc');
     fs.writeFileSync(outPath, encrypted);
     return { outputPath: outPath, count: 0 };
   }
 
   if (operation === 'hash') {
-    const hexHash = hashBuffer(rawBytes, options.algorithm);
-    const ext = path.extname(originalName || 'image.jpg');
-    const outPath = makeOutputPath(outputDir, originalName, 'hash').replace(/\.[^.]+$/, '.txt');
     const algo = options.algorithm || 'sha256';
-    fs.writeFileSync(outPath,
-      `File: ${originalName}\nAlgorithm: ${algo}\nHash: ${hexHash}\n`,
-      'utf8'
-    );
+    const hexHash = hashBuffer(rawBytes, algo);
+    const report = JSON.stringify({
+      file:      originalName,
+      algorithm: algo.toUpperCase(),
+      digest:    hexHash,
+      generatedAt: new Date().toISOString(),
+      note: 'Whole-file integrity hash of the image. The original image is unchanged.',
+    }, null, 2);
+    // Output as JSON report
+    const outPath = makeOutputPath(outputDir, originalName, 'hash').replace(/\.[^.]+$/, '') + '_hash.json';
+    fs.writeFileSync(outPath, report, 'utf8');
     return {
       outputPath: outPath,
       count: 1,
-      notes: [`Image hash (${algo}) written to text file. Original image not modified.`],
+      notes: [
+        `Image whole-file hash (${algo.toUpperCase()}) written to JSON report.`,
+        'Original image is NOT modified.',
+        `Digest: ${hexHash.slice(0, 24)}…`,
+      ],
     };
   }
 
-  // mask: OCR + region blur
+  // mask: OCR + region blackout
   const notes = [];
   let count = 0;
 
   try {
-    // Lazy-load tesseract to avoid loading it unless needed
-    const Tesseract = require('tesseract.js');
-    const { data } = await Tesseract.recognize(filePath, 'eng', { logger: () => {} });
+    let Tesseract;
+    try {
+      Tesseract = require('tesseract.js');
+    } catch {
+      throw { code: 'MODULE_NOT_FOUND' };
+    }
 
-    const ext = path.extname(originalName || 'image.jpg').toLowerCase();
+    const { data } = await Tesseract.recognize(filePath, 'eng', { logger: () => {} });
     const meta = await sharp(filePath).metadata();
     const imgWidth = meta.width;
     const imgHeight = meta.height;
 
-    // Collect bounding boxes of sensitive words
     const redactRegions = [];
     for (const word of (data.words || [])) {
-      const { protect } = shouldProtect(word.text.trim());
-      if (protect && word.text.trim().length > 0) {
+      const text = word.text.trim();
+      if (!text) continue;
+      const { protect } = shouldProtect(text);
+      if (protect) {
         count++;
         const b = word.bbox;
         redactRegions.push({
@@ -76,37 +93,40 @@ async function process({ filePath, originalName, outputDir, operation, options }
     if (redactRegions.length === 0) {
       notes.push('No sensitive text detected in image via OCR.');
       const outPath = makeOutputPath(outputDir, originalName, operation);
-      fs.copyFileSync(filePath, outPath);
+      await sharp(filePath).toFile(outPath);
       return { outputPath: outPath, count: 0, notes };
     }
 
-    // Build sharp composite overlays (black rectangles)
     const overlays = redactRegions.map(r => ({
       input: {
         create: {
-          width:   Math.max(1, r.width),
-          height:  Math.max(1, r.height),
+          width:    Math.max(1, r.width),
+          height:   Math.max(1, r.height),
           channels: 4,
-          background: { r: 0, g: 0, b: 0, alpha: 1 },
+          background: { r: 0, g: 0, b: 0, alpha: 255 },
         },
       },
-      left:  r.left,
-      top:   r.top,
+      left: r.left,
+      top:  r.top,
     }));
 
     const outPath = makeOutputPath(outputDir, originalName, operation);
-    await sharp(filePath)
-      .composite(overlays)
-      .toFile(outPath);
+    await sharp(filePath).composite(overlays).toFile(outPath);
 
-    notes.push(`OCR detected ${count} sensitive text region(s) and redacted them with black boxes.`);
+    notes.push(`OCR detected ${count} sensitive text region(s) and covered them with black boxes.`);
     return { outputPath: outPath, count, notes };
+
   } catch (e) {
     if (e.code === 'MODULE_NOT_FOUND') {
-      notes.push('tesseract.js not available — image copied without OCR masking. Install tesseract.js to enable image text masking.');
+      notes.push(
+        'tesseract.js is not available — image masking requires OCR. ' +
+        'Run: npm install tesseract.js to enable image text masking.'
+      );
+      notes.push('Image is returned unmodified. Encrypt and Hash operations still work normally.');
     } else {
       notes.push(`OCR masking failed: ${e.message}. Image copied unmodified.`);
     }
+    // Return original image with a clear note — do not claim success silently
     const outPath = makeOutputPath(outputDir, originalName, operation);
     fs.copyFileSync(filePath, outPath);
     return { outputPath: outPath, count: 0, notes };
