@@ -6,7 +6,10 @@
 import { initUpload }     from './upload.js';
 import { initOperations } from './operations.js';
 import { initDownload }   from './download.js';
-
+const API_BASE_URL =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:3000'
+    : ' https://data-masking-1.onrender.com';
 // State
 let currentFile   = null;
 let currentFormat = null;
@@ -158,7 +161,7 @@ if (scanBtn) {
     formData.append('file', currentFile);
 
     try {
-      const resp = await fetch('/api/scan-file', { method: 'POST', body: formData });
+      const resp = await fetch('${API_BASE_URL}/api/scan-file', { method: 'POST', body: formData });
       const data = await resp.json();
 
       scanLoading.classList.add('hidden');
@@ -307,7 +310,7 @@ async function loadFormats() {
   const grid  = document.getElementById('formats-grid');
   const empty = document.getElementById('formats-empty');
   try {
-    const resp = await fetch('/api/formats');
+    const resp = await fetch('${API_BASE_URL}/api/formats');
     const data = await resp.json();
     allFormats = data.formats || [];
     renderFormats(allFormats);

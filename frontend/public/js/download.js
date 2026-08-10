@@ -3,7 +3,10 @@
  * Handles result display, file download, integrity badge, privacy report, and the Restore Encrypted File flow.
  * Exports: initDownload()
  */
-
+const API_BASE_URL =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:3000'
+    : ' https://data-masking-1.onrender.com';
 export function initDownload() {
   const downloadBtn   = document.getElementById('download-btn');
   const reportBtn     = document.getElementById('report-btn');
@@ -29,7 +32,8 @@ export function initDownload() {
 
   function triggerDownload(token) {
     const a = document.createElement('a');
-    a.href = `/api/download/${token}`;
+    a.href =
+  `${API_BASE_URL}/api/download/${token}`;
     a.download = '';
     document.body.appendChild(a);
     a.click();
@@ -125,7 +129,14 @@ export function initDownload() {
     formData.append('password', pw);
 
     try {
-      const resp = await fetch('/api/restore-file', { method: 'POST', body: formData });
+      const resp =
+  await fetch(
+    `${API_BASE_URL}/api/restore-file`,
+    {
+      method: 'POST',
+      body: formData
+    }
+  );
       const data = await resp.json();
       if (!resp.ok || !data.success) {
         showRestoreError(data.error || 'Decryption failed. Check your password and try again.');
