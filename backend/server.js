@@ -13,7 +13,9 @@ const processRoutes =
   require('./routes/process.routes');
 
 const app = express();
-
+const {
+  initializeSchema
+} = require('./database/init-db');
 const PORT =
   parseInt(
     process.env.PORT || '3000',
@@ -237,21 +239,46 @@ app.use(
    START SERVER
 ========================================================= */
 
-app.listen(
-  PORT,
-  '0.0.0.0',
-  () => {
+async function startServer() {
 
-    console.log(
-      `[UDPS] Server running on port ${PORT}`
+  try {
+
+    await initializeSchema();
+
+  } catch (err) {
+
+    console.error(
+      '[DB Init Warning]',
+      err.message
     );
 
-    console.log(
-      `[UDPS] Frontend: ${FRONTEND_DIR}`
-    );
+    /*
+      Database history should not prevent
+      UDPS file-processing functionality
+      from starting.
+    */
 
   }
-);
 
+
+  app.listen(
+    PORT,
+    '0.0.0.0',
+    () => {
+
+      console.log(
+        `[UDPS] Server running on port ${PORT}`
+      );
+
+      console.log(
+        `[UDPS] Frontend: ${FRONTEND_DIR}`
+      );
+
+    }
+  );
+}
+
+
+startServer();
 
 module.exports = app;

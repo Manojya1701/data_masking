@@ -1,41 +1,137 @@
 'use strict';
 
 /**
- * Database Initialization Script
- * Runs schema.sql to create processing_history and privacy_scan_history tables.
- * Usage: npm run db:init
+ * Database Initialization
+ * Creates required tables using schema.sql.
+ *
+ * CLI:
+ *   npm run db:init
+ *
+ * Server startup:
+ *   const { initializeSchema } = require('./database/init-db');
  */
 
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+
+require('dotenv').config({
+  path: path.join(__dirname, '../../.env')
+});
 
 const db = require('./db');
 
-async function initDb() {
+
+/* =========================================================
+   REUSABLE SCHEMA INITIALIZER
+========================================================= */
+
+async function initializeSchema() {
+
   if (!db.isConfigured()) {
-    console.log('[DB Init] DATABASE_URL is not set in environment variables.');
-    console.log('[DB Init] Please configure DATABASE_URL in .env before running db:init.');
-    process.exit(0);
+
+    console.log(
+      '[DB Init] DATABASE_URL is not configured. Skipping database initialization.'
+    );
+
+    return false;
   }
 
-  console.log('[DB Init] Connecting to PostgreSQL database…');
-  const schemaPath = path.join(__dirname, 'schema.sql');
-  const sql = fs.readFileSync(schemaPath, 'utf8');
+
+  const schemaPath =
+    path.join(
+      __dirname,
+      'schema.sql'
+    );
+
+
+  const sql =
+    fs.readFileSync(
+      schemaPath,
+      'utf8'
+    );
+
+
+  console.log(
+    '[DB Init] Checking PostgreSQL schema…'
+  );
+
+
+  await db.query(sql);
+
+
+  console.log(
+    '[DB Init] ✅ Database tables ready.'
+  );
+
+
+  return true;
+}
+
+
+/* =========================================================
+   CLI VERSION
+========================================================= */
+
+async function initDb() {
 
   try {
-    await db.query(sql);
-    console.log('[DB Init] ✅ Tables initialized successfully (processing_history, privacy_scan_history).');
+
+    const initialized =
+      await initializeSchema();
+
+
+    if (!initialized) {
+
+      console.log(
+        '[DB Init] Nothing to initialize.'
+      );
+
+      return;
+    }
+
+
+    console.log(
+      '[DB Init] ✅ processing_history and privacy_scan_history initialized.'
+    );
+
   } catch (err) {
-    console.error('[DB Init] ❌ Schema initialization failed:', err.message);
-    process.exit(1);
+
+    console.error(
+      '[DB Init] ❌ Schema initialization failed:',
+      err.message
+    );
+
+    process.exitCode = 1;
+
   } finally {
+
+    /*
+      Close the pool ONLY when this file
+      is executed as a standalone CLI script.
+    */
+
     await db.close();
+
   }
 }
 
+
+/* =========================================================
+   RUN FROM COMMAND LINE
+========================================================= */
+
 if (require.main === module) {
+
   initDb();
+
 }
 
-module.exports = { initDb };
+
+/* =========================================================
+   EXPORTS
+========================================================= */
+
+module.exports = {
+  initDb,
+  initializeSchema
+};
