@@ -254,6 +254,61 @@ router.post('/restore-file', upload.single('file'), async (req, res) => {
   }
 });
 
+// ── GET /api/preview/:token ───────────────────────────────────────────────────
+
+router.get('/preview/:token', (req, res) => {
+  const { token } = req.params;
+
+  if (!/^[a-f0-9]{64}$/.test(token)) {
+    return jsonError(res, 400, 'Invalid preview token.');
+  }
+
+  const entry = redeemToken(token);
+  if (!entry) {
+    return jsonError(res, 404, 'Preview token not found or expired.');
+  }
+
+  const { filePath, originalName } = entry;
+  const resolved = path.resolve(filePath);
+  if (!resolved.startsWith(path.resolve(OUTPUT_DIR))) {
+    return jsonError(res, 403, 'Access denied.');
+  }
+
+  if (!fs.existsSync(resolved)) {
+    return jsonError(res, 404, 'Output file not found.');
+  }
+
+  const ext = path.extname(originalName || filePath).toLowerCase();
+  const mimeTypes = {
+    '.pdf':     'application/pdf',
+    '.jpg':     'image/jpeg',
+    '.jpeg':    'image/jpeg',
+    '.png':     'image/png',
+    '.json':    'application/json',
+    '.csv':     'text/plain; charset=utf-8',
+    '.tsv':     'text/plain; charset=utf-8',
+    '.jsonl':   'text/plain; charset=utf-8',
+    '.ndjson':  'text/plain; charset=utf-8',
+    '.yaml':    'text/plain; charset=utf-8',
+    '.yml':     'text/plain; charset=utf-8',
+    '.xml':     'text/plain; charset=utf-8',
+    '.html':    'text/plain; charset=utf-8',
+    '.htm':     'text/plain; charset=utf-8',
+  };
+
+  const contentType = mimeTypes[ext] || 'application/octet-stream';
+  res.setHeader('Content-Type', contentType);
+  res.setHeader('Content-Disposition', `inline; filename="${path.basename(originalName)}"`);
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+
+  res.sendFile(resolved, (err) => {
+    if (err && !res.headersSent) {
+      console.error('[Routes] preview error:', err.message);
+      return jsonError(res, 500, 'Failed to stream preview.');
+    }
+  });
+});
+
 // ── GET /api/download/:token ──────────────────────────────────────────────────
 
 router.get('/download/:token', (req, res) => {

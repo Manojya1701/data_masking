@@ -3,10 +3,7 @@
  * Handles result display, file download, integrity badge, privacy report, and the Restore Encrypted File flow.
  * Exports: initDownload()
  */
-const API_BASE_URL =
-  window.location.hostname === 'localhost'
-    ? 'http://localhost:3000'
-    : ' https://data-masking-1.onrender.com';
+const API_BASE_URL = window.location.origin;
 export function initDownload() {
   const downloadBtn   = document.getElementById('download-btn');
   const reportBtn     = document.getElementById('report-btn');
@@ -171,9 +168,98 @@ export function initDownload() {
     restoreError.classList.remove('hidden');
   }
 
+  // Preview Modal Elements
+  const previewModal       = document.getElementById('preview-modal');
+  const previewBackdrop    = document.getElementById('preview-backdrop');
+  const previewCloseBtn    = document.getElementById('preview-close-btn');
+  const previewCancelBtn   = document.getElementById('preview-cancel-btn');
+  const previewDownloadBtn = document.getElementById('preview-download-btn');
+  const previewLoading     = document.getElementById('preview-loading');
+  const previewContainer   = document.getElementById('preview-container');
+  const previewFormatPill  = document.getElementById('preview-format-pill');
+  const previewBtn         = document.getElementById('preview-btn');
+  const restorePreviewBtn  = document.getElementById('restore-preview-btn');
+
+  let currentFormatLabel = '';
+  let currentDownloadName = '';
+
+  if (previewBtn) {
+    previewBtn.addEventListener('click', () => {
+      if (currentToken) openPreviewModal(currentToken, currentFormatLabel, currentDownloadName);
+    });
+  }
+
+  if (restorePreviewBtn) {
+    restorePreviewBtn.addEventListener('click', () => {
+      if (restoreToken) openPreviewModal(restoreToken, 'Restored File', 'restored_file');
+    });
+  }
+
+  if (previewCloseBtn)  previewCloseBtn.addEventListener('click', closePreviewModal);
+  if (previewCancelBtn) previewCancelBtn.addEventListener('click', closePreviewModal);
+  if (previewBackdrop)  previewBackdrop.addEventListener('click', closePreviewModal);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && previewModal && !previewModal.classList.contains('hidden')) {
+      closePreviewModal();
+    }
+  });
+
+  async function openPreviewModal(token, formatLabel, fileName) {
+    if (!previewModal) return;
+
+    previewFormatPill.textContent = formatLabel || 'File Preview';
+    previewLoading.classList.remove('hidden');
+    previewContainer.innerHTML = '';
+    previewModal.classList.remove('hidden');
+
+    previewDownloadBtn.onclick = () => triggerDownload(token);
+
+    const previewUrl = `${API_BASE_URL}/api/preview/${token}`;
+    const ext = (fileName || '').split('.').pop().toLowerCase();
+
+    try {
+      if (ext === 'pdf') {
+        previewContainer.innerHTML = `<iframe src="${previewUrl}" class="preview-iframe" title="PDF Preview"></iframe>`;
+      } else if (['jpg', 'jpeg', 'png'].includes(ext)) {
+        previewContainer.innerHTML = `<img src="${previewUrl}" class="preview-img" alt="File Preview">`;
+      } else if (['json', 'csv', 'tsv', 'yaml', 'yml', 'xml', 'html', 'jsonl', 'ndjson', 'txt'].includes(ext)) {
+        const resp = await fetch(previewUrl);
+        const text = await resp.text();
+        const truncated = text.length > 50000 ? text.slice(0, 50000) + '\n\n… [Preview truncated at 50KB]' : text;
+        previewContainer.innerHTML = `<div class="preview-code-wrap"><pre class="preview-code">${escapeHtml(truncated)}</pre></div>`;
+      } else {
+        previewContainer.innerHTML = `
+          <div class="preview-info-box">
+            <h4>Encrypted or Binary Container</h4>
+            <p>This file is in a binary format (<strong>${escapeHtml(formatLabel || ext.toUpperCase())}</strong>). Direct inline visual preview is not applicable.</p>
+            <p style="margin-top:12px;color:var(--text-muted);">Click "Download File" below to save the file to your computer.</p>
+          </div>
+        `;
+      }
+    } catch (err) {
+      previewContainer.innerHTML = `
+        <div class="preview-info-box">
+          <h4 style="color:#ef4444;">Preview Failed</h4>
+          <p>${escapeHtml(err.message)}</p>
+        </div>
+      `;
+    } finally {
+      previewLoading.classList.add('hidden');
+    }
+  }
+
+  function closePreviewModal() {
+    if (!previewModal) return;
+    previewModal.classList.add('hidden');
+    previewContainer.innerHTML = '';
+  }
+
   return {
     showResult(data) {
       currentToken = data.token;
+      currentFormatLabel = data.formatLabel || data.format || '';
+      currentDownloadName = data.downloadName || '';
 
       // Build privacy report (no sensitive values — metadata only)
       currentReport = {
@@ -247,6 +333,8 @@ export function initDownload() {
     reset() {
       currentToken  = null;
       currentReport = null;
+      currentFormatLabel = '';
+      currentDownloadName = '';
       resultSection.classList.add('hidden');
       restoreResult.classList.add('hidden');
       restoreError.classList.add('hidden');
@@ -255,6 +343,7 @@ export function initDownload() {
       restoreToken = null;
       restoreFileInput.value  = '';
       restorePassword.value   = '';
+      closePreviewModal();
       if (integrityBadge) integrityBadge.classList.add('hidden');
       if (reportBtn) reportBtn.classList.add('hidden');
     }

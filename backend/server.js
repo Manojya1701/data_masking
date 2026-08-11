@@ -7,7 +7,7 @@ require('dotenv').config({
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs'); 
 
 const processRoutes =
   require('./routes/process.routes');
@@ -78,7 +78,7 @@ app.use(
 
     res.set(
       'X-Frame-Options',
-      'DENY'
+      'SAMEORIGIN'
     );
 
     res.set(

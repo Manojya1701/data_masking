@@ -1,13 +1,16 @@
 'use strict';
 
+const crypto = require('crypto');
+
 /**
  * Masking utilities — shared across all handlers.
  *
  * Masking types:
- *   partial    — keep first/last chars, mask middle  (default)
- *   redact     — replace entire value with [REDACTED]
- *   character  — replace each sensitive char with * preserving format
- *   pseudo     — replace with consistent pseudonym (PERSON_001, EMAIL_001, etc.)
+ *   partial      — keep first/last chars, mask middle  (default)
+ *   redact       — replace entire value with [REDACTED]
+ *   character    — replace each sensitive char with * preserving format
+ *   pseudo       — replace with consistent pseudonym (PERSON_001, EMAIL_001, etc.)
+ *   tokenization — replace with secure random crypto token (TKN_NAME_A7F291, TKN_EMAIL_4C82D1, etc.)
  */
 
 // Pseudonym counters and maps — per processing session
@@ -17,6 +20,21 @@ const PSEUDO_TYPE_MAP = {
   name:        'PERSON',
   phone_in:    'PHONE',
   phone_intl:  'PHONE',
+  aadhaar:     'AADHAAR',
+  pan:         'PAN',
+  credit_card: 'CARD',
+  dob:         'DOB',
+  ipv4:        'IP',
+  ipv6:        'IP',
+  passport:    'PASSPORT',
+};
+
+const TOKEN_TYPE_MAP = {
+  email:       'EMAIL',
+  name:        'NAME',
+  phone_in:    'PHONE',
+  phone_intl:  'PHONE',
+  phone:       'PHONE',
   aadhaar:     'AADHAAR',
   pan:         'PAN',
   credit_card: 'CARD',
@@ -129,6 +147,25 @@ function pseudoMask(value, pseudoMap, piiType) {
   return pseudonym;
 }
 
+// ── Tokenization ──────────────────────────────────────────────────────────────
+
+function tokenMask(value, tokenMap, piiType) {
+  if (!tokenMap) tokenMap = {};
+
+  // Session consistency: same sensitive value gets same token within operation
+  if (tokenMap[value] !== undefined) return tokenMap[value];
+
+  const type = detectType(value);
+  const category = TOKEN_TYPE_MAP[piiType] || TOKEN_TYPE_MAP[type] || 'DATA';
+
+  // Generate 6 uppercase random hex digits using Node.js crypto
+  const hex = crypto.randomBytes(3).toString('hex').toUpperCase();
+  const token = `TKN_${category}_${hex}`;
+
+  tokenMap[value] = token;
+  return token;
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 /**
@@ -136,8 +173,8 @@ function pseudoMask(value, pseudoMap, piiType) {
  *
  * @param {string} value        The raw sensitive value
  * @param {string} [fieldName]  Column/field name hint
- * @param {string} [maskingType] 'partial' | 'redact' | 'character' | 'pseudo'
- * @param {object} [pseudoMap]   Shared map for pseudonymization consistency
+ * @param {string} [maskingType] 'partial' | 'redact' | 'character' | 'pseudo' | 'tokenization'
+ * @param {object} [pseudoMap]   Shared map for pseudonymization / tokenization consistency
  * @param {string} [piiType]     Detected PII type from sensitive-data-detector
  * @returns {string}
  */
@@ -153,10 +190,14 @@ function maskValue(value, fieldName, maskingType, pseudoMap, piiType) {
     case 'pseudo':
     case 'pseudonymization':
       return pseudoMask(value, pseudoMap, piiType);
+    case 'token':
+    case 'tokenization':
+      return tokenMask(value, pseudoMap, piiType);
     case 'partial':
     default:
       return partialMask(value, fieldName);
   }
 }
 
-module.exports = { maskValue, partialMask, redactFull, characterMask, pseudoMask };
+module.exports = { maskValue, partialMask, redactFull, characterMask, pseudoMask, tokenMask };
+

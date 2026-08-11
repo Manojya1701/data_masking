@@ -107,6 +107,7 @@ async function processFile({ filePath, originalName, outputDir, operation, optio
 async function scanFile(filePath, originalName) {
   const { format } = detectFormat(filePath, originalName);
   let text = '';
+  let imageResult = null;
 
   try {
     if (['csv', 'tsv', 'json', 'jsonl', 'yaml', 'xml', 'html'].includes(format)) {
@@ -119,11 +120,50 @@ async function scanFile(filePath, originalName) {
       } catch {
         text = '';
       }
+    } else if (format === 'image') {
+      try {
+        let Tesseract;
+        try { Tesseract = require('tesseract.js'); } catch { /* optional */ }
+        let ocrText = '';
+        if (Tesseract) {
+          const { data } = await Tesseract.recognize(filePath, 'eng', { logger: () => {} });
+          ocrText = (data.words || []).map(w => w.text).join(' ');
+        }
+        const textScan = scanText(ocrText || '');
+
+        let faceCount = 0;
+        try {
+          const pico = require('picojs');
+          const sharp = require('sharp');
+          const cascadePath = require('path').join(__dirname, '../handlers/facefinder.bin');
+          if (fs.existsSync(cascadePath)) {
+            const bytes = new Uint8Array(fs.readFileSync(cascadePath));
+            const faceCascade = pico.unpack_cascade(bytes);
+            const { data: rawGray, info } = await sharp(filePath).grayscale().raw().toBuffer({ resolveWithObject: true });
+            const imageObj = { pixels: rawGray, nrows: info.height, ncols: info.width, ldim: info.width };
+            const params = { shiftfactor: 0.1, minsize: Math.max(20, Math.round(Math.min(info.width, info.height) * 0.08)), maxsize: 1000, scalefactor: 1.1 };
+            let detections = pico.run_cascade(imageObj, faceCascade, params);
+            detections = pico.cluster_detections(detections, 0.2);
+            faceCount = detections.filter(d => d[3] > 10.0).length;
+          }
+        } catch { /* face scan optional */ }
+
+        if (faceCount > 0) {
+          textScan.counts.face = (textScan.counts.face || 0) + faceCount;
+          textScan.total += faceCount;
+          textScan.riskScore = textScan.total >= 3 ? 'High' : 'Medium';
+        }
+
+        imageResult = { ...textScan, format };
+      } catch {
+        text = '';
+      }
     }
-    // For binary formats (parquet, avro, orc, image), scan is not supported
   } catch {
     text = '';
   }
+
+  if (imageResult) return imageResult;
 
   if (!text) {
     return {

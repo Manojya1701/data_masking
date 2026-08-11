@@ -16,7 +16,7 @@
 
 const fs   = require('fs');
 const path = require('path');
-const { execFile } = require('child_process');
+const { spawn } = require('child_process');
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 
 const { encrypt }      = require('../services/encryption-service');
@@ -31,7 +31,7 @@ const EXTRACTOR = path.join(__dirname, 'pdf-extractor.mjs');
 // ── Text extraction via child process ────────────────────────────────────────
 
 /**
- * Run pdf-extractor.mjs in a child process.
+ * Run pdf-extractor.mjs in a child process via spawn.
  * Pipes pdfBytes → stdin, reads JSON page-array from stdout.
  *
  * @param {Buffer} pdfBytes
@@ -39,28 +39,43 @@ const EXTRACTOR = path.join(__dirname, 'pdf-extractor.mjs');
  */
 function extractTextItems(pdfBytes) {
   return new Promise((resolve, reject) => {
-    const child = execFile(
-      process.execPath,          // same node binary
-      [EXTRACTOR],
-      {
-        encoding:  'buffer',
-        maxBuffer: 64 * 1024 * 1024,   // 64 MB — enough for large PDFs
-        timeout:   60_000,             // 60-second hard timeout
-      },
-      (err, stdout, stderr) => {
-        if (err) {
-          const msg = (stderr && stderr.toString().trim()) || err.message;
-          return reject(new Error(`PDF extractor: ${msg}`));
-        }
-        try {
-          resolve(JSON.parse(stdout.toString('utf8')));
-        } catch (parseErr) {
-          reject(new Error(`PDF extractor returned invalid JSON: ${parseErr.message}`));
-        }
-      }
-    );
+    const nodeBin = process.execPath || 'node';
+    const child = spawn(nodeBin, [EXTRACTOR]);
 
-    // Send PDF bytes on stdin then close it
+    const stdoutChunks = [];
+    const stderrChunks = [];
+
+    child.stdout.on('data', chunk => stdoutChunks.push(chunk));
+    child.stderr.on('data', chunk => stderrChunks.push(chunk));
+
+    child.on('error', err => {
+      reject(new Error(`PDF extractor process error: ${err.message}`));
+    });
+
+    child.on('close', code => {
+      const stdoutStr = Buffer.concat(stdoutChunks).toString('utf8');
+      const stderrStr = Buffer.concat(stderrChunks).toString('utf8').trim();
+
+      if (code !== 0) {
+        console.log('[PDF] Extractor stderr:', stderrStr);
+        return reject(new Error(`PDF extractor failed (exit code ${code}): ${stderrStr || 'unknown error'}`));
+      }
+
+      try {
+        const jsonStart = Math.min(
+          stdoutStr.indexOf('[') >= 0 ? stdoutStr.indexOf('[') : Infinity,
+          stdoutStr.indexOf('{') >= 0 ? stdoutStr.indexOf('{') : Infinity
+        );
+        if (jsonStart === Infinity) {
+          throw new Error('No JSON object or array found in output');
+        }
+        resolve(JSON.parse(stdoutStr.slice(jsonStart)));
+      } catch (parseErr) {
+        console.log('[PDF] Extractor JSON parse error:', parseErr.message, 'Output:', stdoutStr);
+        reject(new Error(`PDF extractor returned invalid JSON: ${parseErr.message}`));
+      }
+    });
+
     child.stdin.write(pdfBytes);
     child.stdin.end();
   });
@@ -215,7 +230,7 @@ async function process({ filePath, originalName, outputDir, operation, options }
     console.log(`[PDF] Extracted ${total} text items across ${rawPages.length} page(s)`);
   } catch (err) {
     extractionError = err.message;
-    console.error('[PDF] Extraction failed:', err.message);
+    console.log('[PDF] Extraction failed:', err.message, err.stack);
   }
 
   if (extractionError || !rawPages) {

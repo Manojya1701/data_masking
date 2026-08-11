@@ -219,14 +219,44 @@ describe('Mask Utils — 4 Masking Types', () => {
       const p = maskValue(name, null, 'pseudo', map, 'name');
       expect(p).toMatch(/^PERSON_\d{3}$/);
     });
-    test('All 4 types produce different outputs', () => {
+    test('All 5 types produce different outputs', () => {
       const results = new Set([
         maskValue(email, null, 'partial'),
         maskValue(email, null, 'redact'),
         maskValue(email, null, 'character'),
         maskValue(email, null, 'pseudo', {}, 'email'),
+        maskValue(email, null, 'tokenization', {}, 'email'),
       ]);
-      expect(results.size).toBe(4);
+      expect(results.size).toBe(5);
+    });
+  });
+
+  describe('Tokenization', () => {
+    test('Email tokenized as TKN_EMAIL_XXXXXX', () => {
+      const map = {};
+      const t1 = maskValue(email, null, 'tokenization', map, 'email');
+      expect(t1).toMatch(/^TKN_EMAIL_[A-F0-9]{6}$/);
+      expect(t1).not.toContain(email);
+    });
+    test('Same sensitive value gets same token within operation session', () => {
+      const map = {};
+      const t1 = maskValue(email, null, 'tokenization', map, 'email');
+      const t2 = maskValue(email, null, 'tokenization', map, 'email');
+      expect(t1).toBe(t2);
+    });
+    test('Different sensitive values get different tokens', () => {
+      const map = {};
+      const t1 = maskValue('harika@example.com', null, 'tokenization', map, 'email');
+      const t2 = maskValue('john@example.com',   null, 'tokenization', map, 'email');
+      expect(t1).not.toBe(t2);
+      expect(t1).toMatch(/^TKN_EMAIL_[A-F0-9]{6}$/);
+      expect(t2).toMatch(/^TKN_EMAIL_[A-F0-9]{6}$/);
+    });
+    test('Name, Phone, and PAN get appropriate token prefixes', () => {
+      const map = {};
+      expect(maskValue(name,  null, 'tokenization', map, 'name')).toMatch(/^TKN_NAME_[A-F0-9]{6}$/);
+      expect(maskValue(phone, null, 'tokenization', map, 'phone')).toMatch(/^TKN_PHONE_[A-F0-9]{6}$/);
+      expect(maskValue(pan,   null, 'tokenization', map, 'pan')).toMatch(/^TKN_PAN_[A-F0-9]{6}$/);
     });
   });
 });

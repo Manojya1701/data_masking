@@ -95,6 +95,7 @@ const SENSITIVE_FIELD_NAMES = [
   'address', 'addr', 'ssn', 'creditcard', 'credit_card',
   'card', 'cardnumber', 'card_number', 'passport', 'nid',
   'nationalid', 'national_id', 'ip', 'ipaddress', 'ip_address',
+  'patient', 'patientname', 'patient_name', 'patientid', 'patient_id',
 ];
 
 // ─── Public API ───────────────────────────────────────────────────────────────
@@ -140,7 +141,7 @@ function isSensitiveField(fieldName) {
   if (SENSITIVE_FIELD_NAMES.some(f => normalized === f.replace(/[^a-z0-9]/g, ''))) return true;
   // Substring match: column names like "email_address", "phone_number", "card_number"
   const sensitiveKeywords = ['email', 'phone', 'mobile', 'aadhaar', 'aadhar', 'pan', 'dob', 'birth',
-    'creditcard', 'card', 'passport', 'national', 'ssn', 'ip', 'address', 'contact', 'uid'];
+    'creditcard', 'card', 'passport', 'national', 'ssn', 'ip', 'address', 'contact', 'uid', 'patient'];
   return sensitiveKeywords.some(kw => normalized.includes(kw));
 }
 
@@ -172,19 +173,14 @@ function shouldProtect(value, fieldName, opts = {}) {
  * @returns {{ counts: Object.<string, number>, total: number, riskScore: 'Low'|'Medium'|'High' }}
  */
 function scanText(textOrLines, opts = {}) {
-  const lines = Array.isArray(textOrLines) ? textOrLines : [textOrLines];
+  const inputStr = Array.isArray(textOrLines) ? textOrLines.join('\n') : String(textOrLines || '');
+  const lines = inputStr.split(/\r?\n/);
   const counts = {};
 
-  // Tokenize: split on whitespace, commas, semicolons, quotes, newlines
   for (const line of lines) {
-    const tokens = String(line).split(/[\s,;"'<>(){}\[\]|]+/);
-    for (const token of tokens) {
-      const trimmed = token.trim();
-      if (!trimmed || trimmed.length < 2) continue;
-      const result = detectValue(trimmed, opts);
-      if (result.isSensitive) {
-        counts[result.type] = (counts[result.type] || 0) + 1;
-      }
+    const foundTokens = extractSensitiveTokens(line, opts);
+    for (const t of foundTokens) {
+      counts[t.type] = (counts[t.type] || 0) + 1;
     }
   }
 
@@ -234,7 +230,8 @@ function scanRecords(records, opts = {}) {
 
 /**
  * Scan a single string and return each sensitive token found inside it.
- * Useful for PDF lines where pdfjs returns full sentences ("Email: foo@bar.com").
+ * Handles full-string PII patterns (emails, Aadhaar with spaces, etc.) and
+ * key-value labels (e.g. "Name: Ram", "Aadhaar: 1234 5678 9012").
  *
  * @param {string} text
  * @param {object} [opts]
@@ -242,24 +239,67 @@ function scanRecords(records, opts = {}) {
  */
 function extractSensitiveTokens(text, opts = {}) {
   if (!text || typeof text !== 'string') return [];
-  const tokens = text.split(/[\s,;"'<>(){}\[\]|]+/);
-  const results = [];
-  let searchFrom = 0;
 
+  const matches = [];
+
+  // 1. Full-string global regex patterns (spaced Aadhaar, Credit Cards, Emails, Phones, PAN, etc.)
+  const FULL_PATTERNS = [
+    { type: 'email', regex: /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g },
+    { type: 'aadhaar', regex: /\b\d{4}[\s\-]?\d{4}[\s\-]?\d{4}\b/g },
+    { type: 'credit_card', regex: /\b(?:\d{4}[\s\-]?){3}\d{4}\b/g },
+    { type: 'pan', regex: /\b[A-Z]{5}[0-9]{4}[A-Z]{1}\b/g },
+    { type: 'phone_in', regex: /(?:\+91|0)?[6-9]\d{9}\b/g },
+    { type: 'phone_intl', regex: /\+[1-9]\d{1,3}[\s\-]?\d{6,14}\b/g },
+    { type: 'dob', regex: /\b(?:\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}|\d{2}-\d{2}-\d{4})\b/g },
+    { type: 'ipv4', regex: /\b(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\b/g },
+    { type: 'passport', regex: /\b[A-Z]{1,2}\d{6,7}\b/g },
+  ];
+
+  for (const { type, regex } of FULL_PATTERNS) {
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      matches.push({ token: match[0], type, startIndex: match.index });
+    }
+  }
+
+  // 2. Key-Value pairs: e.g. "Name: Ram", "Aadhaar: 1234 5678 9012"
+  const kvRegex = /(?:^|[\s,;])([A-Za-z_][A-Za-z_\s]{1,18})\s*[:=]\s*([^\r\n,;]+)/g;
+  let kvMatch;
+  while ((kvMatch = kvRegex.exec(text)) !== null) {
+    const key = kvMatch[1].trim();
+    const val = kvMatch[2].trim();
+    if (isSensitiveField(key) && val) {
+      const valIdx = text.indexOf(val, kvMatch.index);
+      if (!matches.some(m => m.startIndex <= valIdx && valIdx < m.startIndex + m.token.length)) {
+        matches.push({
+          token: val,
+          type: key.toLowerCase().includes('name') ? 'name' : 'field_value',
+          startIndex: valIdx
+        });
+      }
+    }
+  }
+
+  // 3. Fallback tokenization for remaining tokens
+  const tokens = text.split(/[\s,;"'<>(){}\[\]|]+/);
+  let searchFrom = 0;
   for (const token of tokens) {
     const trimmed = token.trim();
     if (!trimmed || trimmed.length < 2) {
       searchFrom += token.length + 1;
       continue;
     }
-    const result = detectValue(trimmed, opts);
-    if (result.isSensitive) {
-      const idx = text.indexOf(trimmed, searchFrom);
-      results.push({ token: trimmed, type: result.type, startIndex: idx >= 0 ? idx : searchFrom });
+    const idx = text.indexOf(trimmed, searchFrom);
+    if (!matches.some(m => m.startIndex <= idx && idx < m.startIndex + m.token.length)) {
+      const res = detectValue(trimmed, opts);
+      if (res.isSensitive) {
+        matches.push({ token: trimmed, type: res.type, startIndex: idx >= 0 ? idx : searchFrom });
+      }
     }
-    searchFrom = Math.max(searchFrom, text.indexOf(trimmed, searchFrom) + trimmed.length);
+    searchFrom = Math.max(searchFrom, (idx >= 0 ? idx : searchFrom) + trimmed.length);
   }
-  return results;
+
+  return matches.sort((a, b) => a.startIndex - b.startIndex);
 }
 
 module.exports = {

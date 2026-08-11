@@ -6,10 +6,7 @@
 import { initUpload }     from './upload.js';
 import { initOperations } from './operations.js';
 import { initDownload }   from './download.js';
-const API_BASE_URL =
-  window.location.hostname === 'localhost'
-    ? 'http://localhost:3000'
-    : ' https://data-masking-1.onrender.com';
+const API_BASE_URL = window.location.origin;
 // State
 let currentFile   = null;
 let currentFormat = null;
