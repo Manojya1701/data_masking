@@ -18,6 +18,8 @@ const { processFile, scanFile } = require('../services/privacy-engine');
 const { decrypt }               = require('../services/encryption-service');
 const { detectFormat, formatLabel } = require('../services/file-type-detector');
 const { createToken, redeemToken, revokeToken } = require('../services/token-store');
+const db           = require('../database/db');
+const auditService = require('../services/audit-service');
 
 const router = express.Router();
 
@@ -76,12 +78,27 @@ router.post('/scan-file', upload.single('file'), async (req, res) => {
 
   const uploadedPath = req.file.path;
   const originalName = req.file.originalname;
+  const fileSize     = req.file.size || 0;
+  const jobId        = uuidv4();
 
   try {
     const result = await scanFile(uploadedPath, originalName);
     const { format } = detectFormat(uploadedPath, originalName);
+
+    // Record privacy scan audit metadata in PostgreSQL (non-blocking, counts only)
+    auditService.recordPrivacyScanHistory({
+      jobId,
+      fileName: originalName,
+      fileFormat: format,
+      fileSize,
+      totalDetected: result.total || 0,
+      counts: result.counts || {},
+      riskLevel: result.riskScore || 'Low',
+    });
+
     return res.json({
       success: true,
+      jobId,
       format,
       formatLabel: formatLabel(format),
       ...result,
@@ -111,6 +128,8 @@ router.post('/process-file', upload.single('file'), async (req, res) => {
 
   const uploadedPath  = req.file.path;
   const originalName  = req.file.originalname;
+  const fileSize      = req.file.size || 0;
+  const jobId         = uuidv4();
 
   console.log(`[Routes] process-file: op=${operation} algo=${algorithm} hashMode=${hashMode} encAlgo=${encAlgorithm} maskType=${maskingType} file=${originalName}`);
 
@@ -162,8 +181,28 @@ router.post('/process-file', upload.single('file'), async (req, res) => {
 
     cleanupUpload(uploadedPath);
 
+    // Record processing history audit metadata in PostgreSQL (non-blocking, metadata only)
+    auditService.recordProcessingHistory({
+      jobId,
+      originalFileName: originalName,
+      fileFormat: result.format,
+      fileSize,
+      operation,
+      maskingType: operation === 'mask' ? (maskingType || 'partial') : null,
+      hashMode: operation === 'hash' ? (hashMode || 'sensitive') : null,
+      hashAlgorithm: operation === 'hash' ? (algorithm || 'sha256') : null,
+      encryptionAlgorithm: operation === 'encrypt' ? (encAlgorithm || 'aes-256-gcm') : null,
+      detectedCount: result.count || 0,
+      processedCount: result.count || 0,
+      riskLevel: (result.count || 0) > 0 ? 'Medium' : 'Low',
+      processingTimeSeconds: parseFloat(result.processingTime || 0),
+      outputFileName: downloadName,
+      status: 'success',
+    });
+
     return res.json({
       success:        true,
+      jobId,
       token,
       format:         result.format,
       formatLabel:    formatLabel(result.format),
@@ -180,6 +219,22 @@ router.post('/process-file', upload.single('file'), async (req, res) => {
   } catch (err) {
     cleanupUpload(uploadedPath);
     console.error('[Routes] processFile error:', err.message);
+
+    // Record failed processing attempt safely
+    auditService.recordProcessingHistory({
+      jobId,
+      originalFileName: originalName,
+      fileFormat: path.extname(originalName).replace('.', ''),
+      fileSize,
+      operation,
+      maskingType: operation === 'mask' ? (maskingType || 'partial') : null,
+      hashMode: operation === 'hash' ? (hashMode || 'sensitive') : null,
+      hashAlgorithm: operation === 'hash' ? (algorithm || 'sha256') : null,
+      encryptionAlgorithm: operation === 'encrypt' ? (encAlgorithm || 'aes-256-gcm') : null,
+      status: 'failed',
+      errorCategory: 'ProcessingError',
+    });
+
     return jsonError(res, 422, err.message);
   }
 });
@@ -340,6 +395,25 @@ router.get('/download/:token', (req, res) => {
       console.error('[Routes] download error:', err.message);
     }
   });
+});
+
+// ── GET /api/history ──────────────────────────────────────────────────────────
+
+router.get('/history', async (req, res) => {
+  const { limit, operation, format, status } = req.query;
+  const history = await auditService.getHistory({ limit, operation, format, status });
+  return res.json({
+    success: true,
+    configured: history.configured,
+    records: history.records || [],
+  });
+});
+
+// ── GET /api/db-health ────────────────────────────────────────────────────────
+
+router.get('/db-health', async (req, res) => {
+  const health = await db.healthCheck();
+  return res.status(health.success ? 200 : 503).json(health);
 });
 
 // ── GET /api/formats ──────────────────────────────────────────────────────────

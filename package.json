@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node backend/server.js",
     "dev": "nodemon backend/server.js",
-    "test": "jest --testPathPattern=tests/"
+    "test": "jest --testPathPattern=tests/",
+    "db:init": "node backend/database/init-db.js"
   },
   "dependencies": {
     "@noble/hashes": "^1.4.0",
@@ -24,6 +25,7 @@
     "parquetjs-lite": "^0.8.7",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^4.0.0",
+    "pg": "^8.23.0",
     "picojs": "^1.0.0",
     "sharp": "^0.33.4",
     "tesseract.js": "^5.0.0",

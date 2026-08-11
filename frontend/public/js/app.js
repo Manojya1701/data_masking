@@ -6,6 +6,7 @@
 import { initUpload }     from './upload.js';
 import { initOperations } from './operations.js';
 import { initDownload }   from './download.js';
+import { initHistory, refreshHistory } from './history.js';
 const API_BASE_URL = window.location.origin;
 // State
 let currentFile   = null;
@@ -61,6 +62,7 @@ const COMPAT_NOTES = {
 const uploader   = initUpload(onFileReady);
 const operations = initOperations();
 const downloader = initDownload();
+initHistory();
 
 // ── File ready callback ───────────────────────────────────────────────
 function onFileReady(file) {
@@ -250,6 +252,7 @@ async function processFile(file, operation, opts) {
     }
 
     downloader.showResult(data);
+    refreshHistory();
     hideError();
   } catch (e) {
     showError('Network error: ' + e.message);
