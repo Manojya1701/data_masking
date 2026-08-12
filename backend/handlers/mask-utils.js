@@ -81,7 +81,9 @@ function partialMask(value, fieldName) {
       : '*'.repeat(value.length);
   }
   if (type === 'pan') {
-    return value[0] + value[1] + '*'.repeat(6) + value[9] + value[10];
+    return value.length >= 10
+      ? value.slice(0, 2) + '*'.repeat(value.length - 4) + value.slice(-2)
+      : value[0] + '*'.repeat(Math.max(value.length - 2, 1)) + value.slice(-1);
   }
   if (type === 'name') {
     return value.split(' ').map(w =>

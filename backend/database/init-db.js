@@ -58,11 +58,29 @@ async function initializeSchema() {
 
   await db.query(sql);
 
+  // Check if customers table is empty and seed 5 sample records
+  try {
+    const countRes = await db.query('SELECT COUNT(*) AS total FROM customers;');
+    const total = parseInt(countRes?.rows?.[0]?.total || '0', 10);
+    if (total === 0) {
+      console.log('[DB Init] Seeding sample customer records…');
+      await db.query(`
+        INSERT INTO customers (name, email, phone, aadhaar, pan, address) VALUES
+        ('Harika', 'harika@example.com', '9876543210', '1234 5678 9012', 'ABCDE1234F', 'Visakhapatnam'),
+        ('Ravi Kumar', 'ravi.k@example.com', '9123456789', '2345 6789 0123', 'BCDEF2345G', 'Hyderabad'),
+        ('Ananya Sharma', 'ananya@example.com', '9988776655', '3456 7890 1234', 'CDEFG3456H', 'Bengaluru'),
+        ('Vikram Patel', 'vikram.p@example.com', '9876501234', '4567 8901 2345', 'DEFGH4567I', 'Mumbai'),
+        ('Priya Das', 'priya.das@example.com', '9765432109', '5678 9012 3456', 'EFGHI5678J', 'Chennai');
+      `);
+      console.log('[DB Init] ✅ Seeded 5 sample customer records.');
+    }
+  } catch (seedErr) {
+    console.warn('[DB Init] Seeding warning:', seedErr.message);
+  }
 
   console.log(
     '[DB Init] ✅ Database tables ready.'
   );
-
 
   return true;
 }

@@ -498,6 +498,84 @@
       <button id="error-close" class="error-close" aria-label="Dismiss error">✕</button>
     </div>
 
+    <!-- ── Database Table Protection Section ──────────────────────────────── -->
+    <section id="db-protection-section" class="section db-protection-section" aria-labelledby="db-heading">
+      <div class="section-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+          </svg>
+          <h2 id="db-heading" class="section-title" style="margin:0;">Database Table Protection</h2>
+        </div>
+        <p class="section-desc">Apply privacy operations directly to records stored inside PostgreSQL tables.</p>
+      </div>
+
+      <div class="db-card" style="background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; box-shadow:0 10px 30px rgba(0,0,0,.3); backdrop-filter:blur(12px);">
+        <div class="db-toolbar" style="margin-bottom:16px;">
+          <div class="db-op-selector-wrap">
+            <label for="db-op-select" class="form-label" style="margin-bottom:6px; font-weight:600; display:block;">Choose Privacy Operation</label>
+            <div class="db-control-group" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+              <select id="db-op-select" class="form-input db-op-select" style="min-width:260px; max-width:340px;" aria-label="Choose privacy operation">
+                <option value="masking">Masking (Partial Mask)</option>
+                <option value="tokenization">Tokenization (Cryptographic Token)</option>
+                <option value="anonymization">Anonymization (Generic Replacements)</option>
+                <option value="pseudonymization">Pseudonymization (Consistent Pseudonyms)</option>
+                <option value="redaction">Redaction ([REDACTED])</option>
+                <option value="encryption">Encryption (AES-256-GCM)</option>
+                <option value="hashing">Hashing (SHA-256 Digest)</option>
+              </select>
+              <button id="btn-db-apply" class="btn-primary" style="padding:10px 20px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Apply Operation
+              </button>
+              <button id="btn-db-reset" class="btn-ghost" style="padding:10px 16px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                  <path d="M3 3v5h5"></path>
+                </svg>
+                Show Original
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="db-status-banner" class="db-status-banner hidden" style="margin-bottom:14px; padding:10px 14px; background:rgba(34,211,238,.08); border:1px solid rgba(34,211,238,.3); border-radius:var(--radius-sm); color:var(--cyan); font-size:.875rem; font-weight:500;">
+          <span id="db-status-text">✓ Operation applied</span>
+        </div>
+
+        <div class="db-table-header-wrap" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+          <span id="db-view-badge" class="meta-pill neutral" style="font-weight:600;">Original Customer Data (PostgreSQL)</span>
+          <span class="db-table-hint" style="font-size:.78rem; color:var(--text-muted);">Sensitive columns: <code>name</code>, <code>email</code>, <code>phone</code>, <code>aadhaar</code>, <code>pan</code>, <code>address</code></span>
+        </div>
+
+        <div id="db-table-wrap" class="history-table-wrap">
+          <table class="history-table db-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Aadhaar</th>
+                <th>PAN</th>
+                <th>Address</th>
+                <th>Created At</th>
+              </tr>
+            </thead>
+            <tbody id="db-table-body">
+              <tr>
+                <td colspan="8" class="history-empty">Loading PostgreSQL customer records…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Processing History ───────────────────────────────────────────── -->
     <section id="history-section" class="section history-section" aria-labelledby="history-heading">
       <div class="section-header">

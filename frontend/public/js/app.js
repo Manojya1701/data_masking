@@ -7,6 +7,7 @@ import { initUpload }     from './upload.js';
 import { initOperations } from './operations.js';
 import { initDownload }   from './download.js';
 import { initHistory, refreshHistory } from './history.js';
+import { initDbProtection } from './db-protection.js';
 const API_BASE_URL = window.location.origin;
 // State
 let currentFile   = null;
@@ -63,6 +64,7 @@ const uploader   = initUpload(onFileReady);
 const operations = initOperations();
 const downloader = initDownload();
 initHistory();
+initDbProtection();
 
 // ── File ready callback ───────────────────────────────────────────────
 function onFileReady(file) {

@@ -46,3 +46,16 @@ CREATE TABLE IF NOT EXISTS privacy_scan_history (
 CREATE INDEX IF NOT EXISTS idx_processing_history_created_at ON processing_history (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_processing_history_operation ON processing_history (operation);
 CREATE INDEX IF NOT EXISTS idx_privacy_scan_history_created_at ON privacy_scan_history (created_at DESC);
+
+-- Customer Data Protection Table
+CREATE TABLE IF NOT EXISTS customers (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(150),
+    phone VARCHAR(20),
+    aadhaar VARCHAR(20),
+    pan VARCHAR(20),
+    address TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+

@@ -20,6 +20,7 @@ const { detectFormat, formatLabel } = require('../services/file-type-detector');
 const { createToken, redeemToken, revokeToken } = require('../services/token-store');
 const db           = require('../database/db');
 const auditService = require('../services/audit-service');
+const dbProtectionService = require('../services/db-protection-service');
 
 const router = express.Router();
 
@@ -414,6 +415,41 @@ router.get('/history', async (req, res) => {
 router.get('/db-health', async (req, res) => {
   const health = await db.healthCheck();
   return res.status(health.success ? 200 : 503).json(health);
+});
+
+// ── GET /api/database/customers ───────────────────────────────────────────────
+
+router.get('/database/customers', async (req, res) => {
+  try {
+    const data = await dbProtectionService.getCustomers();
+    return res.json({
+      success: true,
+      source: data.source,
+      count: data.records.length,
+      records: data.records,
+    });
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── POST /api/database/customers/protect ─────────────────────────────────────
+
+router.post('/database/customers/protect', async (req, res) => {
+  const { operation } = req.body || {};
+  if (!operation) {
+    return jsonError(res, 400, 'Please select an operation to apply.');
+  }
+
+  try {
+    const result = await dbProtectionService.protectCustomers(operation);
+    return res.json({
+      success: true,
+      ...result,
+    });
+  } catch (err) {
+    return jsonError(res, 400, err.message);
+  }
 });
 
 // ── GET /api/formats ──────────────────────────────────────────────────────────
