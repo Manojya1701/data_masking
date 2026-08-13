@@ -216,9 +216,112 @@ async function protectCustomers(opRequested) {
   };
 }
 
+// In-memory array for saved protected records when PostgreSQL is offline/unconfigured
+const MOCK_SAVED_PROTECTED = [];
+
+/**
+ * Save protected preview records into PostgreSQL protected_customer_data table.
+ */
+async function saveProtectedCustomers(operation, records) {
+  const op = (operation || '').toLowerCase().trim();
+  if (!ALLOWED_OPERATIONS.has(op)) {
+    throw new Error(`Invalid operation: "${operation}". Must be one of the allowed 7 operations.`);
+  }
+
+  if (!Array.isArray(records) || records.length === 0) {
+    throw new Error('No protected records provided to save.');
+  }
+
+  let normalizedOp = 'masking';
+  if (op.startsWith('token')) normalizedOp = 'tokenization';
+  else if (op.startsWith('anon')) normalizedOp = 'anonymization';
+  else if (op.startsWith('pseudo')) normalizedOp = 'pseudonymization';
+  else if (op.startsWith('redact')) normalizedOp = 'redaction';
+  else if (op.startsWith('enc')) normalizedOp = 'encryption';
+  else if (op.startsWith('hash')) normalizedOp = 'hashing';
+
+  let savedCount = 0;
+
+  if (db.isConfigured()) {
+    try {
+      for (const rec of records) {
+        const sourceCustomerId = rec.id || rec.source_customer_id || null;
+        const sql = `
+          INSERT INTO protected_customer_data (
+            source_customer_id, operation, name, email, phone, aadhaar, pan, address
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+        `;
+        const params = [
+          sourceCustomerId,
+          normalizedOp,
+          rec.name || null,
+          rec.email || null,
+          rec.phone || null,
+          rec.aadhaar || null,
+          rec.pan || null,
+          rec.address || null,
+        ];
+        await db.query(sql, params);
+        savedCount++;
+      }
+      return { source: 'postgresql', savedCount, operation: normalizedOp };
+    } catch (err) {
+      console.warn('[DB Protection Warning] Failed to save to PostgreSQL:', err.message);
+    }
+  }
+
+  // Fallback to in-memory store for offline demo
+  for (const rec of records) {
+    const sourceCustomerId = rec.id || rec.source_customer_id || null;
+    MOCK_SAVED_PROTECTED.unshift({
+      id: MOCK_SAVED_PROTECTED.length + 1,
+      source_customer_id: sourceCustomerId,
+      operation: normalizedOp,
+      name: rec.name || null,
+      email: rec.email || null,
+      phone: rec.phone || null,
+      aadhaar: rec.aadhaar || null,
+      pan: rec.pan || null,
+      address: rec.address || null,
+      created_at: new Date().toISOString(),
+    });
+    savedCount++;
+  }
+
+  return { source: 'sample_fallback', savedCount, operation: normalizedOp };
+}
+
+/**
+ * Fetch saved protected records from PostgreSQL (or mock fallback).
+ */
+async function getSavedProtectedCustomers(limitRaw = 50) {
+  const limit = Math.min(Math.max(parseInt(limitRaw || '50', 10) || 50, 1), 100);
+
+  if (db.isConfigured()) {
+    try {
+      const sql = `
+        SELECT id, source_customer_id, operation, name, email, phone, aadhaar, pan, address, created_at
+        FROM protected_customer_data
+        ORDER BY created_at DESC
+        LIMIT $1;
+      `;
+      const res = await db.query(sql, [limit]);
+      if (res && res.rows) {
+        return { source: 'postgresql', records: res.rows };
+      }
+    } catch (err) {
+      console.warn('[DB Protection Warning] Failed to query protected_customer_data:', err.message);
+    }
+  }
+
+  return { source: 'sample_fallback', records: MOCK_SAVED_PROTECTED.slice(0, limit) };
+}
+
 module.exports = {
   getCustomers,
   protectCustomers,
+  saveProtectedCustomers,
+  getSavedProtectedCustomers,
   SENSITIVE_COLUMNS,
   ALLOWED_OPERATIONS,
 };

@@ -61,6 +61,32 @@ export function initOperations() {
     eyeClosed.classList.toggle('hidden', !isPassword);
   });
 
+  // Sync encryption algorithm radios with enc-algorithm select element
+  const encRadios = document.querySelectorAll('input[name="enc-algo-radio"]');
+  encRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (encAlgoSelect) encAlgoSelect.value = radio.value;
+      updateSubOpClasses();
+    });
+  });
+
+  // Update .checked class on sub-op-card labels for full CSS/browser compatibility
+  function updateSubOpClasses() {
+    document.querySelectorAll('.sub-op-card').forEach(card => {
+      const radio = card.querySelector('.sub-op-radio');
+      if (radio && radio.checked) {
+        card.classList.add('checked');
+      } else {
+        card.classList.remove('checked');
+      }
+    });
+  }
+
+  document.querySelectorAll('.sub-op-radio').forEach(radio => {
+    radio.addEventListener('change', updateSubOpClasses);
+  });
+  updateSubOpClasses();
+
   return {
     getOperation() { return selected; },
 
@@ -68,7 +94,7 @@ export function initOperations() {
       const algorithm   = hashAlgoSelect ? hashAlgoSelect.value : 'sha256';
       const hashMode    = document.querySelector('input[name="hash-mode"]:checked')?.value || 'sensitive';
       const maskingType = document.querySelector('input[name="masking-type"]:checked')?.value || 'partial';
-      const encAlgorithm = encAlgoSelect ? encAlgoSelect.value : 'aes-256-gcm';
+      const encAlgorithm = (document.querySelector('input[name="enc-algo-radio"]:checked')?.value) || (encAlgoSelect ? encAlgoSelect.value : 'aes-256-gcm');
       const password    = pwInput.value;
       return { algorithm, hashMode, maskingType, encAlgorithm, password };
     },
@@ -88,9 +114,13 @@ export function initOperations() {
       // Reset hash mode
       const sensitiveRadio = document.getElementById('hash-mode-sensitive');
       if (sensitiveRadio) sensitiveRadio.checked = true;
+      // Reset encryption algorithm
+      const gcmRadio = document.getElementById('enc-algo-gcm');
+      if (gcmRadio) gcmRadio.checked = true;
       // Reset algorithms
       if (hashAlgoSelect) hashAlgoSelect.value = 'sha256';
       if (encAlgoSelect)  encAlgoSelect.value  = 'aes-256-gcm';
+      updateSubOpClasses();
     }
   };
 }

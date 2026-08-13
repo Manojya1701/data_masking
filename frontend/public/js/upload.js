@@ -1,8 +1,5 @@
-/**
- * upload.js
- * Handles drag-and-drop, file input, validation, and file info display.
- * Exports: initUpload()
- */
+import { showToast } from './toast.js';
+import { updateWorkflowProgress } from './workflow-step.js';
 
 export function initUpload(onFileReady) {
   const dropZone   = document.getElementById('drop-zone');
@@ -56,11 +53,11 @@ export function initUpload(onFileReady) {
   function showFile(file) {
     const ext = getExt(file.name);
     if (!ALLOWED_EXTS.has(ext)) {
-      alert(`Unsupported file type: .${ext}`);
+      showToast(`Unsupported file type: .${ext}`, 'error');
       return;
     }
     if (file.size > 104857600) {
-      alert('File exceeds maximum size of 100 MB.');
+      showToast('File exceeds maximum size of 100 MB.', 'warning');
       return;
     }
     fileName.textContent   = file.name;
@@ -69,6 +66,8 @@ export function initUpload(onFileReady) {
     iconWrap.innerHTML     = getFileIcon(ext);
     fileInfo.classList.remove('hidden');
     dropZone.classList.add('hidden');
+    showToast(`File loaded: ${file.name}`, 'info');
+    updateWorkflowProgress('file_ready');
     onFileReady(file);
   }
 
@@ -95,6 +94,7 @@ export function initUpload(onFileReady) {
     fileInfo.classList.add('hidden');
     dropZone.classList.remove('hidden');
     fileInput.value = '';
+    updateWorkflowProgress('initial');
     onFileReady(null);
   });
 
@@ -103,6 +103,7 @@ export function initUpload(onFileReady) {
       fileInfo.classList.add('hidden');
       dropZone.classList.remove('hidden');
       fileInput.value = '';
+      updateWorkflowProgress('initial');
     }
   };
 }

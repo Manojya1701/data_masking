@@ -8,6 +8,12 @@ import { initOperations } from './operations.js';
 import { initDownload }   from './download.js';
 import { initHistory, refreshHistory } from './history.js';
 import { initDbProtection } from './db-protection.js';
+import { initTheme } from './theme.js';
+import { initDashboardStats } from './dashboard-stats.js';
+import { initSearch } from './search.js';
+import { showToast } from './toast.js';
+import { updateWorkflowProgress } from './workflow-step.js';
+
 const API_BASE_URL = window.location.origin;
 // State
 let currentFile   = null;
@@ -60,6 +66,9 @@ const COMPAT_NOTES = {
 };
 
 // ── Init modules ──────────────────────────────────────────────────────
+initTheme();
+initDashboardStats();
+initSearch();
 const uploader   = initUpload(onFileReady);
 const operations = initOperations();
 const downloader = initDownload();
@@ -170,8 +179,25 @@ if (scanBtn) {
       if (!resp.ok || !data.success) {
         scanNote.textContent = data.error || 'Scan failed.';
         scanResults.classList.remove('hidden');
+        showToast(data.error || 'Scan failed', 'error');
         return;
       }
+
+      // Category Icon Map
+      const catIcons = {
+        name: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+        email: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>`,
+        phone_in: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+        phone_intl: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+        aadhaar: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="16" x2="10" y2="16"/></svg>`,
+        pan: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="16" x2="10" y2="16"/></svg>`,
+        passport: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="16" x2="10" y2="16"/></svg>`,
+        credit_card: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,
+        dob: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+        ipv4: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+        ipv6: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+        generic: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+      };
 
       // Show counts
       const countEntries = Object.entries(data.counts || {});
@@ -186,7 +212,12 @@ if (scanBtn) {
         };
         scanCounts.innerHTML = countEntries.map(([type, cnt]) => {
           const label = typeLabels[type] || type;
-          return `<div class="scan-count-item"><span class="scan-count-label">${escapeHtml(label)}</span><span class="scan-count-val">${cnt}</span></div>`;
+          const icon = catIcons[type] || catIcons.generic;
+          return `<div class="scan-count-item">
+            <span class="scan-count-icon">${icon}</span>
+            <span class="scan-count-label">${escapeHtml(label)}</span>
+            <span class="scan-count-val">${cnt}</span>
+          </div>`;
         }).join('');
       }
 
@@ -199,10 +230,13 @@ if (scanBtn) {
 
       scanNote.textContent = data.note || `Total sensitive items detected: ${data.total || 0}. Full values are not shown.`;
       scanResults.classList.remove('hidden');
+      showToast('✓ Privacy scan completed', 'success');
+      updateWorkflowProgress('scanned');
     } catch (e) {
       scanLoading.classList.add('hidden');
       scanNote.textContent = 'Scan error: ' + e.message;
       scanResults.classList.remove('hidden');
+      showToast('Scan error: ' + e.message, 'error');
     } finally {
       scanBtn.disabled = false;
     }
@@ -250,14 +284,18 @@ async function processFile(file, operation, opts) {
 
     if (!resp.ok || !data.success) {
       showError(data.error || 'Processing failed.');
+      showToast(data.error || 'Processing failed', 'error');
       return;
     }
 
     downloader.showResult(data);
     refreshHistory();
     hideError();
+    showToast('✓ File processed successfully', 'success');
+    updateWorkflowProgress('protected');
   } catch (e) {
     showError('Network error: ' + e.message);
+    showToast('Network error: ' + e.message, 'error');
   } finally {
     showProcessing(false);
   }
@@ -320,16 +358,93 @@ async function loadFormats() {
     grid.innerHTML = '<p style="color:var(--text-muted)">Could not load formats.</p>';
   }
 
+  // Compact Formats Explorer controls
+  const exploreBtn   = document.getElementById('btn-explore-formats');
+  const drawer       = document.getElementById('formats-drawer');
+  const quickSearch  = document.getElementById('format-quick-search');
+  const quickFilter  = document.getElementById('format-quick-filter');
+  const quickResult  = document.getElementById('format-quick-result');
+
+  if (exploreBtn && drawer) {
+    exploreBtn.addEventListener('click', () => {
+      const isHidden = drawer.classList.contains('hidden');
+      drawer.classList.toggle('hidden', !isHidden);
+      exploreBtn.textContent = isHidden ? 'Hide Formats ▲' : 'View Formats ▾';
+    });
+  }
+
+  function handleQuickFormatSearch() {
+    if (!quickSearch || !quickResult) return;
+    const val = quickSearch.value.trim().toLowerCase();
+
+    if (!val) {
+      quickResult.classList.add('hidden');
+      return;
+    }
+
+    const cleanExt = val.startsWith('.') ? val.slice(1) : val;
+
+    const matched = allFormats.find(f =>
+      f.key.toLowerCase() === cleanExt ||
+      f.label.toLowerCase().includes(val) ||
+      (f.ext || []).some(e => e.toLowerCase() === cleanExt || e.toLowerCase() === val)
+    );
+
+    quickResult.classList.remove('hidden');
+    if (matched) {
+      const opsText = 'Mask • Hash • Encrypt';
+      quickResult.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div>
+            <span style="font-weight:700; color:var(--cyan);">${escapeHtml(matched.label)} (${matched.ext.join(', ')})</span>
+            <span style="font-size:0.8rem; color:var(--text-muted); margin-left:8px;">Category: ${escapeHtml(matched.category || '')}</span>
+          </div>
+          <div style="font-size:0.8rem; font-weight:600; color:var(--green);">
+            Supported operations: ${escapeHtml(opsText)}
+          </div>
+        </div>
+      `;
+    } else {
+      quickResult.innerHTML = `
+        <div style="font-size:0.85rem; color:var(--red); font-weight:600;">
+          This format is not currently supported.
+        </div>
+      `;
+    }
+  }
+
+  if (quickSearch) {
+    quickSearch.addEventListener('input', handleQuickFormatSearch);
+  }
+
+  if (quickFilter) {
+    quickFilter.addEventListener('change', () => {
+      const cat = quickFilter.value;
+      const tabs = document.querySelectorAll('.format-filter-chip');
+      tabs.forEach(tab => {
+        if ((tab.dataset.cat || 'all').toLowerCase() === cat) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+      if (drawer) drawer.classList.remove('hidden');
+      if (exploreBtn) exploreBtn.textContent = 'Hide Formats ▲';
+      filterFormats();
+    });
+  }
+
   // Search
-  const searchInput = document.getElementById('formats-search');
+  const searchInput = document.getElementById('format-search-input') || document.getElementById('formats-search');
   if (searchInput) {
     searchInput.addEventListener('input', () => filterFormats());
   }
 
   // Category tabs
-  document.querySelectorAll('.filter-tab').forEach(tab => {
+  const tabs = document.querySelectorAll('.format-filter-chip, .filter-tab');
+  tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       filterFormats();
     });
@@ -337,23 +452,22 @@ async function loadFormats() {
 }
 
 function filterFormats() {
-  const searchVal  = (document.getElementById('formats-search')?.value || '').toLowerCase();
-  const activeTab  = document.querySelector('.filter-tab.active');
-  const activeCat  = activeTab ? activeTab.dataset.cat : 'all';
+  const searchInput = document.getElementById('format-search-input') || document.getElementById('formats-search');
+  const searchVal  = (searchInput?.value || '').toLowerCase().trim();
+  const activeTab  = document.querySelector('.format-filter-chip.active, .filter-tab.active');
+  const activeCat  = activeTab ? (activeTab.dataset.cat || 'all').toLowerCase() : 'all';
 
   const filtered = allFormats.filter(f => {
     const matchSearch = !searchVal ||
       f.label.toLowerCase().includes(searchVal) ||
       f.key.toLowerCase().includes(searchVal) ||
       (f.ext || []).some(e => e.toLowerCase().includes(searchVal));
-    const matchCat = activeCat => activeCat === 'all' || f.category === activeCat;
-    return matchSearch && matchCat(activeTab?.dataset.cat || 'all');
+    const catLower = (f.category || '').toLowerCase();
+    const matchCat = activeCat === 'all' || catLower === activeCat;
+    return matchSearch && matchCat;
   });
 
   renderFormats(filtered);
-
-  const empty = document.getElementById('formats-empty');
-  if (empty) empty.classList.toggle('hidden', filtered.length > 0);
 }
 
 function renderFormats(formats) {

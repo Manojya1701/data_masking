@@ -1,8 +1,5 @@
-/**
- * download.js
- * Handles result display, file download, integrity badge, privacy report, and the Restore Encrypted File flow.
- * Exports: initDownload()
- */
+import { showToast } from './toast.js';
+
 const API_BASE_URL = window.location.origin;
 export function initDownload() {
   const downloadBtn   = document.getElementById('download-btn');
@@ -141,6 +138,7 @@ export function initDownload() {
         restoreToken = data.token;
         restoreResult.classList.remove('hidden');
         restorePassword.value = '';
+        showToast('✓ Original file restored', 'success');
 
         // Show integrity badge
         if (integrityBadge) {

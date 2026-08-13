@@ -59,3 +59,20 @@ CREATE TABLE IF NOT EXISTS customers (
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Saved Protected Customer Data Table
+CREATE TABLE IF NOT EXISTS protected_customer_data (
+    id BIGSERIAL PRIMARY KEY,
+    source_customer_id BIGINT,
+    operation VARCHAR(50) NOT NULL,
+    name TEXT,
+    email TEXT,
+    phone TEXT,
+    aadhaar TEXT,
+    pan TEXT,
+    address TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_protected_customer_data_created_at ON protected_customer_data (created_at DESC);
+
+

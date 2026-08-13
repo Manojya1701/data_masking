@@ -452,6 +452,42 @@ router.post('/database/customers/protect', async (req, res) => {
   }
 });
 
+// ── POST /api/database/customers/save-protected ──────────────────────────────
+
+router.post('/database/customers/save-protected', async (req, res) => {
+  const { operation, records } = req.body || {};
+  if (!operation || !records) {
+    return jsonError(res, 400, 'Missing operation or protected records to save.');
+  }
+
+  try {
+    const result = await dbProtectionService.saveProtectedCustomers(operation, records);
+    return res.json({
+      success: true,
+      ...result,
+    });
+  } catch (err) {
+    return jsonError(res, 400, err.message);
+  }
+});
+
+// ── GET /api/database/protected-data ──────────────────────────────────────────
+
+router.get('/database/protected-data', async (req, res) => {
+  try {
+    const { limit } = req.query;
+    const data = await dbProtectionService.getSavedProtectedCustomers(limit);
+    return res.json({
+      success: true,
+      source: data.source,
+      count: data.records.length,
+      records: data.records,
+    });
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 // ── GET /api/formats ──────────────────────────────────────────────────────────
 
 router.get('/formats', (req, res) => {

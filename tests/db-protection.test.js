@@ -117,4 +117,29 @@ describe('Database Table Protection Service', () => {
   test('Invalid operation name throws clear error', async () => {
     await expect(protectCustomers('invalid_op')).rejects.toThrow(/Unsupported operation/);
   });
+
+  describe('Persistence & Saved Protected Data', () => {
+    const { saveProtectedCustomers, getSavedProtectedCustomers } = require('../backend/services/db-protection-service');
+
+    test('saveProtectedCustomers saves preview records and getSavedProtectedCustomers retrieves them', async () => {
+      const preview = await protectCustomers('tokenization');
+      const saveRes = await saveProtectedCustomers('tokenization', preview.records);
+      expect(saveRes).toHaveProperty('savedCount', preview.records.length);
+      expect(saveRes).toHaveProperty('operation', 'tokenization');
+
+      const savedData = await getSavedProtectedCustomers(10);
+      expect(savedData).toHaveProperty('records');
+      expect(Array.isArray(savedData.records)).toBe(true);
+      expect(savedData.records.length).toBeGreaterThanOrEqual(preview.records.length);
+
+      const firstSaved = savedData.records[0];
+      expect(firstSaved).toHaveProperty('operation', 'tokenization');
+      expect(firstSaved.name).toMatch(/^TKN_NAME_[A-F0-9]{6}$/);
+    });
+
+    test('saveProtectedCustomers rejects invalid operation names or empty records', async () => {
+      await expect(saveProtectedCustomers('invalid_op', [{ id: 1 }])).rejects.toThrow(/Invalid operation/);
+      await expect(saveProtectedCustomers('masking', [])).rejects.toThrow(/No protected records/);
+    });
+  });
 });

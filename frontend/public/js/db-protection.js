@@ -2,10 +2,30 @@
 
 /**
  * Frontend Database Table Protection Module
- * Manages fetching customer records from PostgreSQL and applying in-memory privacy operations.
+ * Handles customer preview fetching, in-memory protection, optional persistence saving, and saved protected data display.
  */
 
+import { showToast } from './toast.js';
+
 let originalRecords = null;
+let currentProtectedPreview = null;
+let selectedOperation = 'masking';
+
+export function selectOperation(op) {
+  if (!op) return;
+  selectedOperation = op;
+  const cards = document.querySelectorAll('.db-op-card');
+  cards.forEach(card => {
+    const isSelected = card.getAttribute('data-op') === op;
+    if (isSelected) {
+      card.classList.add('selected');
+      card.setAttribute('aria-pressed', 'true');
+    } else {
+      card.classList.remove('selected');
+      card.setAttribute('aria-pressed', 'false');
+    }
+  });
+}
 
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
@@ -44,7 +64,7 @@ function renderTable(records, isProtected = false, opName = '') {
 
   if (viewBadge) {
     if (isProtected) {
-      viewBadge.textContent = `Protected Customer Data (Operation: ${opName.toUpperCase()})`;
+      viewBadge.textContent = `Protected Customer Data Preview (Operation: ${opName.toUpperCase()})`;
       viewBadge.className = 'meta-pill success';
     } else {
       viewBadge.textContent = 'Original Customer Data (PostgreSQL)';
@@ -70,10 +90,43 @@ function renderTable(records, isProtected = false, opName = '') {
   tableBody.innerHTML = rowsHtml;
 }
 
+function renderSavedTable(records) {
+  const savedBody = document.getElementById('saved-table-body');
+  if (!savedBody) return;
+
+  if (!records || records.length === 0) {
+    savedBody.innerHTML = '<tr><td colspan="9" class="history-empty">No saved protected data yet. Select an operation card and click "Save to Database".</td></tr>';
+    return;
+  }
+
+  const rowsHtml = records.map(rec => {
+    const opUpper = (rec.operation || 'masking').toUpperCase();
+    return `
+      <tr>
+        <td><span class="meta-pill primary" style="font-size:.75rem;">${escapeHtml(opUpper)}</span></td>
+        <td style="font-weight: 700; color: var(--text-muted);">${escapeHtml(rec.source_customer_id || '—')}</td>
+        <td style="font-weight: 600; color: var(--text-primary);">${escapeHtml(rec.name)}</td>
+        <td><code>${escapeHtml(rec.email)}</code></td>
+        <td><code>${escapeHtml(rec.phone)}</code></td>
+        <td><code>${escapeHtml(rec.aadhaar)}</code></td>
+        <td><code>${escapeHtml(rec.pan)}</code></td>
+        <td>${escapeHtml(rec.address)}</td>
+        <td style="font-size: .78rem; color: var(--text-muted);">${escapeHtml(formatDate(rec.created_at))}</td>
+      </tr>
+    `;
+  }).join('');
+
+  savedBody.innerHTML = rowsHtml;
+}
+
 export async function loadOriginalCustomers() {
   const tableBody = document.getElementById('db-table-body');
   const statusBanner = document.getElementById('db-status-banner');
+  const savePrompt = document.getElementById('db-save-prompt');
+
   if (statusBanner) statusBanner.classList.add('hidden');
+  if (savePrompt) savePrompt.classList.add('hidden');
+  currentProtectedPreview = null;
 
   try {
     const resp = await fetch(`${window.location.origin}/api/database/customers`);
@@ -90,14 +143,30 @@ export async function loadOriginalCustomers() {
   }
 }
 
+export async function loadSavedProtectedData() {
+  const savedBody = document.getElementById('saved-table-body');
+  try {
+    const resp = await fetch(`${window.location.origin}/api/database/protected-data`);
+    const data = await resp.json();
+    if (data.success && Array.isArray(data.records)) {
+      renderSavedTable(data.records);
+    }
+  } catch (err) {
+    console.warn('Error fetching saved protected data:', err.message);
+  }
+}
+
 export async function applyDbProtection() {
-  const select = document.getElementById('db-op-select');
   const applyBtn = document.getElementById('btn-db-apply');
   const statusBanner = document.getElementById('db-status-banner');
   const statusText = document.getElementById('db-status-text');
+  const savePrompt = document.getElementById('db-save-prompt');
 
-  if (!select) return;
-  const operation = select.value || 'masking';
+  if (!selectedOperation) {
+    showToast('Please select a privacy operation first.', 'warning');
+    return;
+  }
+  const operation = selectedOperation;
 
   if (applyBtn) applyBtn.disabled = true;
 
@@ -111,30 +180,101 @@ export async function applyDbProtection() {
     const data = await resp.json();
 
     if (data.success && Array.isArray(data.records)) {
+      currentProtectedPreview = {
+        operation: data.operation || operation,
+        records: data.records,
+      };
+
       renderTable(data.records, true, data.operation || operation);
 
       if (statusBanner && statusText) {
         const fieldCount = (data.sensitiveFields || []).length;
-        statusText.textContent = `✓ ${data.operation.toUpperCase()} applied to ${fieldCount} sensitive fields across ${data.recordCount} records (In-Memory Preview)`;
+        statusText.textContent = `✓ ${(data.operation || operation).toUpperCase()} preview applied to ${fieldCount} sensitive fields across ${data.recordCount} records (In-Memory)`;
         statusBanner.classList.remove('hidden');
       }
 
-      // Also trigger history section refresh so the audit log updates
+      if (savePrompt) {
+        savePrompt.classList.remove('hidden');
+      }
+
+      showToast(`✓ ${(data.operation || operation).toUpperCase()} applied to database records`, 'success');
+
+      // Also trigger history section refresh so audit log updates
       const historyBtn = document.getElementById('btn-refresh-history');
       if (historyBtn) historyBtn.click();
     } else {
-      alert(`Database Protection Error: ${data.error || 'Failed to apply operation'}`);
+      showToast(`Database Protection Error: ${data.error || 'Failed to apply operation'}`, 'error');
     }
   } catch (err) {
-    alert(`Network error applying operation: ${err.message}`);
+    showToast(`Network error applying operation: ${err.message}`, 'error');
   } finally {
     if (applyBtn) applyBtn.disabled = false;
   }
 }
 
+export async function saveProtectedData() {
+  const saveBtn = document.getElementById('btn-db-save');
+  const savePrompt = document.getElementById('db-save-prompt');
+  const statusText = document.getElementById('db-status-text');
+
+  if (!currentProtectedPreview || !currentProtectedPreview.records) {
+    showToast('No active protected preview to save.', 'warning');
+    return;
+  }
+
+  if (saveBtn) saveBtn.disabled = true;
+
+  try {
+    const resp = await fetch(`${window.location.origin}/api/database/customers/save-protected`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        operation: currentProtectedPreview.operation,
+        records: currentProtectedPreview.records,
+      }),
+    });
+
+    const data = await resp.json();
+
+    if (data.success) {
+      if (statusText) {
+        statusText.textContent = `✓ Protected data saved to PostgreSQL (${data.savedCount || currentProtectedPreview.records.length} records written to protected_customer_data)`;
+      }
+      if (savePrompt) {
+        savePrompt.classList.add('hidden');
+      }
+      showToast('✓ Protected records saved to database', 'success');
+      await loadSavedProtectedData();
+    } else {
+      showToast(`Save Failed: ${data.error || 'Failed to save protected data'}`, 'error');
+    }
+  } catch (err) {
+    showToast(`Network error saving data: ${err.message}`, 'error');
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
+  }
+}
+
+export function discardProtectedData() {
+  currentProtectedPreview = null;
+  showToast('Protected preview discarded', 'info');
+  loadOriginalCustomers();
+}
+
 export function initDbProtection() {
   const applyBtn = document.getElementById('btn-db-apply');
   const resetBtn = document.getElementById('btn-db-reset');
+  const saveBtn = document.getElementById('btn-db-save');
+  const discardBtn = document.getElementById('btn-db-discard');
+
+  // Operation card selection listeners
+  const opCards = document.querySelectorAll('.db-op-card');
+  opCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const op = card.getAttribute('data-op');
+      if (op) selectOperation(op);
+    });
+  });
 
   if (applyBtn) {
     applyBtn.addEventListener('click', applyDbProtection);
@@ -144,6 +284,15 @@ export function initDbProtection() {
     resetBtn.addEventListener('click', loadOriginalCustomers);
   }
 
-  // Initial load
+  if (saveBtn) {
+    saveBtn.addEventListener('click', saveProtectedData);
+  }
+
+  if (discardBtn) {
+    discardBtn.addEventListener('click', discardProtectedData);
+  }
+
+  // Initial loads
   loadOriginalCustomers();
+  loadSavedProtectedData();
 }
