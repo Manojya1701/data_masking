@@ -67,7 +67,10 @@ export function initDownload() {
   let restoreFile  = null;
   let restoreToken = null;
 
-  // Restore drag-and-drop
+  // Restore drag-and-drop & click handlers
+  restoreDropZone.addEventListener('click', () => {
+    restoreFileInput.click();
+  });
   restoreDropZone.addEventListener('dragover', e => { e.preventDefault(); restoreDropZone.classList.add('drag-over'); });
   restoreDropZone.addEventListener('dragleave', () => restoreDropZone.classList.remove('drag-over'));
   restoreDropZone.addEventListener('drop', e => {
@@ -83,10 +86,23 @@ export function initDownload() {
     if (restoreFileInput.files[0]) setRestoreFile(restoreFileInput.files[0]);
   });
 
+  const changeRestoreFileBtn = document.getElementById('change-restore-file-btn');
+  if (changeRestoreFileBtn) {
+    changeRestoreFileBtn.addEventListener('click', () => {
+      restoreFile = null;
+      restoreFileInput.value = '';
+      restoreFileInfo.classList.add('hidden');
+      restoreDropZone.classList.remove('hidden');
+      restoreResult.classList.add('hidden');
+      restoreError.classList.add('hidden');
+    });
+  }
+
   function setRestoreFile(file) {
     restoreFile = file;
     restoreFileName.textContent = file.name;
     restoreFileInfo.classList.remove('hidden');
+    restoreDropZone.classList.add('hidden');
     restoreResult.classList.add('hidden');
     restoreError.classList.add('hidden');
     if (integrityBadge) integrityBadge.classList.add('hidden');
@@ -98,6 +114,14 @@ export function initDownload() {
     restorePassword.type = isPassword ? 'text' : 'password';
     restoreEyeOpen.classList.toggle('hidden', isPassword);
     restoreEyeClosed.classList.toggle('hidden', !isPassword);
+  });
+
+  // Enter key inside password input triggers decrypt
+  restorePassword.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      restoreBtn.click();
+    }
   });
 
   // Restore button
