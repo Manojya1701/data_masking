@@ -13,6 +13,7 @@ import { initDashboardStats } from './dashboard-stats.js';
 import { initSearch } from './search.js';
 import { showToast } from './toast.js';
 import { updateWorkflowProgress } from './workflow-step.js';
+import { initDemoModal } from './demo-modal.js';
 
 const API_BASE_URL = window.location.origin;
 // State
@@ -69,6 +70,7 @@ const COMPAT_NOTES = {
 initTheme();
 initDashboardStats();
 initSearch();
+initDemoModal();
 const uploader   = initUpload(onFileReady);
 const operations = initOperations();
 const downloader = initDownload();
