@@ -13,14 +13,16 @@
   <header class="app-header">
     <div class="container header-inner">
       
-      <!-- Brand Logo -->
+      <!-- Brand Logo Lockup -->
       <a href="#hero-section" class="logo-wrap" aria-label="UDPS Home">
-        <svg class="logo-icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <path d="M12 8v4M12 16h.01"/>
-        </svg>
-        <span class="logo-text">UDPS</span>
-        <span class="logo-sub">Data Protection System</span>
+        <div class="brand-logo-pill">
+          <img src="assets/images/segmento-logo.png" alt="Segmento Data Technologies" class="brand-segmento-logo">
+        </div>
+        <span class="brand-divider">|</span>
+        <div class="brand-product-info">
+          <span class="logo-text">UDPS</span>
+          <span class="logo-sub">Universal Data Protection System</span>
+        </div>
       </a>
 
       <!-- Navigation Links -->
@@ -75,6 +77,7 @@
         Enterprise Privacy Engineering
       </div>
       <h1 class="hero-title">Universal <span>Data Protection System</span></h1>
+      <div class="hero-attribution">Privacy-first data protection by <span class="brand-company-name">Segmento Data Technologies</span></div>
       <p class="hero-desc">Protect sensitive information across structured files, documents, images, and PostgreSQL database tables using masking, tokenization, anonymization, hashing, and authenticated AES-256-GCM encryption.</p>
       
       <div class="hero-ctas">
@@ -894,7 +897,29 @@
 
   </main>
 
-  <!-- ── 9. INLINE FILE PREVIEW MODAL ───────────────────────────────────────── -->
+  <!-- ── 9. SEGMENTO BRAND FOOTER ───────────────────────────────────────────── -->
+  <footer class="app-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="brand-logo-pill footer-logo-pill">
+          <img src="assets/images/segmento-logo.png" alt="Segmento Data Technologies" class="footer-segmento-logo">
+        </div>
+        <div class="footer-brand-info">
+          <span class="footer-product-title">UDPS — Universal Data Protection System</span>
+          <span class="footer-company-name">Segmento Data Technologies</span>
+        </div>
+      </div>
+
+      <div class="footer-right">
+        <a href="https://www.segmento.in/" target="_blank" rel="noopener noreferrer" class="footer-website-link">
+          <span>Official Website</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── 10. INLINE FILE PREVIEW MODAL ───────────────────────────────────────── -->
   <div id="preview-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
     <div id="preview-backdrop" class="modal-overlay"></div>
     <div class="preview-modal">
