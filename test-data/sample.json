@@ -1,0 +1,29 @@
+{
+  "company": "Acme Corp",
+  "employees": [
+    {
+      "id": 1,
+      "name": "Ram Sharma",
+      "email": "ram@example.com",
+      "phone": "9876543210",
+      "aadhaar": "1234 5678 9012",
+      "pan": "ABCDE1234F"
+    },
+    {
+      "id": 2,
+      "name": "Priya Singh",
+      "email": "priya.singh@test.in",
+      "phone": "+919812345678"
+    },
+    {
+      "id": 3,
+      "name": "John Doe",
+      "email": "john.doe@company.com",
+      "department": "Engineering"
+    }
+  ],
+  "metadata": {
+    "created": "2024-01-01",
+    "version": "1.0"
+  }
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<employees>
+  <employee id="1">
+    <name>Ram Sharma</name>
+    <email>ram@example.com</email>
+    <phone>9876543210</phone>
+    <aadhaar>1234 5678 9012</aadhaar>
+    <pan>ABCDE1234F</pan>
+    <department>Engineering</department>
+  </employee>
+  <employee id="2">
+    <name>Priya Singh</name>
+    <email>priya.singh@test.in</email>
+    <phone>+919812345678</phone>
+    <department>Marketing</department>
+  </employee>
+</employees>
