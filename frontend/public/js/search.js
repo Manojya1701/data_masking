@@ -9,7 +9,6 @@ const SEARCH_INDEX = [
   // Features & Sections
   { title: 'File Protection Workspace', category: 'Feature', section: 'file-protection-section', desc: 'Upload, scan for PII, and protect structured files' },
   { title: 'Database Table Protection', category: 'Feature', section: 'db-protection-section', desc: 'Apply privacy operations directly to PostgreSQL customer records' },
-  { title: 'Processing History & Audit Log', category: 'Feature', section: 'history-section', desc: 'Audit trail of data protection jobs logged to PostgreSQL' },
   { title: 'Restore Encrypted File', category: 'Feature', section: 'restore-section', desc: 'Decrypt and restore AES-256 / ChaCha20 encrypted files' },
   { title: 'Supported Formats Catalog', category: 'Feature', section: 'formats-explorer-wrap', desc: 'Browse supported file formats across tabular, documents, and images' },
 
@@ -47,10 +46,59 @@ const SEARCH_INDEX = [
 export function initSearch() {
   const searchInput = document.getElementById('global-search-input');
   const searchPopover = document.getElementById('global-search-popover');
+  const searchModal = document.getElementById('search-modal');
+  const searchBtn = document.getElementById('nav-btn-search');
+  const searchBackdrop = document.getElementById('search-modal-backdrop');
+
   if (!searchInput || !searchPopover) return;
 
   let activeIndex = -1;
   let currentResults = [];
+
+  function openSearchModal() {
+    if (searchModal) {
+      searchModal.classList.remove('hidden');
+    }
+    searchInput.focus();
+    if (searchInput.value.trim()) {
+      renderPopover(filterSearch(searchInput.value));
+    }
+  }
+
+  function closeSearchModal() {
+    if (searchModal) {
+      searchModal.classList.add('hidden');
+    } else {
+      searchPopover.classList.add('hidden');
+    }
+  }
+
+  if (searchBtn) {
+    searchBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openSearchModal();
+    });
+  }
+
+  if (searchBackdrop) {
+    searchBackdrop.addEventListener('click', () => {
+      closeSearchModal();
+    });
+  }
+
+  // Keyboard shortcut: Ctrl + K or Cmd + K
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (searchModal && !searchModal.classList.contains('hidden')) {
+        closeSearchModal();
+      } else {
+        openSearchModal();
+      }
+    } else if (e.key === 'Escape') {
+      closeSearchModal();
+    }
+  });
 
   function filterSearch(query) {
     const q = query.toLowerCase().trim();
@@ -96,7 +144,7 @@ export function initSearch() {
 
   function selectResult(item) {
     if (!item) return;
-    searchPopover.classList.add('hidden');
+    closeSearchModal();
     searchInput.value = '';
 
     const targetEl = document.getElementById(item.section);
@@ -151,14 +199,6 @@ export function initSearch() {
       } else if (currentResults.length > 0) {
         selectResult(currentResults[0]);
       }
-    } else if (e.key === 'Escape') {
-      searchPopover.classList.add('hidden');
-    }
-  });
-
-  document.addEventListener('click', e => {
-    if (!searchInput.contains(e.target) && !searchPopover.contains(e.target)) {
-      searchPopover.classList.add('hidden');
     }
   });
 }

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="cyan-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    
+    <linearGradient id="pink-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#c026d3" />
+    </linearGradient>
+    
+    <linearGradient id="blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+    
+    <linearGradient id="amber-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    
+    <linearGradient id="line-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+
+  <!-- 4 Circle Arc Segments -->
+  <!-- Top Arc (Cyan) -->
+  <path d="M 72 28 A 82 82 0 0 1 155 42 L 126 84 A 40 40 0 0 0 88 77 Z" fill="url(#cyan-grad)" />
+  
+  <!-- Right Arc (Pink/Magenta) -->
+  <path d="M 160 48 A 82 82 0 0 1 178 128 L 136 120 A 40 40 0 0 0 128 88 Z" fill="url(#pink-grad)" />
+  
+  <!-- Bottom Arc (Dark Blue) -->
+  <path d="M 172 134 A 82 82 0 0 1 76 178 L 88 136 A 40 40 0 0 0 130 125 Z" fill="url(#blue-grad)" />
+  
+  <!-- Left Arc (Amber/Orange) -->
+  <path d="M 70 172 A 82 82 0 0 1 66 34 L 84 74 A 40 40 0 0 0 85 130 Z" fill="url(#amber-grad)" />
+
+  <!-- Center Connection Graph Overlay -->
+  <!-- White outline under node lines -->
+  <path d="M 88 140 L 115 95 L 158 122" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Node lines -->
+  <path d="M 88 140 L 115 95 L 158 122" fill="none" stroke="url(#line-grad)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Left Node Dot (Dark Blue) -->
+  <circle cx="88" cy="140" r="11" fill="#ffffff" />
+  <circle cx="88" cy="140" r="8" fill="#1e293b" />
+
+  <!-- Middle Node Dot (Teal) -->
+  <circle cx="115" cy="95" r="10" fill="#ffffff" />
+  <circle cx="115" cy="95" r="7" fill="#0d9488" />
+
+  <!-- Right Node Dot (Orange) -->
+  <circle cx="158" cy="122" r="11" fill="#ffffff" />
+  <circle cx="158" cy="122" r="8" fill="#ea580c" />
+</svg>

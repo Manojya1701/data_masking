@@ -5,59 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UDPS — Universal Data Protection System</title>
   <meta name="description" content="Enterprise Privacy Engineering & Data Protection Platform for Files and PostgreSQL Databases.">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=2.0.0">
 </head>
 <body>
 
   <!-- ── 1. STICKY APP HEADER & NAVIGATION ───────────────────────────────────── -->
   <header class="app-header">
-    <div class="container header-inner">
+    <div class="container app-header__inner">
       
-      <!-- Brand Logo Lockup -->
-      <a href="#hero-section" class="logo-wrap" aria-label="UDPS Home">
-        <div class="brand-logo-pill">
-          <img src="assets/images/segmento-logo.png" alt="Segmento" class="brand-segmento-logo">
+      <!-- Left: Brand Logo Lockup (Segmento Collector Reference Style) -->
+      <a href="#hero-section" class="app-header__brand logo-wrap" aria-label="Segmento UDPS Home">
+        <img src="assets/images/segmento-icon.svg" alt="Segmento" class="brand-segmento-logo">
+        <div class="brand-text-stack">
+          <span class="brand-company-name">Segmento</span>
+          <span class="brand-product-subtitle">UDPS</span>
         </div>
-        <span class="logo-text">UDPS</span>
       </a>
 
-      <!-- Navigation Links -->
-      <nav class="header-nav">
+      <!-- Center: Navigation Links -->
+      <nav id="header-nav" class="app-header__nav">
         <ul class="nav-links">
-          <li><a href="#hero-section" class="nav-link active">Dashboard</a></li>
           <li><a href="#file-protection-section" class="nav-link">File Protection</a></li>
-          <li><a href="#db-protection-section" class="nav-link">Database Protection</a></li>
-          <li><a href="#history-section" class="nav-link">History</a></li>
+          <li><a href="#db-protection-section" class="nav-link">Database</a></li>
           <li><a href="#restore-section" class="nav-link">Restore</a></li>
           <li><a href="#formats-explorer-wrap" class="nav-link">Formats</a></li>
         </ul>
       </nav>
 
-      <!-- Right Controls: Global Search, DB Status Pill & Theme Toggle Switch -->
-      <div class="header-right">
-        <div class="global-search-wrap">
-          <div class="search-input-wrap">
-            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="global-search-input" class="global-search-input" placeholder="Search features, formats..." autocomplete="off">
-          </div>
-          <div id="global-search-popover" class="global-search-popover hidden"></div>
-        </div>
+      <!-- Right: Utilities -->
+      <div class="app-header__utilities">
+        <!-- Quick Search Icon Button -->
+        <button id="nav-btn-search" class="nav-icon-btn" title="Quick Search (Ctrl+K)" aria-label="Quick Search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
 
+        <!-- Compact Demo Button -->
         <button id="nav-btn-watch-demo" class="nav-demo-btn" title="Watch UDPS Product Demo" aria-label="Watch UDPS Product Demo">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="8 5 19 12 8 19 8 5"/></svg>
           <span>Demo</span>
         </button>
 
-        <div id="nav-db-status" class="db-status-pill offline" title="PostgreSQL Connection Status">
+        <!-- Compact DB Status Indicator -->
+        <div id="nav-db-status" class="db-status-pill offline" title="Database: Offline">
           <span class="status-indicator offline"></span>
-          <span>DB Status</span>
+          <span class="db-pill-text">DB</span>
         </div>
 
-        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark or Light theme">
+        <!-- Compact Theme Toggle Switch -->
+        <button id="theme-toggle" class="theme-toggle-btn icon-only" title="Switch to Light Mode" aria-label="Toggle Dark or Light theme">
           <span id="theme-toggle-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </span>
-          <span id="theme-toggle-text">Dark</span>
+        </button>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button id="mobile-menu-btn" class="mobile-menu-btn" title="Navigation Menu" aria-label="Toggle Navigation Menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
       </div>
 
@@ -68,28 +71,101 @@
 
     <!-- ── 2. HERO & QUICK ACTIONS ───────────────────────────────────────────── -->
     <section id="hero-section" class="hero-section">
-      <div class="hero-badge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Enterprise Privacy Engineering
+      <div class="hero-grid">
+        
+        <!-- Left Messaging & CTAs -->
+        <div class="hero-left">
+          <div class="hero-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            PRIVACY-FIRST DATA PROTECTION
+          </div>
+          <h1 class="hero-title">Universal <span>Data Protection</span></h1>
+          <p class="hero-subtitle">One Engine. Every Data Format.</p>
+          <p class="hero-desc">Protect sensitive information across structured files, documents, images, and PostgreSQL database tables using masking, tokenization, anonymization, hashing, and authenticated AES-256-GCM encryption.</p>
+          
+          <div class="hero-ctas">
+            <a href="#file-protection-section" id="cta-file-protection" class="btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Protect Your Data
+            </a>
+            <a href="#db-protection-section" id="cta-db-protection" class="btn-ghost">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              Database Protection
+            </a>
+            <button type="button" id="btn-watch-demo" class="btn-ghost btn-watch-demo">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/></svg>
+              <span>Watch Demo</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Architecture & Privacy Engine Diagram -->
+        <div class="hero-right">
+          <div class="hero-arch-card">
+            <div class="arch-header">
+              <div class="arch-window-dots">
+                <span class="arch-dot red"></span>
+                <span class="arch-dot yellow"></span>
+                <span class="arch-dot green"></span>
+              </div>
+              <span class="arch-title">DATA PROTECTION ARCHITECTURE</span>
+            </div>
+
+            <div class="arch-diagram">
+              <!-- Top Row: Inputs -->
+              <div class="arch-inputs-row">
+                <div class="arch-chip input-file">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span>FILE</span>
+                </div>
+                <div class="arch-chip input-db">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                  <span>DATABASE</span>
+                </div>
+              </div>
+
+              <!-- Connector Arrow -->
+              <div class="arch-arrow-down">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+              </div>
+
+              <!-- Engine Node -->
+              <div class="arch-node engine-node">
+                <div class="engine-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </div>
+                <span class="engine-title">PRIVACY ENGINE</span>
+              </div>
+
+              <!-- Connector Arrow -->
+              <div class="arch-arrow-down">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+              </div>
+
+              <!-- Operations Row -->
+              <div class="arch-ops-row">
+                <span class="arch-op-pill">MASK</span>
+                <span class="arch-op-bullet">•</span>
+                <span class="arch-op-pill">HASH</span>
+                <span class="arch-op-bullet">•</span>
+                <span class="arch-op-pill">ENCRYPT</span>
+              </div>
+
+              <!-- Connector Arrow -->
+              <div class="arch-arrow-down">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+              </div>
+
+              <!-- Protected Node -->
+              <div class="arch-node protected-node">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span class="protected-title">PROTECTED DATA</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
-      <h1 class="hero-title">Universal <span>Data Protection System</span></h1>
-      <p class="hero-desc">Protect sensitive information across structured files, documents, images, and PostgreSQL database tables using masking, tokenization, anonymization, hashing, and authenticated AES-256-GCM encryption.</p>
-      
-      <div class="hero-ctas">
-        <a href="#file-protection-section" id="cta-file-protection" class="btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Protect a File
-        </a>
-        <a href="#db-protection-section" id="cta-db-protection" class="btn-ghost">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-          Protect Database
-        </a>
-        <button type="button" id="btn-watch-demo" class="btn-ghost btn-watch-demo">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/></svg>
-          <span>Watch Demo</span>
-        </button>
-      </div>
-      <div class="hero-demo-label">Product walkthrough</div>
     </section>
 
     <!-- ── 3. OVERVIEW STATS DASHBOARD ───────────────────────────────────────── -->
@@ -783,52 +859,7 @@
 
     </section>
 
-    <!-- ── 6. PROCESSING HISTORY & AUDIT LOG ─────────────────────────────────── -->
-    <section id="history-section" class="section">
-      
-      <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-        <div>
-          <h2 class="section-title" style="margin:0;">Processing History & Audit Log</h2>
-          <p class="section-desc">Audit trail of data protection jobs logged to PostgreSQL.</p>
-        </div>
-        <button id="btn-refresh-history" class="btn-ghost btn-sm">Refresh Log</button>
-      </div>
-
-      <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; box-shadow:var(--shadow-md);">
-        
-        <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
-          <button class="history-filter-btn active" data-filter="all">All Operations</button>
-          <button class="history-filter-btn" data-filter="mask">Masking</button>
-          <button class="history-filter-btn" data-filter="hash">Hashing</button>
-          <button class="history-filter-btn" data-filter="encrypt">Encryption</button>
-        </div>
-
-        <div class="history-table-wrap">
-          <table class="history-table">
-            <thead>
-              <tr>
-                <th>File Name</th>
-                <th>Format</th>
-                <th>Operation</th>
-                <th>Details / Algorithm</th>
-                <th>Items Processed</th>
-                <th>Status</th>
-                <th>Timestamp</th>
-              </tr>
-            </thead>
-            <tbody id="history-table-body">
-              <tr>
-                <td colspan="7" class="history-empty">Loading audit history…</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- ── 7. RESTORE ENCRYPTED FILE WORKSPACE ───────────────────────────────── -->
+    <!-- ── 6. RESTORE ENCRYPTED FILE WORKSPACE ───────────────────────────────── -->
     <section id="restore-section" class="section">
       
       <div class="section-header">
@@ -895,16 +926,24 @@
   <!-- ── 9. APP FOOTER ─────────────────────────────────────────────────────── -->
   <footer class="app-footer">
     <div class="container footer-inner">
-      <div class="footer-brand">
-        <div class="brand-logo-pill footer-logo-pill">
-          <img src="assets/images/segmento-logo.png" alt="Segmento" class="footer-segmento-logo">
-        </div>
-        <span class="footer-product-title">UDPS — Universal Data Protection System</span>
-      </div>
+      <span class="footer-copyright">© 2026 Segmento Data Technologies — UDPS</span>
     </div>
   </footer>
 
-  <!-- ── 10. INLINE FILE PREVIEW MODAL ───────────────────────────────────────── -->
+  <!-- ── 10. QUICK SEARCH COMMAND PALETTE MODAL ─────────────────────────────── -->
+  <div id="search-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-label="Quick Search Command Palette">
+    <div id="search-modal-backdrop" class="modal-overlay"></div>
+    <div class="search-command-card">
+      <div class="search-input-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="global-search-input" class="global-search-input" placeholder="Search features, operations, formats... (press Esc to close)" autocomplete="off">
+        <span class="search-shortcut-badge">ESC</span>
+      </div>
+      <div id="global-search-popover" class="global-search-popover"></div>
+    </div>
+  </div>
+
+  <!-- ── 11. INLINE FILE PREVIEW MODAL ───────────────────────────────────────── -->
   <div id="preview-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
     <div id="preview-backdrop" class="modal-overlay"></div>
     <div class="preview-modal">

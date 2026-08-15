@@ -494,3 +494,19 @@ function escapeHtml(str) {
 }
 
 loadFormats();
+
+// Mobile Navigation Menu Toggle
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const headerNav = document.getElementById('header-nav');
+if (mobileMenuBtn && headerNav) {
+  mobileMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    headerNav.classList.toggle('active');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!mobileMenuBtn.contains(e.target) && !headerNav.contains(e.target)) {
+      headerNav.classList.remove('active');
+    }
+  });
+}
