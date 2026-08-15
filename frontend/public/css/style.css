@@ -160,6 +160,7 @@ button {
   align-items: center;
   gap: 12px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .brand-logo-pill {
@@ -167,50 +168,31 @@ button {
   align-items: center;
   justify-content: center;
   background: #ffffff;
-  padding: 4px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   transition: all var(--dur) ease;
 }
 
 [data-theme="light"] .brand-logo-pill {
   border-color: rgba(15, 23, 42, 0.12);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .brand-segmento-logo {
-  height: 24px;
+  height: 22px;
   width: auto;
   object-fit: contain;
   display: block;
 }
 
-.brand-divider {
-  color: var(--text-muted);
-  opacity: 0.4;
-  font-size: 1.1rem;
-  font-weight: 300;
-}
-
-.brand-product-info {
-  display: flex;
-  flex-direction: column;
-}
-
 .logo-text {
   font-weight: 800;
-  font-size: 1.2rem;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
-}
-
-.logo-sub {
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.02em;
 }
 
 .nav-links {
@@ -1706,28 +1688,27 @@ button {
   font-weight: 600;
 }
 
-/* ── SEGMENTO BRAND FOOTER ────────────────────────────────────────────────── */
+/* ── APP FOOTER ──────────────────────────────────────────────────────────── */
 
 .app-footer {
   margin-top: 60px;
   border-top: 1px solid var(--border);
   background: var(--bg-surface);
-  padding: 32px 0;
+  padding: 24px 0;
   transition: background-color var(--dur) ease;
 }
 
 .footer-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
 }
 
 .footer-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .footer-logo-pill {
@@ -1735,49 +1716,16 @@ button {
 }
 
 .footer-segmento-logo {
-  height: 20px;
+  height: 18px;
   width: auto;
   object-fit: contain;
   display: block;
 }
 
-.footer-brand-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
 .footer-product-title {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  color: var(--text-primary);
-}
-
-.footer-company-name {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.footer-website-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.83rem;
-  font-weight: 700;
-  color: var(--cyan);
-  padding: 6px 16px;
-  border-radius: 20px;
-  background: var(--cyan-glow);
-  border: 1px solid var(--border);
-  transition: all var(--dur) ease;
-  text-decoration: none;
-}
-
-.footer-website-link:hover {
-  border-color: var(--cyan);
-  transform: translateY(-1px);
-  box-shadow: 0 0 16px var(--cyan-glow);
+  color: var(--text-secondary);
 }
 
 /* ── 15. RESPONSIVE BREAKPOINTS ──────────────────────────────────────────── */
