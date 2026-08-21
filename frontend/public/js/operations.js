@@ -89,6 +89,7 @@ export function initOperations() {
 
   return {
     getOperation() { return selected; },
+    selectOperation,
 
     getOptions() {
       const algorithm   = hashAlgoSelect ? hashAlgoSelect.value : 'sha256';

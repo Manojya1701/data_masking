@@ -1674,6 +1674,331 @@ button {
   margin-top: 2px;
 }
 
+/* ── 14.1 PROTECTION PREVIEW MODAL (BEFORE VS AFTER) ─────────────────────── */
+
+.protection-preview-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 920px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 32px var(--cyan-glow);
+  overflow: hidden;
+  position: relative;
+  z-index: 201;
+}
+
+.prot-preview-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+}
+
+.prot-preview-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.prot-preview-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan);
+}
+
+.prot-preview-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 2px;
+}
+
+.prot-preview-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.prot-preview-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color var(--dur) ease;
+}
+
+.prot-preview-close-btn:hover {
+  color: var(--text-primary);
+}
+
+.prot-preview-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 24px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.controls-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prot-method-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.prot-method-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--dur) ease;
+}
+
+.prot-method-tab .tab-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.prot-method-tab.active {
+  background: var(--bg-card);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.prot-method-tab.active .tab-badge {
+  background: var(--cyan-glow);
+  color: var(--cyan);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.prot-preview-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.prot-comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.prot-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prot-col-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.col-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.col-indicator.red-dot {
+  background: var(--red);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.4);
+}
+
+.col-indicator.green-dot {
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green-glow);
+}
+
+.col-header-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.prot-data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prot-item-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all var(--dur) ease;
+}
+
+.prot-item-card.after-card {
+  background: var(--bg-elevated);
+  border-color: rgba(56, 189, 248, 0.2);
+}
+
+.prot-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prot-item-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prot-pii-chip {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(251, 191, 36, 0.12);
+  color: var(--amber);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  letter-spacing: 0.03em;
+}
+
+.prot-method-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--cyan-glow);
+  color: var(--cyan);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.prot-item-val {
+  font-size: 0.86rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.prot-item-val.before-val {
+  color: var(--text-primary);
+}
+
+.prot-item-val.after-val {
+  color: var(--green);
+}
+
+.prot-preview-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.prot-footer-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-badge-green {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.prot-footer-count-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.prot-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Light Theme Overrides */
+[data-theme="light"] .protection-preview-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] .prot-preview-header,
+[data-theme="light"] .prot-preview-footer {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .prot-preview-controls {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .prot-item-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .prot-item-card.after-card {
+  background: #f8fafc;
+}
+
 /* ── 14. PREVIEW MODAL ───────────────────────────────────────────────────── */
 
 .modal-backdrop {

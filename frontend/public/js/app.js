@@ -14,6 +14,7 @@ import { initSearch } from './search.js';
 import { showToast } from './toast.js';
 import { updateWorkflowProgress } from './workflow-step.js';
 import { initDemoModal } from './demo-modal.js';
+import { initProtectionPreview, renderPreviewComparison } from './protection-preview.js';
 
 const API_BASE_URL = window.location.origin;
 // State
@@ -38,6 +39,7 @@ const scanResults = document.getElementById('scan-results');
 const scanCounts  = document.getElementById('scan-counts');
 const scanNote    = document.getElementById('scan-note');
 const riskBadge   = document.getElementById('scan-risk-badge');
+const scanPreviewWrap = document.getElementById('scan-preview-trigger-wrap');
 
 // Compatibility indicator
 const compatIndicator   = document.getElementById('compat-indicator');
@@ -76,6 +78,22 @@ const operations = initOperations();
 const downloader = initDownload();
 initHistory();
 initDbProtection();
+
+initProtectionPreview((method) => {
+  const targetOp = (method === 'tokenize') ? 'mask' : method;
+  operations.selectOperation(targetOp);
+  if (operationSection) {
+    operationSection.classList.remove('hidden');
+    operationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  const methodNames = {
+    mask: 'Masking',
+    tokenize: 'Tokenization',
+    hash: 'Hashing',
+    encrypt: 'Encryption'
+  };
+  showToast(`✓ Selected ${methodNames[method] || method} operation`, 'success');
+});
 
 // ── File ready callback ───────────────────────────────────────────────
 function onFileReady(file) {
@@ -232,6 +250,11 @@ if (scanBtn) {
 
       scanNote.textContent = data.note || `Total sensitive items detected: ${data.total || 0}. Full values are not shown.`;
       scanResults.classList.remove('hidden');
+
+      // Update and show Protection Preview trigger
+      renderPreviewComparison(data.counts || {});
+      if (scanPreviewWrap) scanPreviewWrap.classList.remove('hidden');
+
       showToast('✓ Privacy scan completed', 'success');
       updateWorkflowProgress('scanned');
     } catch (e) {
