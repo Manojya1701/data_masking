@@ -821,18 +821,19 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Name</th>
+                <th>First Name</th>
+                <th>Last Name</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Aadhaar</th>
                 <th>PAN</th>
                 <th>Address</th>
-                <th>Created At</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody id="db-table-body">
               <tr>
-                <td colspan="8" class="history-empty">Loading PostgreSQL customer records…</td>
+                <td colspan="9" class="history-empty">Loading PostgreSQL customer records…</td>
               </tr>
             </tbody>
           </table>
@@ -872,6 +873,53 @@
           </div>
         </div>
 
+      </div>
+
+    </section>
+
+    <!-- ── 5.1 PRIVACY DATA DELETION WORKSPACE (SEPARATE FEATURE) ─────────────── -->
+    <section id="privacy-deletion-section" class="section">
+      
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h2 class="section-title" style="display:flex; align-items:center; gap:10px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            <span>Privacy Data Deletion</span>
+          </h2>
+          <p class="section-desc">Permanently delete customer personal data records from the system (`privacy_deletion_customers` table).</p>
+        </div>
+        <button type="button" id="btn-refresh-privacy-deletion" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          <span>Refresh Records</span>
+        </button>
+      </div>
+
+      <div class="db-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+          <span class="meta-pill primary" style="background:rgba(244,63,94,0.12); color:var(--red); border:1px solid rgba(244,63,94,0.3); font-weight:700;">
+            Deletion Target Table: privacy_deletion_customers
+          </span>
+          <span style="font-size:0.78rem; color:var(--text-muted);">Permanently removes records using parameterized SQL query (<code>DELETE FROM privacy_deletion_customers WHERE id = ?</code>)</span>
+        </div>
+
+        <div class="history-table-wrap">
+          <table class="history-table db-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="privacy-deletion-table-body">
+              <tr>
+                <td colspan="5" class="history-empty">Loading privacy deletion customer records…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </section>
@@ -1113,6 +1161,50 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>
+      </div>
+
+  <!-- ── 13. PRIVACY DATA DELETION CONFIRMATION MODAL ───────────────────────── -->
+  <div id="privacy-deletion-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="privacy-deletion-modal-title">
+    <div id="privacy-deletion-backdrop" class="modal-overlay"></div>
+    <div class="protection-preview-card" style="max-width: 520px;">
+      
+      <!-- Modal Header -->
+      <div class="prot-preview-header">
+        <div class="prot-preview-header-left">
+          <div class="prot-preview-icon-wrap" style="color: var(--red);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          </div>
+          <div>
+            <h3 id="privacy-deletion-modal-title" class="prot-preview-title">Delete Personal Data</h3>
+            <p class="prot-preview-subtitle">Permanent Privacy Data Erasure</p>
+          </div>
+        </div>
+        <button type="button" id="btn-cancel-privacy-delete-x" class="prot-preview-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="prot-preview-body" style="padding: 20px 24px;">
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
+          <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Selected email:</span>
+          <div id="privacy-deletion-selected-email" style="font-size: 1.1rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--red); margin-top: 4px; word-break: break-all;">
+            rahul@gmail.com
+          </div>
+        </div>
+
+        <p style="font-size: 0.9rem; color: var(--text-primary); margin: 0; line-height: 1.5;">
+          Are you sure you want to permanently delete this customer's personal data?
+        </p>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin: 6px 0 0;">
+          Database record ID: <strong id="privacy-deletion-selected-id" style="color: var(--text-primary);">1</strong>
+        </p>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="prot-preview-footer" style="justify-content: flex-end; gap: 10px;">
+        <button type="button" id="btn-cancel-privacy-delete" class="btn-ghost btn-sm">CANCEL</button>
+        <button type="button" id="btn-confirm-privacy-delete" class="btn-danger btn-sm" style="display:inline-flex; align-items:center; gap:8px;">
+          <span>CONFIRM DELETE</span>
+        </button>
       </div>
 
     </div>

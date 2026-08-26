@@ -3,6 +3,7 @@
 /**
  * Frontend Database Table Protection Module
  * Handles customer preview fetching, in-memory protection, optional persistence saving, and saved protected data display.
+ * Retains 100% of original database protection operations.
  */
 
 import { showToast } from './toast.js';
@@ -276,21 +277,10 @@ export function initDbProtection() {
     });
   });
 
-  if (applyBtn) {
-    applyBtn.addEventListener('click', applyDbProtection);
-  }
-
-  if (resetBtn) {
-    resetBtn.addEventListener('click', loadOriginalCustomers);
-  }
-
-  if (saveBtn) {
-    saveBtn.addEventListener('click', saveProtectedData);
-  }
-
-  if (discardBtn) {
-    discardBtn.addEventListener('click', discardProtectedData);
-  }
+  if (applyBtn) applyBtn.addEventListener('click', applyDbProtection);
+  if (resetBtn) resetBtn.addEventListener('click', loadOriginalCustomers);
+  if (saveBtn) saveBtn.addEventListener('click', saveProtectedData);
+  if (discardBtn) discardBtn.addEventListener('click', discardProtectedData);
 
   // Initial loads
   loadOriginalCustomers();

@@ -63,7 +63,7 @@ async function initializeSchema() {
     const countRes = await db.query('SELECT COUNT(*) AS total FROM customers;');
     const total = parseInt(countRes?.rows?.[0]?.total || '0', 10);
     if (total === 0) {
-      console.log('[DB Init] Seeding sample customer records…');
+      console.log('[DB Init] Seeding sample customer records for operations…');
       await db.query(`
         INSERT INTO customers (name, email, phone, aadhaar, pan, address) VALUES
         ('Harika', 'harika@example.com', '9876543210', '1234 5678 9012', 'ABCDE1234F', 'Visakhapatnam'),
@@ -76,6 +76,24 @@ async function initializeSchema() {
     }
   } catch (seedErr) {
     console.warn('[DB Init] Seeding warning:', seedErr.message);
+  }
+
+  // Check if privacy_deletion_customers table is empty and seed 3 sample deletion records
+  try {
+    const delCountRes = await db.query('SELECT COUNT(*) AS total FROM privacy_deletion_customers;');
+    const delTotal = parseInt(delCountRes?.rows?.[0]?.total || '0', 10);
+    if (delTotal === 0) {
+      console.log('[DB Init] Seeding sample privacy deletion records…');
+      await db.query(`
+        INSERT INTO privacy_deletion_customers (first_name, last_name, email) VALUES
+        ('Rahul', 'Kumar', 'rahul@gmail.com'),
+        ('Priya', 'Sharma', 'priya@gmail.com'),
+        ('Arjun', 'Reddy', 'arjun@gmail.com');
+      `);
+      console.log('[DB Init] ✅ Seeded 3 sample privacy deletion records.');
+    }
+  } catch (delSeedErr) {
+    console.warn('[DB Init] Privacy deletion seeding warning:', delSeedErr.message);
   }
 
   console.log(

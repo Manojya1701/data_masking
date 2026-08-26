@@ -21,6 +21,7 @@ const { createToken, redeemToken, revokeToken } = require('../services/token-sto
 const db           = require('../database/db');
 const auditService = require('../services/audit-service');
 const dbProtectionService = require('../services/db-protection-service');
+const privacyDeletionService = require('../services/privacy-deletion-service');
 
 const router = express.Router();
 
@@ -432,6 +433,67 @@ router.get('/database/customers', async (req, res) => {
     return jsonError(res, 500, err.message);
   }
 });
+
+// ── GET /api/privacy-deletion/customers ──────────────────────────────────────
+
+router.get('/privacy-deletion/customers', async (req, res) => {
+  try {
+    const data = await privacyDeletionService.getPrivacyDeletionCustomers();
+    return res.json({
+      success: true,
+      source: data.source,
+      count: data.records.length,
+      records: data.records,
+    });
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── DELETE /api/privacy-deletion/customers/:id ───────────────────────────────
+
+async function handleDeletePrivacyCustomer(req, res) {
+  const { id } = req.params;
+  const customerId = parseInt(id, 10);
+
+  if (isNaN(customerId) || customerId <= 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid customer ID',
+    });
+  }
+
+  try {
+    const result = await privacyDeletionService.deletePrivacyCustomer(customerId);
+
+    if (!result.success) {
+      if (result.notFound) {
+        return res.status(404).json({
+          success: false,
+          message: 'Customer not found',
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: result.message || 'Failed to delete customer',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Customer personal data deleted successfully',
+      deletedId: result.deletedId,
+    });
+  } catch (err) {
+    console.error('[Routes] Error deleting customer from privacy_deletion_customers:', err.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Database failure during customer deletion',
+    });
+  }
+}
+
+router.delete('/privacy-deletion/customers/:id', handleDeletePrivacyCustomer);
 
 // ── POST /api/database/customers/protect ─────────────────────────────────────
 

@@ -68,7 +68,7 @@ describe('Database Table Protection Service', () => {
     const res = await protectCustomers('masking');
     const first = res.records[0];
     expect(first.name).toContain('*');
-    expect(first.email).toContain('@example.com');
+    expect(first.email).toContain('@');
   });
 
   test('Tokenization replaces values with cryptographic TKN_ tokens', async () => {

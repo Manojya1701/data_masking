@@ -47,7 +47,7 @@ CREATE INDEX IF NOT EXISTS idx_processing_history_created_at ON processing_histo
 CREATE INDEX IF NOT EXISTS idx_processing_history_operation ON processing_history (operation);
 CREATE INDEX IF NOT EXISTS idx_privacy_scan_history_created_at ON privacy_scan_history (created_at DESC);
 
--- Customer Data Protection Table
+-- Customer Data Protection Table (Anonymisation / Pseudonymisation / Operations Table)
 CREATE TABLE IF NOT EXISTS customers (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100),
@@ -56,6 +56,15 @@ CREATE TABLE IF NOT EXISTS customers (
     aadhaar VARCHAR(20),
     pan VARCHAR(20),
     address TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Separate Privacy Data Deletion Table
+CREATE TABLE IF NOT EXISTS privacy_deletion_customers (
+    id BIGSERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 

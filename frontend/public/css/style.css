@@ -751,6 +751,30 @@ button {
   font-size: 0.8rem;
 }
 
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(244, 63, 94, 0.15);
+  color: var(--red);
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  cursor: pointer;
+  transition: all var(--dur) ease;
+}
+
+.btn-danger:hover {
+  background: var(--red);
+  color: #ffffff;
+  border-color: var(--red);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.45);
+  transform: translateY(-1px);
+}
+
 /* ── 7. WORKSPACE & SECTIONS ─────────────────────────────────────────────── */
 
 .section {
