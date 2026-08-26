@@ -119,30 +119,55 @@ export async function confirmPrivacyCustomerDeletion() {
 }
 
 export function initPrivacyDeletion() {
-  const cancelBtn = document.getElementById('btn-cancel-privacy-delete');
-  const cancelX = document.getElementById('btn-cancel-privacy-delete-x');
-  const modalBackdrop = document.getElementById('privacy-deletion-backdrop');
-  const confirmBtn = document.getElementById('btn-confirm-privacy-delete');
-  const refreshBtn = document.getElementById('btn-refresh-privacy-deletion');
-
-  // Delegated click listener for row DELETE buttons in the Privacy Data Deletion table
+  // Document-level delegated click listener for all Privacy Data Deletion actions
   document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.btn-delete-privacy-customer');
-    if (btn) {
+    // 1. Delete button on row
+    const deleteBtn = e.target.closest('.btn-delete-privacy-customer');
+    if (deleteBtn) {
       e.preventDefault();
-      const id = btn.getAttribute('data-id');
-      const email = btn.getAttribute('data-email');
-      const fName = btn.getAttribute('data-firstname');
-      const lName = btn.getAttribute('data-lastname');
+      const id = deleteBtn.getAttribute('data-id');
+      const email = deleteBtn.getAttribute('data-email');
+      const fName = deleteBtn.getAttribute('data-firstname');
+      const lName = deleteBtn.getAttribute('data-lastname');
       openPrivacyDeleteModal(id, email, fName, lName);
+      return;
+    }
+
+    // 2. Cancel / Close buttons on modal
+    const cancelTrigger = e.target.closest('#btn-cancel-privacy-delete, #btn-cancel-privacy-delete-x, #privacy-deletion-backdrop');
+    if (cancelTrigger) {
+      e.preventDefault();
+      closePrivacyDeleteModal();
+      return;
+    }
+
+    // 3. Confirm Delete button
+    const confirmTrigger = e.target.closest('#btn-confirm-privacy-delete');
+    if (confirmTrigger) {
+      e.preventDefault();
+      confirmPrivacyCustomerDeletion();
+      return;
+    }
+
+    // 4. Refresh Records button
+    const refreshTrigger = e.target.closest('#btn-refresh-privacy-deletion');
+    if (refreshTrigger) {
+      e.preventDefault();
+      showToast('Refreshing deletion customer records…', 'info');
+      loadPrivacyDeletionCustomers();
+      return;
     }
   });
 
-  if (cancelBtn) cancelBtn.addEventListener('click', closePrivacyDeleteModal);
-  if (cancelX) cancelX.addEventListener('click', closePrivacyDeleteModal);
-  if (modalBackdrop) modalBackdrop.addEventListener('click', closePrivacyDeleteModal);
-  if (confirmBtn) confirmBtn.addEventListener('click', confirmPrivacyCustomerDeletion);
-  if (refreshBtn) refreshBtn.addEventListener('click', loadPrivacyDeletionCustomers);
+  // Escape key handler to close modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('privacy-deletion-modal');
+      if (modal && !modal.classList.contains('hidden')) {
+        closePrivacyDeleteModal();
+      }
+    }
+  });
 
   // Initial table load
   loadPrivacyDeletionCustomers();
