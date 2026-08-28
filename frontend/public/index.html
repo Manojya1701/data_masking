@@ -711,7 +711,11 @@
           <div class="db-op-selector-wrap" style="width:100%;">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
               <span class="form-label" style="font-weight:700; font-size:0.95rem; color:var(--text-primary); margin:0;">Select Privacy Operation</span>
-              <div style="display:flex; gap:10px;">
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button id="btn-toggle-saved-protected" class="btn-ghost" style="padding:8px 14px; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <span id="toggle-saved-btn-text">View Saved Records</span>
+                </button>
                 <button id="btn-db-apply" class="btn-primary" style="padding:8px 18px; font-size:0.85rem;">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                   Apply Operation
@@ -743,7 +747,7 @@
                   <svg class="db-op-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
                 </div>
                 <span class="db-op-title">Tokenization</span>
-                <span class="db-op-desc">Replace tokens</span>
+                <span class="db-op-desc">Replace with tokens</span>
               </button>
 
               <!-- 3. Anonymization -->
@@ -839,8 +843,8 @@
           </table>
         </div>
 
-        <!-- Saved Protected Data Sub-Section -->
-        <div id="saved-protected-card" class="saved-protected-card" style="margin-top:28px; padding-top:20px; border-top:1px solid var(--border);">
+        <!-- Saved Protected Data Sub-Section (Hidden by default, user can toggle) -->
+        <div id="saved-protected-card" class="saved-protected-card hidden" style="margin-top:28px; padding-top:20px; border-top:1px solid var(--border);">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>

@@ -245,7 +245,18 @@ export async function saveProtectedData() {
         savePrompt.classList.add('hidden');
       }
       showToast('✓ Protected records saved to database', 'success');
+      
+      // Auto-reveal saved records table on user request
+      const savedCard = document.getElementById('saved-protected-card');
+      const toggleBtnText = document.getElementById('toggle-saved-btn-text');
+      if (savedCard) {
+        savedCard.classList.remove('hidden');
+        if (toggleBtnText) toggleBtnText.textContent = 'Hide Saved Records';
+      }
       await loadSavedProtectedData();
+      if (savedCard) {
+        savedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     } else {
       showToast(`Save Failed: ${data.error || 'Failed to save protected data'}`, 'error');
     }
@@ -267,6 +278,24 @@ export function initDbProtection() {
   const resetBtn = document.getElementById('btn-db-reset');
   const saveBtn = document.getElementById('btn-db-save');
   const discardBtn = document.getElementById('btn-db-discard');
+  const toggleSavedBtn = document.getElementById('btn-toggle-saved-protected');
+  const savedCard = document.getElementById('saved-protected-card');
+  const toggleBtnText = document.getElementById('toggle-saved-btn-text');
+
+  if (toggleSavedBtn && savedCard) {
+    toggleSavedBtn.addEventListener('click', () => {
+      const isHidden = savedCard.classList.contains('hidden');
+      if (isHidden) {
+        savedCard.classList.remove('hidden');
+        if (toggleBtnText) toggleBtnText.textContent = 'Hide Saved Records';
+        loadSavedProtectedData();
+        savedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        savedCard.classList.add('hidden');
+        if (toggleBtnText) toggleBtnText.textContent = 'View Saved Records';
+      }
+    });
+  }
 
   // Operation card selection listeners
   const opCards = document.querySelectorAll('.db-op-card');
@@ -282,7 +311,6 @@ export function initDbProtection() {
   if (saveBtn) saveBtn.addEventListener('click', saveProtectedData);
   if (discardBtn) discardBtn.addEventListener('click', discardProtectedData);
 
-  // Initial loads
+  // Initial load
   loadOriginalCustomers();
-  loadSavedProtectedData();
 }
