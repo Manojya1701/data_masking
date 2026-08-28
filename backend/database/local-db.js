@@ -2,9 +2,8 @@
 
 /**
  * Local File Database Engine (udps_local_db)
- * Provides persistent local database table storage for offline and Render environments
- * when PostgreSQL DATABASE_URL is not configured.
- * Supports SQL query parsing for SELECT, INSERT, DELETE, COUNT, and health checks.
+ * Provides persistent local database table storage for offline and Render environments.
+ * Supports SQL query parsing for SELECT, INSERT, UPDATE, DELETE, COUNT, and health checks.
  */
 
 const fs = require('fs');
@@ -17,7 +16,12 @@ const DEFAULT_STORE = {
   privacy_deletion_customers: [
     { id: 1, first_name: 'Rahul', last_name: 'Kumar', email: 'rahul@gmail.com', created_at: '2026-08-15T10:00:00.000Z' },
     { id: 2, first_name: 'Priya', last_name: 'Sharma', email: 'priya@gmail.com', created_at: '2026-08-15T10:05:00.000Z' },
-    { id: 3, first_name: 'Arjun', last_name: 'Reddy', email: 'arjun@gmail.com', created_at: '2026-08-15T10:10:00.000Z' }
+    { id: 3, first_name: 'Arjun', last_name: 'Reddy', email: 'arjun@gmail.com', created_at: '2026-08-15T10:10:00.000Z' },
+    { id: 4, first_name: 'Sneha', last_name: 'Patel', email: 'sneha.p@gmail.com', created_at: '2026-08-15T10:15:00.000Z' },
+    { id: 5, first_name: 'Vikram', last_name: 'Verma', email: 'vikram.v@example.com', created_at: '2026-08-15T10:20:00.000Z' },
+    { id: 6, first_name: 'Ananya', last_name: 'Roy', email: 'ananya.roy@example.com', created_at: '2026-08-15T10:25:00.000Z' },
+    { id: 7, first_name: 'Karthik', last_name: 'Nair', email: 'karthik.n@gmail.com', created_at: '2026-08-15T10:30:00.000Z' },
+    { id: 8, first_name: 'Divya', last_name: 'Das', email: 'divya.das@example.com', created_at: '2026-08-15T10:35:00.000Z' }
   ],
   customers: [
     { id: 1, name: 'Harika', email: 'harika@example.com', phone: '9876543210', aadhaar: '1234 5678 9012', pan: 'ABCDE1234F', address: 'Visakhapatnam', created_at: '2026-08-12T10:00:00.000Z' },
@@ -39,6 +43,11 @@ function loadStore() {
     if (fs.existsSync(DB_FILE)) {
       const raw = fs.readFileSync(DB_FILE, 'utf8');
       store = JSON.parse(raw);
+      // If store had old 3 records, refresh with new expanded entries if less than 8
+      if (store && Array.isArray(store.privacy_deletion_customers) && store.privacy_deletion_customers.length < 8) {
+        store.privacy_deletion_customers = JSON.parse(JSON.stringify(DEFAULT_STORE.privacy_deletion_customers));
+        saveStore();
+      }
     } else {
       store = JSON.parse(JSON.stringify(DEFAULT_STORE));
       saveStore();
@@ -82,7 +91,26 @@ async function query(text, params = []) {
     return { rows: [{ total: String(list.length) }] };
   }
 
-  // 3. DELETE FROM privacy_deletion_customers WHERE id = $1
+  // 3. UPDATE privacy_deletion_customers SET first_name = $1, last_name = $2, email = $3 WHERE id = $4
+  if (lowerSql.startsWith('update privacy_deletion_customers')) {
+    const fName = params[0] || 'Anonymous';
+    const lName = params[1] || 'User';
+    const emailVal = params[2] || 'anonymized@privacy.invalid';
+    const targetId = parseInt(params[3], 10);
+
+    const list = currentStore.privacy_deletion_customers || [];
+    const item = list.find(c => c.id === targetId);
+    if (item) {
+      item.first_name = fName;
+      item.last_name = lName;
+      item.email = emailVal;
+      saveStore();
+      return { rowCount: 1 };
+    }
+    return { rowCount: 0 };
+  }
+
+  // 4. DELETE FROM privacy_deletion_customers WHERE id = $1
   if (lowerSql.startsWith('delete from privacy_deletion_customers')) {
     const targetId = parseInt(params[0], 10);
     const list = currentStore.privacy_deletion_customers || [];
@@ -95,7 +123,7 @@ async function query(text, params = []) {
     return { rowCount: 0 };
   }
 
-  // 4. DELETE FROM customers WHERE id = $1
+  // 5. DELETE FROM customers WHERE id = $1
   if (lowerSql.startsWith('delete from customers')) {
     const targetId = parseInt(params[0], 10);
     const list = currentStore.customers || [];
@@ -108,7 +136,7 @@ async function query(text, params = []) {
     return { rowCount: 0 };
   }
 
-  // 5. SELECT FROM privacy_deletion_customers WHERE id = $1
+  // 6. SELECT FROM privacy_deletion_customers WHERE id = $1
   if (lowerSql.startsWith('select') && lowerSql.includes('from privacy_deletion_customers') && lowerSql.includes('where id =')) {
     const targetId = parseInt(params[0], 10);
     const list = currentStore.privacy_deletion_customers || [];
@@ -116,13 +144,13 @@ async function query(text, params = []) {
     return { rows: JSON.parse(JSON.stringify(found)) };
   }
 
-  // 6. SELECT FROM privacy_deletion_customers
+  // 7. SELECT FROM privacy_deletion_customers
   if (lowerSql.startsWith('select') && lowerSql.includes('from privacy_deletion_customers')) {
     const list = currentStore.privacy_deletion_customers || [];
     return { rows: JSON.parse(JSON.stringify(list)) };
   }
 
-  // 7. SELECT FROM customers WHERE id = $1
+  // 8. SELECT FROM customers WHERE id = $1
   if (lowerSql.startsWith('select') && lowerSql.includes('from customers') && lowerSql.includes('where id =')) {
     const targetId = parseInt(params[0], 10);
     const list = currentStore.customers || [];
@@ -130,13 +158,13 @@ async function query(text, params = []) {
     return { rows: JSON.parse(JSON.stringify(found)) };
   }
 
-  // 8. SELECT FROM customers
+  // 9. SELECT FROM customers
   if (lowerSql.startsWith('select') && lowerSql.includes('from customers')) {
     const list = currentStore.customers || [];
     return { rows: JSON.parse(JSON.stringify(list)) };
   }
 
-  // 9. SELECT FROM protected_customer_data
+  // 10. SELECT FROM protected_customer_data
   if (lowerSql.startsWith('select') && lowerSql.includes('from protected_customer_data')) {
     const list = currentStore.protected_customer_data || [];
     const limitMatch = sql.match(/limit\s+\$1/i);
@@ -144,7 +172,7 @@ async function query(text, params = []) {
     return { rows: JSON.parse(JSON.stringify(list.slice(0, limit))) };
   }
 
-  // 10. INSERT INTO protected_customer_data
+  // 11. INSERT INTO protected_customer_data
   if (lowerSql.startsWith('insert into protected_customer_data')) {
     const list = currentStore.protected_customer_data || [];
     const newRecord = {
@@ -164,7 +192,7 @@ async function query(text, params = []) {
     return { rowCount: 1 };
   }
 
-  // 11. INSERT INTO privacy_deletion_customers
+  // 12. INSERT INTO privacy_deletion_customers
   if (lowerSql.startsWith('insert into privacy_deletion_customers')) {
     const list = currentStore.privacy_deletion_customers || [];
     const newRecord = {
@@ -179,7 +207,6 @@ async function query(text, params = []) {
     return { rowCount: 1 };
   }
 
-  // Default fallback for unrecognized queries
   return { rows: [] };
 }
 

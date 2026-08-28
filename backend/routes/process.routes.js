@@ -495,6 +495,53 @@ async function handleDeletePrivacyCustomer(req, res) {
 
 router.delete('/privacy-deletion/customers/:id', handleDeletePrivacyCustomer);
 
+// ── PUT/POST /api/privacy-deletion/customers/:id/anonymize ─────────────────
+
+async function handleAnonymizePrivacyCustomer(req, res) {
+  const { id } = req.params;
+  const customerId = parseInt(id, 10);
+
+  if (isNaN(customerId) || customerId <= 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid customer ID',
+    });
+  }
+
+  try {
+    const result = await privacyDeletionService.anonymizePrivacyCustomer(customerId);
+
+    if (!result.success) {
+      if (result.notFound) {
+        return res.status(404).json({
+          success: false,
+          message: 'Customer not found',
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: result.message || 'Failed to anonymize customer',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Customer personal data anonymized successfully',
+      anonymizedId: result.anonymizedId,
+      anonymizedEmail: result.anonymizedEmail,
+    });
+  } catch (err) {
+    console.error('[Routes] Error anonymizing customer:', err.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Database failure during customer anonymization',
+    });
+  }
+}
+
+router.put('/privacy-deletion/customers/:id/anonymize', handleAnonymizePrivacyCustomer);
+router.post('/privacy-deletion/customers/:id/anonymize', handleAnonymizePrivacyCustomer);
+
 // ── POST /api/database/customers/protect ─────────────────────────────────────
 
 router.post('/database/customers/protect', async (req, res) => {
