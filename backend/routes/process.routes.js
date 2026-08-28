@@ -22,6 +22,7 @@ const db           = require('../database/db');
 const auditService = require('../services/audit-service');
 const dbProtectionService = require('../services/db-protection-service');
 const privacyDeletionService = require('../services/privacy-deletion-service');
+const emailSearchService = require('../services/email-search-service');
 
 const router = express.Router();
 
@@ -429,6 +430,25 @@ router.get('/database/customers', async (req, res) => {
       count: data.records.length,
       records: data.records,
     });
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── GET /api/database/search-email?email=xxx ────────────────────────────────
+
+router.get('/database/search-email', async (req, res) => {
+  const email = req.query.email || req.query.q;
+  if (!email || typeof email !== 'string' || !email.trim()) {
+    return res.status(400).json({
+      success: false,
+      error: 'Email query parameter is required',
+    });
+  }
+
+  try {
+    const results = await emailSearchService.searchEmailInDatabase(email);
+    return res.json(results);
   } catch (err) {
     return jsonError(res, 500, err.message);
   }

@@ -9,6 +9,7 @@ import { initDownload }   from './download.js';
 import { initHistory, refreshHistory } from './history.js';
 import { initDbProtection } from './db-protection.js';
 import { initPrivacyDeletion } from './privacy-deletion.js';
+import { initEmailSearch } from './email-search.js';
 import { initTheme } from './theme.js';
 import { initDashboardStats } from './dashboard-stats.js';
 import { initSearch } from './search.js';
@@ -80,6 +81,7 @@ const downloader = initDownload();
 initHistory();
 initDbProtection();
 initPrivacyDeletion();
+initEmailSearch();
 
 initProtectionPreview((method) => {
   const targetOp = (method === 'tokenize') ? 'mask' : method;

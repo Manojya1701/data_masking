@@ -928,6 +928,55 @@
 
     </section>
 
+    <!-- ── 5.2 GLOBAL DATABASE EMAIL LOOKUP WORKSPACE ───────────────────────── -->
+    <section id="email-search-section" class="section">
+      
+      <div class="section-header">
+        <h2 class="section-title" style="display:flex; align-items:center; gap:10px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8v6M8 11h6"/></svg>
+          <span>Global Database Email Search</span>
+        </h2>
+        <p class="section-desc">Search any email address across all database tables (`customers`, `privacy_deletion_customers`, `protected_customer_data`, etc.).</p>
+      </div>
+
+      <div class="db-card">
+        
+        <!-- Search Input Bar -->
+        <form id="email-search-form" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
+          <div style="flex:1; min-width:280px; position:relative;">
+            <input type="email" 
+                   id="email-search-input" 
+                   class="form-input" 
+                   placeholder="Enter email address to search (e.g. rahul@gmail.com, priya@gmail.com)" 
+                   required
+                   style="width:100%; padding-left:40px; font-family:'JetBrains Mono', monospace; font-size:0.92rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); pointer-events:none;">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <button type="submit" id="btn-email-search-submit" class="btn-primary" style="padding:10px 22px; display:inline-flex; align-items:center; gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span>Search Database</span>
+          </button>
+          <button type="button" id="btn-email-search-clear" class="btn-ghost" style="padding:10px 16px;">Clear</button>
+        </form>
+
+        <!-- Quick Sample Email Pills -->
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:16px; font-size:0.8rem; color:var(--text-muted);">
+          <span>Try quick sample queries:</span>
+          <button type="button" class="email-sample-pill meta-pill primary" data-email="rahul@gmail.com" style="cursor:pointer;">rahul@gmail.com</button>
+          <button type="button" class="email-sample-pill meta-pill primary" data-email="priya@gmail.com" style="cursor:pointer;">priya@gmail.com</button>
+          <button type="button" class="email-sample-pill meta-pill primary" data-email="harika@example.com" style="cursor:pointer;">harika@example.com</button>
+          <button type="button" class="email-sample-pill meta-pill neutral" data-email="random_not_found@gmail.com" style="cursor:pointer;">random_not_found@gmail.com</button>
+        </div>
+
+        <!-- Dynamic Results Container -->
+        <div id="email-search-results" class="hidden" style="margin-top:16px;"></div>
+
+      </div>
+
+    </section>
+
     <!-- ── 6. RESTORE ENCRYPTED FILE WORKSPACE ───────────────────────────────── -->
     <section id="restore-section" class="section">
       
