@@ -43,11 +43,6 @@ function loadStore() {
     if (fs.existsSync(DB_FILE)) {
       const raw = fs.readFileSync(DB_FILE, 'utf8');
       store = JSON.parse(raw);
-      // If store had old 3 records, refresh with new expanded entries if less than 8
-      if (store && Array.isArray(store.privacy_deletion_customers) && store.privacy_deletion_customers.length < 8) {
-        store.privacy_deletion_customers = JSON.parse(JSON.stringify(DEFAULT_STORE.privacy_deletion_customers));
-        saveStore();
-      }
     } else {
       store = JSON.parse(JSON.stringify(DEFAULT_STORE));
       saveStore();
