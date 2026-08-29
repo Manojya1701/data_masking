@@ -470,6 +470,22 @@ router.get('/privacy-deletion/customers', async (req, res) => {
   }
 });
 
+// ── POST /api/privacy-deletion/customers/reset ──────────────────────────────
+
+router.post('/privacy-deletion/customers/reset', async (req, res) => {
+  try {
+    const data = await privacyDeletionService.resetPrivacyDeletionCustomers();
+    return res.json({
+      success: true,
+      message: 'Privacy customer sample records reset successfully',
+      count: data.count,
+      records: data.records,
+    });
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 // ── DELETE /api/privacy-deletion/customers/:id ───────────────────────────────
 
 async function handleDeletePrivacyCustomer(req, res) {

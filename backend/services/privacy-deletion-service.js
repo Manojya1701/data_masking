@@ -39,6 +39,53 @@ let DELETION_SAMPLE_CUSTOMERS = [
 ];
 
 /**
+ * Reset and re-seed all 8 sample customer records in privacy_deletion_customers table.
+ */
+async function resetPrivacyDeletionCustomers() {
+  const INITIAL_SEED = [
+    { first_name: 'Rahul', last_name: 'Kumar', email: 'rahul@gmail.com' },
+    { first_name: 'Priya', last_name: 'Sharma', email: 'priya@gmail.com' },
+    { first_name: 'Arjun', last_name: 'Reddy', email: 'arjun@gmail.com' },
+    { first_name: 'Sneha', last_name: 'Patel', email: 'sneha.p@gmail.com' },
+    { first_name: 'Vikram', last_name: 'Verma', email: 'vikram.v@example.com' },
+    { first_name: 'Ananya', last_name: 'Roy', email: 'ananya.roy@example.com' },
+    { first_name: 'Karthik', last_name: 'Nair', email: 'karthik.n@gmail.com' },
+    { first_name: 'Divya', last_name: 'Das', email: 'divya.das@example.com' }
+  ];
+
+  if (db.isConfigured()) {
+    try {
+      await db.query(`
+        INSERT INTO privacy_deletion_customers (first_name, last_name, email) VALUES
+        ('Rahul', 'Kumar', 'rahul@gmail.com'),
+        ('Priya', 'Sharma', 'priya@gmail.com'),
+        ('Arjun', 'Reddy', 'arjun@gmail.com'),
+        ('Sneha', 'Patel', 'sneha.p@gmail.com'),
+        ('Vikram', 'Verma', 'vikram.v@example.com'),
+        ('Ananya', 'Roy', 'ananya.roy@example.com'),
+        ('Karthik', 'Nair', 'karthik.n@gmail.com'),
+        ('Divya', 'Das', 'divya.das@example.com')
+        ON CONFLICT (email) DO NOTHING;
+      `);
+      const res = await db.query('SELECT id, first_name, last_name, email, created_at FROM privacy_deletion_customers ORDER BY id ASC;');
+      return { success: true, count: res?.rows?.length || 8, records: res?.rows || [] };
+    } catch (err) {
+      console.warn('[Privacy Deletion Warning] Failed to reset PostgreSQL records:', err.message);
+    }
+  }
+
+  DELETION_SAMPLE_CUSTOMERS = INITIAL_SEED.map((c, i) => ({
+    id: i + 1,
+    first_name: c.first_name,
+    last_name: c.last_name,
+    email: c.email,
+    created_at: new Date().toISOString()
+  }));
+
+  return { success: true, count: DELETION_SAMPLE_CUSTOMERS.length, records: JSON.parse(JSON.stringify(DELETION_SAMPLE_CUSTOMERS)) };
+}
+
+/**
  * Fetch records from privacy_deletion_customers table.
  */
 async function getPrivacyDeletionCustomers() {
@@ -230,4 +277,5 @@ module.exports = {
   deletePrivacyCustomer,
   anonymizePrivacyCustomer,
   applyOperationToPrivacyCustomer,
+  resetPrivacyDeletionCustomers,
 };

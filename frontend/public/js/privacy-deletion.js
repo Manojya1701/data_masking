@@ -294,6 +294,25 @@ export function initPrivacyDeletion() {
       loadPrivacyDeletionCustomers();
       return;
     }
+
+    // 7. Reset 8 Sample Records button
+    const resetTrigger = e.target.closest('#btn-reset-privacy-deletion');
+    if (resetTrigger) {
+      e.preventDefault();
+      showToast('Resetting 8 sample customer records in database…', 'info');
+      fetch(`${window.location.origin}/api/privacy-deletion/customers/reset`, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            showToast('✓ All 8 sample customer records restored!', 'success');
+            loadPrivacyDeletionCustomers();
+          } else {
+            showToast('Failed to reset records', 'error');
+          }
+        })
+        .catch(err => showToast(`Error resetting records: ${err.message}`, 'error'));
+      return;
+    }
   });
 
   // Escape key handler to close modal

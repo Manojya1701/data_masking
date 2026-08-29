@@ -78,25 +78,22 @@ async function initializeSchema() {
     console.warn('[DB Init] Seeding warning:', seedErr.message);
   }
 
-  // Check if privacy_deletion_customers table is empty and seed 8 sample deletion records
+  // Seed sample privacy deletion records into PostgreSQL (ON CONFLICT DO NOTHING ensures all 8 records exist)
   try {
-    const delCountRes = await db.query('SELECT COUNT(*) AS total FROM privacy_deletion_customers;');
-    const delTotal = parseInt(delCountRes?.rows?.[0]?.total || '0', 10);
-    if (delTotal === 0) {
-      console.log('[DB Init] Seeding sample privacy deletion records…');
-      await db.query(`
-        INSERT INTO privacy_deletion_customers (first_name, last_name, email) VALUES
-        ('Rahul', 'Kumar', 'rahul@gmail.com'),
-        ('Priya', 'Sharma', 'priya@gmail.com'),
-        ('Arjun', 'Reddy', 'arjun@gmail.com'),
-        ('Sneha', 'Patel', 'sneha.p@gmail.com'),
-        ('Vikram', 'Verma', 'vikram.v@example.com'),
-        ('Ananya', 'Roy', 'ananya.roy@example.com'),
-        ('Karthik', 'Nair', 'karthik.n@gmail.com'),
-        ('Divya', 'Das', 'divya.das@example.com');
-      `);
-      console.log('[DB Init] ✅ Seeded 8 sample privacy deletion records.');
-    }
+    console.log('[DB Init] Seeding sample privacy deletion records…');
+    await db.query(`
+      INSERT INTO privacy_deletion_customers (first_name, last_name, email) VALUES
+      ('Rahul', 'Kumar', 'rahul@gmail.com'),
+      ('Priya', 'Sharma', 'priya@gmail.com'),
+      ('Arjun', 'Reddy', 'arjun@gmail.com'),
+      ('Sneha', 'Patel', 'sneha.p@gmail.com'),
+      ('Vikram', 'Verma', 'vikram.v@example.com'),
+      ('Ananya', 'Roy', 'ananya.roy@example.com'),
+      ('Karthik', 'Nair', 'karthik.n@gmail.com'),
+      ('Divya', 'Das', 'divya.das@example.com')
+      ON CONFLICT (email) DO NOTHING;
+    `);
+    console.log('[DB Init] ✅ Seeded privacy deletion customer records into PostgreSQL.');
   } catch (delSeedErr) {
     console.warn('[DB Init] Privacy deletion seeding warning:', delSeedErr.message);
   }
