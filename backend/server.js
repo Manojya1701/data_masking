@@ -29,17 +29,10 @@ const PORT =
 
 app.use(
   cors({
-    origin: [
-      'http://localhost:3000',
-      'http://127.0.0.1:3000',
-      'https://dataprotectionsystem.netlify.app'
-    ],
-
-    methods: [
-      'GET',
-      'POST',
-      'OPTIONS'
-    ]
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: false
   })
 );
 
