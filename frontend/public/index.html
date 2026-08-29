@@ -1219,20 +1219,20 @@
     </div>
   </div>
 
-  <!-- ── 13. PRIVACY DATA DELETION CONFIRMATION MODAL ───────────────────────── -->
+  <!-- ── 13. CREATIVE INTERACTIVE PRIVACY WORKSPACE MODAL ───────────────────────── -->
   <div id="privacy-deletion-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="privacy-deletion-modal-title">
     <div id="privacy-deletion-backdrop" class="modal-overlay"></div>
-    <div class="protection-preview-card" style="max-width: 520px;">
+    <div class="protection-preview-card" style="max-width: 680px; border: 1px solid var(--border); box-shadow: var(--shadow-xl);">
       
       <!-- Modal Header -->
       <div class="prot-preview-header">
         <div class="prot-preview-header-left">
-          <div class="prot-preview-icon-wrap" style="color: var(--red);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          <div id="privacy-modal-header-icon" class="prot-preview-icon-wrap" style="color: var(--cyan);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
           <div>
-            <h3 id="privacy-deletion-modal-title" class="prot-preview-title">Delete Personal Data</h3>
-            <p class="prot-preview-subtitle">Permanent Privacy Data Erasure</p>
+            <h3 id="privacy-deletion-modal-title" class="prot-preview-title">Apply Privacy Operation</h3>
+            <p class="prot-preview-subtitle">Transform & Protect Customer Record #<span id="privacy-deletion-selected-id">1</span></p>
           </div>
         </div>
         <button type="button" id="btn-cancel-privacy-delete-x" class="prot-preview-close-btn" aria-label="Close modal">&times;</button>
@@ -1240,26 +1240,64 @@
 
       <!-- Modal Body -->
       <div class="prot-preview-body" style="padding: 20px 24px;">
-        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
-          <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Selected email:</span>
-          <div id="privacy-deletion-selected-email" style="font-size: 1.1rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--red); margin-top: 4px; word-break: break-all;">
-            rahul@gmail.com
+        
+        <!-- 8 Operation Selection Pill Bar -->
+        <div style="margin-bottom: 16px;">
+          <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 8px;">Select Privacy Technique:</span>
+          <div id="privacy-modal-op-tabs" style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button type="button" class="privacy-op-tab active" data-op="masking">🎭 Masking</button>
+            <button type="button" class="privacy-op-tab" data-op="tokenization">🏷️ Tokenization</button>
+            <button type="button" class="privacy-op-tab" data-op="anonymization">🔒 Anonymization</button>
+            <button type="button" class="privacy-op-tab" data-op="pseudonymization">👤 Pseudonym</button>
+            <button type="button" class="privacy-op-tab" data-op="redaction">❌ Redaction</button>
+            <button type="button" class="privacy-op-tab" data-op="encryption">🔐 Encryption</button>
+            <button type="button" class="privacy-op-tab" data-op="hashing">🔑 Hashing</button>
+            <button type="button" class="privacy-op-tab danger-tab" data-op="deletion">🗑️ Deletion</button>
           </div>
         </div>
 
-        <p id="privacy-deletion-prompt-text" style="font-size: 0.9rem; color: var(--text-primary); margin: 0; line-height: 1.5;">
-          Are you sure you want to permanently delete this customer's personal data?
+        <!-- Live Before vs After Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+          
+          <!-- BEFORE Box -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <span class="meta-pill neutral" style="font-size: 0.72rem; font-weight: 700;">RAW DATA</span>
+              <span style="font-size: 0.75rem; color: var(--red); font-weight: 600;">Original</span>
+            </div>
+            <div style="font-size: 0.84rem; line-height: 1.6;">
+              <div><span style="color:var(--text-muted);">First Name:</span> <strong id="privacy-preview-before-fname" style="color:var(--text-primary);">Rahul</strong></div>
+              <div><span style="color:var(--text-muted);">Last Name:</span> <strong id="privacy-preview-before-lname" style="color:var(--text-primary);">Kumar</strong></div>
+              <div><span style="color:var(--text-muted);">Email:</span> <code id="privacy-deletion-selected-email" style="color:var(--cyan); font-weight:700;">rahul@gmail.com</code></div>
+            </div>
+          </div>
+
+          <!-- AFTER Box -->
+          <div style="background: var(--bg-surface); border: 1px solid var(--cyan); border-radius: var(--radius-md); padding: 14px; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <span class="meta-pill success" style="font-size: 0.72rem; font-weight: 700;">PROTECTED PREVIEW</span>
+              <span id="privacy-preview-technique-tag" class="meta-pill primary" style="font-size: 0.72rem; font-weight: 700;">MASKING</span>
+            </div>
+            <div style="font-size: 0.84rem; line-height: 1.6;">
+              <div><span style="color:var(--text-muted);">First Name:</span> <strong id="privacy-preview-after-fname" style="color:var(--green);">R***l</strong></div>
+              <div><span style="color:var(--text-muted);">Last Name:</span> <strong id="privacy-preview-after-lname" style="color:var(--green);">K***r</strong></div>
+              <div><span style="color:var(--text-muted);">Email:</span> <code id="privacy-preview-after-email" style="color:var(--cyan); font-weight:700;">r****@gmail.com</code></div>
+            </div>
+          </div>
+
+        </div>
+
+        <p id="privacy-deletion-prompt-text" style="font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">
+          Clicking confirm will apply this privacy technique and save the protected record directly to your database.
         </p>
-        <p style="font-size: 0.78rem; color: var(--text-muted); margin: 6px 0 0;">
-          Database record ID: <strong id="privacy-deletion-selected-id" style="color: var(--text-primary);">1</strong>
-        </p>
+
       </div>
 
       <!-- Modal Footer -->
       <div class="prot-preview-footer" style="justify-content: flex-end; gap: 10px;">
         <button type="button" id="btn-cancel-privacy-delete" class="btn-ghost btn-sm">CANCEL</button>
-        <button type="button" id="btn-confirm-privacy-delete" class="btn-danger btn-sm" style="display:inline-flex; align-items:center; gap:8px;">
-          <span>CONFIRM DELETE</span>
+        <button type="button" id="btn-confirm-privacy-delete" class="btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:8px;">
+          <span>CONFIRM & SAVE TO DATABASE</span>
         </button>
       </div>
 

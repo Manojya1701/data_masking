@@ -562,6 +562,54 @@ async function handleAnonymizePrivacyCustomer(req, res) {
 router.put('/privacy-deletion/customers/:id/anonymize', handleAnonymizePrivacyCustomer);
 router.post('/privacy-deletion/customers/:id/anonymize', handleAnonymizePrivacyCustomer);
 
+// ── POST /api/privacy-deletion/customers/:id/apply-operation ───────────────
+
+async function handleApplyOperationPrivacyCustomer(req, res) {
+  const { id } = req.params;
+  const customerId = parseInt(id, 10);
+  const operation = req.body?.operation || req.query?.operation || 'masking';
+
+  if (isNaN(customerId) || customerId <= 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid customer ID',
+    });
+  }
+
+  try {
+    const result = await privacyDeletionService.applyOperationToPrivacyCustomer(customerId, operation);
+
+    if (!result.success) {
+      if (result.notFound) {
+        return res.status(404).json({
+          success: false,
+          message: 'Customer not found',
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: result.message || 'Failed to apply operation to customer',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      operation: result.operation,
+      message: result.message,
+      record: result.record,
+      deletedId: result.deletedId,
+    });
+  } catch (err) {
+    console.error('[Routes] Error applying operation to privacy customer:', err.message);
+    return res.status(500).json({
+      success: false,
+      message: err.message || 'Database failure during operation execution',
+    });
+  }
+}
+
+router.post('/privacy-deletion/customers/:id/apply-operation', handleApplyOperationPrivacyCustomer);
+
 // ── POST /api/database/customers/protect ─────────────────────────────────────
 
 router.post('/database/customers/protect', async (req, res) => {

@@ -1,14 +1,30 @@
 'use strict';
 
 /**
- * Privacy Data Management Service (Deletion & In-Place Anonymization)
+ * Privacy Data Management Service (Supports All 8 Privacy Operations)
  * Manages privacy_deletion_customers table.
- * Executes parameterized SQL deletion: DELETE FROM privacy_deletion_customers WHERE id = $1
- * Executes parameterized SQL anonymization: UPDATE privacy_deletion_customers SET first_name = $1, last_name = $2, email = $3 WHERE id = $4
+ * Operations: masking, tokenization, anonymization, pseudonymization, redaction, encryption, hashing, deletion.
+ * Executes parameterized SQL queries: UPDATE / DELETE FROM privacy_deletion_customers WHERE id = $1
  */
 
 const db = require('../database/db');
 const auditService = require('./audit-service');
+const { maskValue } = require('../handlers/mask-utils');
+const { hash } = require('./hashing-service');
+const crypto = require('crypto');
+
+// Secret key for field encryption
+const FIELD_ENC_KEY = crypto.createHash('sha256').update(process.env.FIELD_ENCRYPTION_SECRET || 'udps_field_secret_key_2026').digest();
+
+function encryptFieldVal(val) {
+  if (!val) return val;
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', FIELD_ENC_KEY, iv);
+  let encrypted = cipher.update(String(val), 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  const authTag = cipher.getAuthTag().toString('hex');
+  return `ENC_AES256_${iv.toString('hex')}:${authTag}:${encrypted.slice(0, 10)}…`;
+}
 
 // Sample fallback records for demonstration when PostgreSQL is unconfigured / offline
 let DELETION_SAMPLE_CUSTOMERS = [
@@ -41,28 +57,46 @@ async function getPrivacyDeletionCustomers() {
 
 /**
  * Permanently delete a customer record from privacy_deletion_customers table.
- * Uses parameterized SQL query: DELETE FROM privacy_deletion_customers WHERE id = $1
  */
 async function deletePrivacyCustomer(id) {
+  return applyOperationToPrivacyCustomer(id, 'deletion');
+}
+
+/**
+ * Anonymize customer personal data in-place in privacy_deletion_customers table.
+ */
+async function anonymizePrivacyCustomer(id) {
+  return applyOperationToPrivacyCustomer(id, 'anonymization');
+}
+
+/**
+ * Apply any of the 8 Privacy Operations to a customer record in privacy_deletion_customers table.
+ * Operations: masking, tokenization, anonymization, pseudonymization, redaction, encryption, hashing, deletion.
+ */
+async function applyOperationToPrivacyCustomer(id, rawOp) {
   const customerId = parseInt(id, 10);
   if (isNaN(customerId) || customerId <= 0) {
     throw new Error('Invalid customer ID');
   }
 
-  if (db.isConfigured()) {
-    try {
-      // 1. Verify existence using parameterized query
-      const checkRes = await db.query('SELECT id, email, first_name, last_name FROM privacy_deletion_customers WHERE id = $1;', [customerId]);
+  const op = (rawOp || 'deletion').toLowerCase().trim();
+  const normalizedOp = (op === 'mask' ? 'masking' : op === 'token' ? 'tokenization' : op === 'anonymize' ? 'anonymization' : op === 'pseudo' ? 'pseudonymization' : op === 'redact' ? 'redaction' : op === 'encrypt' ? 'encryption' : op === 'hash' ? 'hashing' : op === 'delete' ? 'deletion' : op);
+
+  const ALLOWED = new Set(['masking', 'tokenization', 'anonymization', 'pseudonymization', 'redaction', 'encryption', 'hashing', 'deletion']);
+  if (!ALLOWED.has(normalizedOp)) {
+    throw new Error(`Unsupported operation: "${rawOp}"`);
+  }
+
+  // Handling DELETION
+  if (normalizedOp === 'deletion') {
+    if (db.isConfigured()) {
+      const checkRes = await db.query('SELECT id, email FROM privacy_deletion_customers WHERE id = $1;', [customerId]);
       if (!checkRes || !checkRes.rows || checkRes.rows.length === 0) {
         return { success: false, notFound: true, message: 'Customer not found' };
       }
-
       const targetEmail = checkRes.rows[0].email;
-
-      // 2. Execute parameterized DELETE
       await db.query('DELETE FROM privacy_deletion_customers WHERE id = $1;', [customerId]);
 
-      // 3. Log audit event
       try {
         await auditService.logOperation({
           jobId: `DEL_PRIV_${customerId}`,
@@ -75,102 +109,119 @@ async function deletePrivacyCustomer(id) {
           riskLevel: 'HIGH',
           outputFileName: `deleted_customer_${customerId}`,
         });
-      } catch { /* ignore audit error */ }
+      } catch { /* ignore */ }
 
       return {
         success: true,
+        operation: 'deletion',
         message: 'Customer personal data deleted successfully',
         deletedId: customerId,
         deletedEmail: targetEmail,
       };
-    } catch (err) {
-      console.error('[Privacy Deletion Error] Failed to delete record:', err.message);
-      throw err;
     }
+
+    const index = DELETION_SAMPLE_CUSTOMERS.findIndex(c => c.id === customerId);
+    if (index === -1) {
+      return { success: false, notFound: true, message: 'Customer not found' };
+    }
+    const deletedItem = DELETION_SAMPLE_CUSTOMERS.splice(index, 1)[0];
+    return {
+      success: true,
+      operation: 'deletion',
+      message: 'Customer personal data deleted successfully',
+      deletedId: customerId,
+      deletedEmail: deletedItem.email,
+    };
   }
 
-  // Fallback in-memory mode
-  const index = DELETION_SAMPLE_CUSTOMERS.findIndex(c => c.id === customerId);
-  if (index === -1) {
+  // Fetch record for transformation operations
+  let origRecord = null;
+  if (db.isConfigured()) {
+    const checkRes = await db.query('SELECT id, first_name, last_name, email FROM privacy_deletion_customers WHERE id = $1;', [customerId]);
+    if (checkRes && checkRes.rows && checkRes.rows.length > 0) {
+      origRecord = checkRes.rows[0];
+    }
+  } else {
+    origRecord = DELETION_SAMPLE_CUSTOMERS.find(c => c.id === customerId);
+  }
+
+  if (!origRecord) {
     return { success: false, notFound: true, message: 'Customer not found' };
   }
 
-  const deletedItem = DELETION_SAMPLE_CUSTOMERS.splice(index, 1)[0];
-  return {
-    success: true,
-    message: 'Customer personal data deleted successfully',
-    deletedId: customerId,
-    deletedEmail: deletedItem.email,
-  };
-}
+  const { first_name: fName, last_name: lName, email: emailVal } = origRecord;
+  let newFirstName = fName;
+  let newLastName = lName;
+  let newEmail = emailVal;
 
-/**
- * Anonymize customer personal data in-place in privacy_deletion_customers table.
- * Uses parameterized SQL query: UPDATE privacy_deletion_customers SET first_name = $1, last_name = $2, email = $3 WHERE id = $4
- */
-async function anonymizePrivacyCustomer(id) {
-  const customerId = parseInt(id, 10);
-  if (isNaN(customerId) || customerId <= 0) {
-    throw new Error('Invalid customer ID');
+  if (normalizedOp === 'masking') {
+    newFirstName = maskValue(fName, 'name');
+    newLastName = maskValue(lName, 'name');
+    newEmail = maskValue(emailVal, 'email');
+  } else if (normalizedOp === 'tokenization') {
+    const hashSnippet = crypto.createHash('sha256').update(String(fName || customerId)).digest('hex').slice(0, 6).toUpperCase();
+    newFirstName = `TKN_FIRST_${hashSnippet}`;
+    newLastName = `TKN_LAST_${hashSnippet}`;
+    newEmail = `TKN_EMAIL_${hashSnippet}@token.invalid`;
+  } else if (normalizedOp === 'anonymization') {
+    newFirstName = 'Anonymous';
+    newLastName = 'User';
+    newEmail = `anonymized_${customerId}@privacy.invalid`;
+  } else if (normalizedOp === 'pseudonymization') {
+    const num = String(customerId).padStart(3, '0');
+    newFirstName = `PERSON_${num}`;
+    newLastName = `USER_${num}`;
+    newEmail = `EMAIL_${num}@domain.invalid`;
+  } else if (normalizedOp === 'redaction') {
+    newFirstName = '[REDACTED]';
+    newLastName = '[REDACTED]';
+    newEmail = '[REDACTED]';
+  } else if (normalizedOp === 'encryption') {
+    newFirstName = encryptFieldVal(fName);
+    newLastName = encryptFieldVal(lName);
+    newEmail = encryptFieldVal(emailVal);
+  } else if (normalizedOp === 'hashing') {
+    newFirstName = hash(String(fName), 'sha256').slice(0, 16);
+    newLastName = hash(String(lName), 'sha256').slice(0, 16);
+    newEmail = hash(String(emailVal), 'sha256').slice(0, 16);
   }
-
-  const anonFirstName = 'Anonymous';
-  const anonLastName = 'User';
-  const anonEmail = `anonymized_${customerId}@privacy.invalid`;
 
   if (db.isConfigured()) {
+    await db.query(
+      'UPDATE privacy_deletion_customers SET first_name = $1, last_name = $2, email = $3 WHERE id = $4;',
+      [newFirstName, newLastName, newEmail, customerId]
+    );
+
     try {
-      const checkRes = await db.query('SELECT id, email FROM privacy_deletion_customers WHERE id = $1;', [customerId]);
-      if (!checkRes || !checkRes.rows || checkRes.rows.length === 0) {
-        return { success: false, notFound: true, message: 'Customer not found' };
-      }
-
-      await db.query(
-        'UPDATE privacy_deletion_customers SET first_name = $1, last_name = $2, email = $3 WHERE id = $4;',
-        [anonFirstName, anonLastName, anonEmail, customerId]
-      );
-
-      try {
-        await auditService.logOperation({
-          jobId: `ANON_PRIV_${customerId}`,
-          originalFileName: 'privacy_deletion_customers',
-          fileFormat: 'postgresql_table',
-          operation: 'anonymization',
-          status: 'SUCCESS',
-          processedCount: 1,
-          detectedCount: 3,
-          riskLevel: 'MEDIUM',
-          outputFileName: `anonymized_customer_${customerId}`,
-        });
-      } catch { /* ignore audit error */ }
-
-      return {
-        success: true,
-        message: 'Customer personal data anonymized successfully',
-        anonymizedId: customerId,
-        anonymizedEmail: anonEmail,
-      };
-    } catch (err) {
-      console.error('[Privacy Anonymize Error] Failed to anonymize record:', err.message);
-      throw err;
-    }
+      await auditService.logOperation({
+        jobId: `OP_${normalizedOp.toUpperCase()}_PRIV_${customerId}`,
+        originalFileName: 'privacy_deletion_customers',
+        fileFormat: 'postgresql_table',
+        operation: normalizedOp,
+        status: 'SUCCESS',
+        processedCount: 1,
+        detectedCount: 3,
+        riskLevel: 'MEDIUM',
+        outputFileName: `${normalizedOp}_customer_${customerId}`,
+      });
+    } catch { /* ignore */ }
+  } else {
+    origRecord.first_name = newFirstName;
+    origRecord.last_name = newLastName;
+    origRecord.email = newEmail;
   }
-
-  // Fallback in-memory mode
-  const item = DELETION_SAMPLE_CUSTOMERS.find(c => c.id === customerId);
-  if (!item) {
-    return { success: false, notFound: true, message: 'Customer not found' };
-  }
-
-  item.first_name = anonFirstName;
-  item.last_name = anonLastName;
-  item.email = anonEmail;
 
   return {
     success: true,
-    message: 'Customer personal data anonymized successfully',
-    anonymizedId: customerId,
-    anonymizedEmail: anonEmail,
+    operation: normalizedOp,
+    message: `Customer personal data updated using ${normalizedOp.toUpperCase()}`,
+    updatedId: customerId,
+    record: {
+      id: customerId,
+      first_name: newFirstName,
+      last_name: newLastName,
+      email: newEmail,
+    }
   };
 }
 
@@ -178,4 +229,5 @@ module.exports = {
   getPrivacyDeletionCustomers,
   deletePrivacyCustomer,
   anonymizePrivacyCustomer,
+  applyOperationToPrivacyCustomer,
 };

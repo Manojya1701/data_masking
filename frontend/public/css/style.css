@@ -2298,6 +2298,39 @@ button {
   gap: 8px;
 }
 
+/* ── 15. PRIVACY OP TABS IN WORKSPACE MODAL ────────────────────────────── */
+.privacy-op-tab {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur) ease;
+}
+
+.privacy-op-tab:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  transform: translateY(-1px);
+}
+
+.privacy-op-tab.active {
+  background: var(--cyan-glow);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+
+.privacy-op-tab.danger-tab:hover, .privacy-op-tab.danger-tab.active {
+  background: rgba(244, 63, 94, 0.15);
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
+}
+
 .demo-tag {
   display: inline-flex;
   align-items: center;

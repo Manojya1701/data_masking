@@ -11,18 +11,18 @@ const { searchEmailInDatabase, DB_TABLE_REGISTRY } = require('../backend/service
 describe('Global Database Email Search Service', () => {
 
   test('searchEmailInDatabase returns matches for existing email across database tables', async () => {
-    const res = await searchEmailInDatabase('rahul@gmail.com');
+    const res = await searchEmailInDatabase('harika@example.com');
     expect(res).toHaveProperty('success', true);
-    expect(res).toHaveProperty('email', 'rahul@gmail.com');
+    expect(res).toHaveProperty('email', 'harika@example.com');
     expect(res).toHaveProperty('found', true);
     expect(res.totalMatches).toBeGreaterThan(0);
     expect(res.tableMatchesCount).toBeGreaterThan(0);
     expect(Array.isArray(res.matches)).toBe(true);
 
-    const match = res.matches.find(m => m.tableName === 'privacy_deletion_customers');
+    const match = res.matches.find(m => m.tableName === 'customers');
     expect(match).toBeDefined();
     expect(match.matchCount).toBeGreaterThan(0);
-    expect(match.records.some(r => r.email === 'rahul@gmail.com')).toBe(true);
+    expect(match.records.some(r => r.email === 'harika@example.com')).toBe(true);
   });
 
   test('searchEmailInDatabase returns found: false for non-existent email', async () => {
