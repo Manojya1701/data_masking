@@ -202,6 +202,41 @@ async function query(text, params = []) {
     return { rowCount: 1 };
   }
 
+  // 13. SELECT FROM processing_history
+  if (lowerSql.startsWith('select') && lowerSql.includes('from processing_history')) {
+    const list = currentStore.processing_history || [];
+    const limit = params.length > 0 ? parseInt(params[params.length - 1], 10) || 20 : 20;
+    return { rows: JSON.parse(JSON.stringify(list.slice(0, limit))) };
+  }
+
+  // 14. INSERT INTO processing_history
+  if (lowerSql.startsWith('insert into processing_history')) {
+    const list = currentStore.processing_history || [];
+    const newRecord = {
+      id: list.length + 1,
+      job_id: params[0] || `JOB_${Date.now()}`,
+      original_file_name: params[1] || 'dataset.csv',
+      file_format: params[2] || 'csv',
+      file_size: params[3] || 0,
+      operation: params[4] || 'masking',
+      masking_type: params[5] || null,
+      hash_mode: params[6] || null,
+      hash_algorithm: params[7] || null,
+      encryption_algorithm: params[8] || null,
+      detected_count: params[9] || 0,
+      processed_count: params[10] || 0,
+      risk_level: params[11] || 'MEDIUM',
+      processing_time_seconds: params[12] || 0,
+      output_file_name: params[13] || null,
+      status: params[14] || 'SUCCESS',
+      error_category: params[15] || null,
+      created_at: new Date().toISOString()
+    };
+    list.unshift(newRecord);
+    saveStore();
+    return { rows: [{ id: newRecord.id }], rowCount: 1 };
+  }
+
   return { rows: [] };
 }
 
