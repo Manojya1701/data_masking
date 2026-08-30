@@ -178,9 +178,51 @@ async function handleDsarSubmit(e) {
   }
 }
 
+export function showDsarPortalView() {
+  const coreWorkspace = document.getElementById('udps-core-workspace');
+  const dsarWorkspace = document.getElementById('dsar-portal-workspace');
+  if (coreWorkspace && dsarWorkspace) {
+    coreWorkspace.classList.add('hidden');
+    dsarWorkspace.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+export function showUdpsCoreView() {
+  const coreWorkspace = document.getElementById('udps-core-workspace');
+  const dsarWorkspace = document.getElementById('dsar-portal-workspace');
+  if (coreWorkspace && dsarWorkspace) {
+    dsarWorkspace.classList.add('hidden');
+    coreWorkspace.classList.remove('hidden');
+  }
+}
+
 export function initDsarIntake() {
   const form = document.getElementById('dsar-intake-form');
   const refreshBtn = document.getElementById('btn-refresh-dsar-requests');
+  const navDsarBtn = document.getElementById('nav-dsar-portal');
+  const backToCoreBtn = document.getElementById('btn-back-to-udps-core');
+  const coreNavLinks = document.querySelectorAll('.nav-core-link, .app-header__brand');
+
+  if (navDsarBtn) {
+    navDsarBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showDsarPortalView();
+    });
+  }
+
+  if (backToCoreBtn) {
+    backToCoreBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showUdpsCoreView();
+    });
+  }
+
+  coreNavLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      showUdpsCoreView();
+    });
+  });
 
   if (form) {
     form.addEventListener('submit', handleDsarSubmit);
@@ -202,6 +244,11 @@ export function initDsarIntake() {
       showToast(`Step 1 Intake Complete for ${requestId}. Ready for Step 2: Identity Resolution & Discovery!`, 'info');
     }
   });
+
+  // Handle URL hash on initial load
+  if (window.location.hash === '#dsar-portal-workspace' || window.location.hash === '#dsar-workflow-section') {
+    showDsarPortalView();
+  }
 
   updateAutoTrackingId();
   loadDsarRequests();
