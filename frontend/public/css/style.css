@@ -2408,3 +2408,83 @@ button {
   .demo-modal-title { font-size: 1.1rem; }
   .demo-modal-footer { display: none; }
 }
+
+/* ── 16. DSAR ERASURE PIPELINE STEPPER ──────────────────────────────────── */
+
+.dsar-pipeline-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.dsar-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 95px;
+  opacity: 0.55;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dsar-step-item.active {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.dsar-step-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.dsar-step-item.active .dsar-step-badge {
+  background: rgba(6,182,212,0.15);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 10px rgba(6,182,212,0.3);
+}
+
+.dsar-step-label {
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.dsar-step-item.active .dsar-step-label {
+  color: var(--text-bright);
+}
+
+.dsar-step-divider {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  min-width: 20px;
+  margin-top: -14px;
+}
+
+.badge-received {
+  background: rgba(6,182,212,0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(6,182,212,0.3);
+}
+
+.badge-verified {
+  background: rgba(16,185,129,0.12);
+  color: var(--emerald);
+  border: 1px solid rgba(16,185,129,0.3);
+}

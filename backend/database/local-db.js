@@ -32,7 +32,22 @@ const DEFAULT_STORE = {
   ],
   protected_customer_data: [],
   processing_history: [],
-  privacy_scan_history: []
+  privacy_scan_history: [],
+  dsar_requests: [
+    {
+      id: 1,
+      request_id: 'DSAR-2026-000123',
+      full_name: 'John Doe',
+      email: 'john.doe@example.com',
+      phone: '+91 98765 43210',
+      customer_id: 'CUST-8842',
+      request_type: 'full_erasure',
+      subject_category: 'customer',
+      verification_evidence: 'Government ID Verified (Pass: #ID-892)',
+      status: 'RECEIVED',
+      created_at: '2026-08-30T10:00:00.000Z'
+    }
+  ]
 };
 
 let store = null;
@@ -232,9 +247,36 @@ async function query(text, params = []) {
       error_category: params[15] || null,
       created_at: new Date().toISOString()
     };
+  // 15. SELECT FROM dsar_requests
+  if (lowerSql.startsWith('select') && lowerSql.includes('from dsar_requests')) {
+    const list = currentStore.dsar_requests || [];
+    if (lowerSql.includes('where request_id =')) {
+      const targetId = params[0];
+      const match = list.find(r => r.request_id === targetId);
+      return { rows: match ? [JSON.parse(JSON.stringify(match))] : [] };
+    }
+    return { rows: JSON.parse(JSON.stringify(list)) };
+  }
+
+  // 16. INSERT INTO dsar_requests
+  if (lowerSql.startsWith('insert into dsar_requests')) {
+    const list = currentStore.dsar_requests || [];
+    const newRecord = {
+      id: list.length > 0 ? Math.max(...list.map(r => r.id || 0)) + 1 : 1,
+      request_id: params[0] || `DSAR-2026-${Math.floor(100000 + Math.random() * 900000)}`,
+      full_name: params[1] || 'Unknown',
+      email: params[2] || 'unknown@example.com',
+      phone: params[3] || null,
+      customer_id: params[4] || null,
+      request_type: params[5] || 'full_erasure',
+      subject_category: params[6] || 'customer',
+      verification_evidence: params[7] || null,
+      status: params[8] || 'RECEIVED',
+      created_at: new Date().toISOString()
+    };
     list.unshift(newRecord);
     saveStore();
-    return { rows: [{ id: newRecord.id }], rowCount: 1 };
+    return { rows: [{ id: newRecord.id, request_id: newRecord.request_id }], rowCount: 1 };
   }
 
   return { rows: [] };

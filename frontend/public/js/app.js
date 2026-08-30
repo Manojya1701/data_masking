@@ -10,6 +10,7 @@ import { initHistory, refreshHistory } from './history.js';
 import { initDbProtection } from './db-protection.js';
 import { initPrivacyDeletion } from './privacy-deletion.js';
 import { initEmailSearch } from './email-search.js';
+import { initDsarIntake } from './dsar-intake.js';
 import { initTheme } from './theme.js';
 import { initDashboardStats } from './dashboard-stats.js';
 import { initSearch } from './search.js';
@@ -537,3 +538,6 @@ if (mobileMenuBtn && headerNav) {
     }
   });
 }
+
+// Initialize DSAR Intake Workspace Controller
+initDsarIntake();

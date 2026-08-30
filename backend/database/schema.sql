@@ -84,4 +84,20 @@ CREATE TABLE IF NOT EXISTS protected_customer_data (
 
 CREATE INDEX IF NOT EXISTS idx_protected_customer_data_created_at ON protected_customer_data (created_at DESC);
 
+-- DSAR (Data Subject Access Request / Data Erasure Workflow) Intake Table
+CREATE TABLE IF NOT EXISTS dsar_requests (
+    id BIGSERIAL PRIMARY KEY,
+    request_id VARCHAR(50) UNIQUE NOT NULL,
+    full_name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    phone VARCHAR(50),
+    customer_id VARCHAR(100),
+    request_type VARCHAR(100) NOT NULL DEFAULT 'full_erasure',
+    subject_category VARCHAR(100) DEFAULT 'customer',
+    verification_evidence TEXT,
+    status VARCHAR(50) NOT NULL DEFAULT 'RECEIVED',
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
 
+CREATE INDEX IF NOT EXISTS idx_dsar_requests_created_at ON dsar_requests (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_dsar_requests_status ON dsar_requests (status);

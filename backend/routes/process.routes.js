@@ -23,6 +23,7 @@ const auditService = require('../services/audit-service');
 const dbProtectionService = require('../services/db-protection-service');
 const privacyDeletionService = require('../services/privacy-deletion-service');
 const emailSearchService = require('../services/email-search-service');
+const dsarService = require('../services/dsar-service');
 
 const router = express.Router();
 
@@ -747,8 +748,42 @@ router.get('/formats', (req, res) => {
       { key: 'orc',     label: 'ORC',              category: 'Binary Data', ext: ['.orc'], note: 'Requires Python 3 + PyArrow' },
       { key: 'jpeg',    label: 'JPEG',             category: 'Images',     ext: ['.jpg', '.jpeg'] },
       { key: 'png',     label: 'PNG',              category: 'Images',     ext: ['.png'] },
-    ],
-  });
+// ── DSAR ERASURE WORKFLOW ROUTES (Segmento Protect Step 1) ─────────────────
+
+// POST /api/dsar/requests — Submit new DSAR intake request
+router.post('/dsar/requests', async (req, res) => {
+  try {
+    const result = await dsarService.createDsarRequest(req.body);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.status(201).json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/requests — Fetch all active DSAR intake requests
+router.get('/dsar/requests', async (req, res) => {
+  try {
+    const result = await dsarService.getDsarRequests();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/requests/:id — Fetch details for a specific DSAR tracking ID
+router.get('/dsar/requests/:id', async (req, res) => {
+  try {
+    const result = await dsarService.getDsarRequestById(req.params.id);
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
 });
 
 module.exports = router;

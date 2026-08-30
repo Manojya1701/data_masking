@@ -97,8 +97,23 @@ async function initializeSchema() {
       `);
       console.log('[DB Init] ✅ Seeded 8 sample privacy deletion customer records into PostgreSQL.');
     }
-  } catch (delSeedErr) {
-    console.warn('[DB Init] Privacy deletion seeding warning:', delSeedErr.message);
+  // Seed initial sample DSAR request into dsar_requests table if empty
+  try {
+    const dsarCountRes = await db.query('SELECT COUNT(*) AS total FROM dsar_requests;');
+    const dsarTotal = parseInt(dsarCountRes?.rows?.[0]?.total || '0', 10);
+    if (dsarTotal === 0) {
+      console.log('[DB Init] Seeding initial sample DSAR intake request…');
+      await db.query(`
+        INSERT INTO dsar_requests (
+          request_id, full_name, email, phone, customer_id, request_type, subject_category, verification_evidence, status
+        ) VALUES (
+          'DSAR-2026-000123', 'John Doe', 'john.doe@example.com', '+91 98765 43210', 'CUST-8842', 'full_erasure', 'customer', 'Government ID Verified (Pass: #ID-892)', 'RECEIVED'
+        ) ON CONFLICT (request_id) DO NOTHING;
+      `);
+      console.log('[DB Init] ✅ Seeded initial sample DSAR intake request.');
+    }
+  } catch (dsarErr) {
+    console.warn('[DB Init] DSAR requests seeding warning:', dsarErr.message);
   }
 
   console.log(
