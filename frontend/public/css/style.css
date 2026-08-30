@@ -2488,3 +2488,67 @@ button {
   color: var(--emerald);
   border: 1px solid rgba(16,185,129,0.3);
 }
+
+/* ── DSAR FORM INPUTS & TABLE STYLING ────────────────────────────────────── */
+
+.input-field {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-bright) !important;
+  padding: 10px 14px !important;
+  border-radius: var(--radius-md) !important;
+  font-size: 0.88rem !important;
+  font-family: inherit !important;
+  outline: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  box-sizing: border-box !important;
+}
+
+.input-field:focus {
+  border-color: var(--cyan) !important;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15) !important;
+}
+
+.input-field::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.6 !important;
+}
+
+select.input-field {
+  appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238892b0' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  padding-right: 36px !important;
+  cursor: pointer !important;
+}
+
+select.input-field option {
+  background-color: var(--bg-card) !important;
+  color: var(--text-bright) !important;
+}
+
+#dsar-requests-table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+#dsar-requests-table th {
+  padding: 14px 18px !important;
+  text-align: left !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  border-bottom: 1px solid var(--border) !important;
+  white-space: nowrap !important;
+  letter-spacing: 0.05em !important;
+}
+
+#dsar-requests-table td {
+  padding: 14px 18px !important;
+  vertical-align: middle !important;
+  border-bottom: 1px solid var(--border) !important;
+  white-space: nowrap !important;
+  font-size: 0.88rem !important;
+}
