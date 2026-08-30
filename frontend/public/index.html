@@ -988,6 +988,69 @@
 
     </section>
 
+    <!-- ── 6. RESTORE ENCRYPTED FILE WORKSPACE ───────────────────────────────── -->
+    <section id="restore-section" class="section">
+      
+      <div class="section-header">
+        <h2 class="section-title">Restore Encrypted File</h2>
+        <p class="section-desc">Decrypt and restore files encrypted with UDPS AES-256-GCM or ChaCha20-Poly1305 key headers.</p>
+      </div>
+
+      <div class="restore-card">
+        
+        <div id="restore-drop-zone" class="drop-zone" style="padding:32px; margin-bottom:20px;" tabindex="0" role="button" aria-label="Upload encrypted file area">
+          <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <h4 style="font-size:1rem; font-weight:700; margin-bottom:4px;">Upload Encrypted File (.enc)</h4>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:12px;">Select or drop the encrypted container file created by UDPS</p>
+          <button type="button" class="btn-ghost btn-sm" onclick="event.stopPropagation(); document.getElementById('restore-file-input').click();">Browse File</button>
+          <input type="file" id="restore-file-input" class="hidden" accept=".enc,*/*">
+        </div>
+
+        <div id="restore-file-info" class="hidden" style="margin-bottom:16px; padding:12px 16px; background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-md); font-weight:600; color:var(--cyan); display:flex; justify-content:space-between; align-items:center;">
+          <span>Encrypted File: <span id="restore-file-name">file.enc</span></span>
+          <button type="button" id="change-restore-file-btn" class="btn-ghost btn-sm" style="font-size:0.78rem; padding:4px 10px;">Change File</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr auto; gap:12px; align-items:end; margin-bottom:16px;">
+          <div>
+            <label for="restore-password" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:6px;">Decryption Password</label>
+            <div style="position:relative;">
+              <input type="password" id="restore-password" class="form-input" placeholder="Enter password used during encryption">
+              <button type="button" id="toggle-restore-password" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer;">
+                <svg id="restore-eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg id="restore-eye-closed" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+          <button id="restore-btn" class="btn-primary" style="padding:10px 24px;">
+            <span id="restore-btn-text">Decrypt & Restore</span>
+          </button>
+        </div>
+
+        <div id="restore-error" class="hidden" style="margin-bottom:16px; padding:12px; background:var(--red-glow); border:1px solid var(--red); border-radius:var(--radius-md); color:var(--red); font-size:0.85rem;">
+          <span id="restore-error-message">Decryption failed.</span>
+        </div>
+
+        <div id="restore-result" class="hidden" style="padding:20px; background:var(--green-glow); border:1px solid var(--green); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div id="integrity-badge" class="meta-pill success" style="margin-bottom:4px;">✓ SHA-256 Integrity Verified</div>
+            <h4 style="font-weight:700; color:var(--green);">Decryption Successful!</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">Your original file has been securely decrypted and verified.</p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button id="restore-preview-btn" class="btn-ghost btn-sm">Preview</button>
+            <button id="restore-download-btn" class="btn-primary btn-sm">Download Restored File</button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+    </div> <!-- /#udps-core-workspace -->
+
     <!-- ── DSAR ERASURE WORKFLOW PORTAL (Segmento Protect Dedicated Portal) ───────────── -->
     <div id="dsar-portal-workspace" class="hidden">
       
@@ -1168,69 +1231,6 @@
 
     </section>
     </div> <!-- /#dsar-portal-workspace -->
-
-    <!-- ── 6. RESTORE ENCRYPTED FILE WORKSPACE ───────────────────────────────── -->
-    <section id="restore-section" class="section">
-      
-      <div class="section-header">
-        <h2 class="section-title">Restore Encrypted File</h2>
-        <p class="section-desc">Decrypt and restore files encrypted with UDPS AES-256-GCM or ChaCha20-Poly1305 key headers.</p>
-      </div>
-
-      <div class="restore-card">
-        
-        <div id="restore-drop-zone" class="drop-zone" style="padding:32px; margin-bottom:20px;" tabindex="0" role="button" aria-label="Upload encrypted file area">
-          <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="11" width="18" height="11" rx="2"/>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-          </svg>
-          <h4 style="font-size:1rem; font-weight:700; margin-bottom:4px;">Upload Encrypted File (.enc)</h4>
-          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:12px;">Select or drop the encrypted container file created by UDPS</p>
-          <button type="button" class="btn-ghost btn-sm" onclick="event.stopPropagation(); document.getElementById('restore-file-input').click();">Browse File</button>
-          <input type="file" id="restore-file-input" class="hidden" accept=".enc,*/*">
-        </div>
-
-        <div id="restore-file-info" class="hidden" style="margin-bottom:16px; padding:12px 16px; background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-md); font-weight:600; color:var(--cyan); display:flex; justify-content:space-between; align-items:center;">
-          <span>Encrypted File: <span id="restore-file-name">file.enc</span></span>
-          <button type="button" id="change-restore-file-btn" class="btn-ghost btn-sm" style="font-size:0.78rem; padding:4px 10px;">Change File</button>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1fr auto; gap:12px; align-items:end; margin-bottom:16px;">
-          <div>
-            <label for="restore-password" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:6px;">Decryption Password</label>
-            <div style="position:relative;">
-              <input type="password" id="restore-password" class="form-input" placeholder="Enter password used during encryption">
-              <button type="button" id="toggle-restore-password" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer;">
-                <svg id="restore-eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <svg id="restore-eye-closed" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-              </button>
-            </div>
-          </div>
-          <button id="restore-btn" class="btn-primary" style="padding:10px 24px;">
-            <span id="restore-btn-text">Decrypt & Restore</span>
-          </button>
-        </div>
-
-        <div id="restore-error" class="hidden" style="margin-bottom:16px; padding:12px; background:var(--red-glow); border:1px solid var(--red); border-radius:var(--radius-md); color:var(--red); font-size:0.85rem;">
-          <span id="restore-error-message">Decryption failed.</span>
-        </div>
-
-        <div id="restore-result" class="hidden" style="padding:20px; background:var(--green-glow); border:1px solid var(--green); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div id="integrity-badge" class="meta-pill success" style="margin-bottom:4px;">✓ SHA-256 Integrity Verified</div>
-            <h4 style="font-weight:700; color:var(--green);">Decryption Successful!</h4>
-            <p style="font-size:0.85rem; color:var(--text-secondary);">Your original file has been securely decrypted and verified.</p>
-          </div>
-          <div style="display:flex; gap:10px;">
-            <button id="restore-preview-btn" class="btn-ghost btn-sm">Preview</button>
-            <button id="restore-download-btn" class="btn-primary btn-sm">Download Restored File</button>
-          </div>
-        </div>
-
-      </div>
-
-    </section>
-    </div> <!-- /#udps-core-workspace -->
 
   </main>
 
