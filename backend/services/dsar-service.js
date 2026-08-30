@@ -81,6 +81,7 @@ async function createDsarRequest(data = {}) {
         created_at: res?.rows?.[0]?.created_at || new Date().toISOString()
       };
 
+      FALLBACK_DSAR_REQUESTS.unshift(record);
       return { success: true, message: 'DSAR Intake Request registered successfully', record };
     } catch (err) {
       console.warn('[DSAR Service Warning] Failed to insert DB request:', err.message);

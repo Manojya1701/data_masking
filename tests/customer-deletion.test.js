@@ -6,9 +6,13 @@
  * against privacy_deletion_customers table records.
  */
 
-const { getPrivacyDeletionCustomers, deletePrivacyCustomer, applyOperationToPrivacyCustomer } = require('../backend/services/privacy-deletion-service');
+const { getPrivacyDeletionCustomers, deletePrivacyCustomer, applyOperationToPrivacyCustomer, resetPrivacyDeletionCustomers } = require('../backend/services/privacy-deletion-service');
 
 describe('Comprehensive Privacy Data Management Service', () => {
+
+  beforeEach(async () => {
+    await resetPrivacyDeletionCustomers();
+  });
 
   test('getPrivacyDeletionCustomers returns customer records', async () => {
     const data = await getPrivacyDeletionCustomers();
@@ -40,7 +44,7 @@ describe('Comprehensive Privacy Data Management Service', () => {
 
     expect(res.success).toBe(true);
     expect(res.operation).toBe('masking');
-    expect(res.record.email).not.toBe(target.email);
+    expect(res.record.email).not.toBe('rahul@gmail.com');
     expect(res.record.email).toMatch(/[*@]/);
   });
 

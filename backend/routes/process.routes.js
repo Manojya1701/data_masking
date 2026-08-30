@@ -748,6 +748,10 @@ router.get('/formats', (req, res) => {
       { key: 'orc',     label: 'ORC',              category: 'Binary Data', ext: ['.orc'], note: 'Requires Python 3 + PyArrow' },
       { key: 'jpeg',    label: 'JPEG',             category: 'Images',     ext: ['.jpg', '.jpeg'] },
       { key: 'png',     label: 'PNG',              category: 'Images',     ext: ['.png'] },
+    ],
+  });
+});
+
 // ── DSAR ERASURE WORKFLOW ROUTES (Segmento Protect Step 1) ─────────────────
 
 // POST /api/dsar/requests — Submit new DSAR intake request

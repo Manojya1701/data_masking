@@ -96,6 +96,7 @@ async function query(text, params = []) {
     let tableName = 'customers';
     if (lowerSql.includes('privacy_deletion_customers')) tableName = 'privacy_deletion_customers';
     else if (lowerSql.includes('protected_customer_data')) tableName = 'protected_customer_data';
+    else if (lowerSql.includes('dsar_requests')) tableName = 'dsar_requests';
     
     const list = currentStore[tableName] || [];
     return { rows: [{ total: String(list.length) }] };
@@ -247,12 +248,17 @@ async function query(text, params = []) {
       error_category: params[15] || null,
       created_at: new Date().toISOString()
     };
+    list.unshift(newRecord);
+    saveStore();
+    return { rows: [{ id: newRecord.id }], rowCount: 1 };
+  }
+
   // 15. SELECT FROM dsar_requests
   if (lowerSql.startsWith('select') && lowerSql.includes('from dsar_requests')) {
     const list = currentStore.dsar_requests || [];
-    if (lowerSql.includes('where request_id =')) {
-      const targetId = params[0];
-      const match = list.find(r => r.request_id === targetId);
+    if (lowerSql.includes('where')) {
+      const targetId = params && params[0] ? String(params[0]).trim().toLowerCase() : '';
+      const match = list.find(r => r && String(r.request_id || '').trim().toLowerCase() === targetId);
       return { rows: match ? [JSON.parse(JSON.stringify(match))] : [] };
     }
     return { rows: JSON.parse(JSON.stringify(list)) };
