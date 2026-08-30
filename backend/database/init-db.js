@@ -97,6 +97,10 @@ async function initializeSchema() {
       `);
       console.log('[DB Init] ✅ Seeded 8 sample privacy deletion customer records into PostgreSQL.');
     }
+  } catch (delSeedErr) {
+    console.warn('[DB Init] Privacy deletion seeding warning:', delSeedErr.message);
+  }
+
   // Seed initial sample DSAR request into dsar_requests table if empty
   try {
     const dsarCountRes = await db.query('SELECT COUNT(*) AS total FROM dsar_requests;');
