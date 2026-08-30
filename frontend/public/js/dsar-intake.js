@@ -188,12 +188,20 @@ export function showDsarPortalView() {
   }
 }
 
-export function showUdpsCoreView() {
+export function showUdpsCoreView(targetHash) {
   const coreWorkspace = document.getElementById('udps-core-workspace');
   const dsarWorkspace = document.getElementById('dsar-portal-workspace');
   if (coreWorkspace && dsarWorkspace) {
     dsarWorkspace.classList.add('hidden');
     coreWorkspace.classList.remove('hidden');
+    if (targetHash) {
+      setTimeout(() => {
+        const targetEl = document.querySelector(targetHash);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 50);
+    }
   }
 }
 
@@ -214,13 +222,14 @@ export function initDsarIntake() {
   if (backToCoreBtn) {
     backToCoreBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      showUdpsCoreView();
+      showUdpsCoreView('#hero-section');
     });
   }
 
   coreNavLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      showUdpsCoreView();
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      showUdpsCoreView(href);
     });
   });
 
