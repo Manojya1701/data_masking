@@ -285,6 +285,58 @@ async function query(text, params = []) {
     return { rows: [{ id: newRecord.id, request_id: newRecord.request_id }], rowCount: 1 };
   }
 
+  // 17. UPDATE dsar_requests SET status = $1 WHERE request_id = $2
+  if (lowerSql.startsWith('update dsar_requests')) {
+    const list = currentStore.dsar_requests || [];
+    const newStatus = params[0];
+    const reqId = params[1];
+    const match = list.find(r => r && String(r.request_id || '').trim().toLowerCase() === String(reqId || '').trim().toLowerCase());
+    if (match) {
+      match.status = newStatus;
+      saveStore();
+      return { rowCount: 1 };
+    }
+    return { rowCount: 0 };
+  }
+
+  // 18. SELECT FROM dsar_identity_maps
+  if (lowerSql.startsWith('select') && lowerSql.includes('from dsar_identity_maps')) {
+    const list = currentStore.dsar_identity_maps || [];
+    if (lowerSql.includes('where')) {
+      const targetId = params && params[0] ? String(params[0]).trim().toLowerCase() : '';
+      const match = list.find(m => m && String(m.request_id || '').trim().toLowerCase() === targetId);
+      return { rows: match ? [JSON.parse(JSON.stringify(match))] : [] };
+    }
+    return { rows: JSON.parse(JSON.stringify(list)) };
+  }
+
+  // 19. INSERT INTO dsar_identity_maps
+  if (lowerSql.startsWith('insert into dsar_identity_maps')) {
+    if (!currentStore.dsar_identity_maps) currentStore.dsar_identity_maps = [];
+    const list = currentStore.dsar_identity_maps;
+    const newRecord = {
+      id: list.length > 0 ? Math.max(...list.map(r => r.id || 0)) + 1 : 1,
+      request_id: params[0],
+      target_email: params[1],
+      target_name: params[2] || null,
+      target_phone: params[3] || null,
+      target_customer_id: params[4] || null,
+      discovered_systems_count: params[5] || 0,
+      total_pii_records_found: params[6] || 0,
+      data_map_json: typeof params[7] === 'string' ? JSON.parse(params[7]) : (params[7] || {}),
+      status: params[8] || 'DISCOVERY_COMPLETED',
+      scanned_at: new Date().toISOString()
+    };
+    // Remove old map if exists for re-scan
+    const existingIdx = list.findIndex(m => m && String(m.request_id).trim().toLowerCase() === String(newRecord.request_id).trim().toLowerCase());
+    if (existingIdx !== -1) {
+      list.splice(existingIdx, 1);
+    }
+    list.unshift(newRecord);
+    saveStore();
+    return { rows: [{ id: newRecord.id, request_id: newRecord.request_id }], rowCount: 1 };
+  }
+
   return { rows: [] };
 }
 

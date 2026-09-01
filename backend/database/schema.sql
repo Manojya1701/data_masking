@@ -101,3 +101,20 @@ CREATE TABLE IF NOT EXISTS dsar_requests (
 
 CREATE INDEX IF NOT EXISTS idx_dsar_requests_created_at ON dsar_requests (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_dsar_requests_status ON dsar_requests (status);
+
+-- DSAR Step 2 Identity Discovery Data Map Table
+CREATE TABLE IF NOT EXISTS dsar_identity_maps (
+    id BIGSERIAL PRIMARY KEY,
+    request_id VARCHAR(50) NOT NULL REFERENCES dsar_requests(request_id) ON DELETE CASCADE,
+    target_email VARCHAR(150) NOT NULL,
+    target_name VARCHAR(150),
+    target_phone VARCHAR(50),
+    target_customer_id VARCHAR(100),
+    discovered_systems_count INT DEFAULT 0,
+    total_pii_records_found INT DEFAULT 0,
+    data_map_json JSONB NOT NULL,
+    status VARCHAR(50) DEFAULT 'DISCOVERY_COMPLETED',
+    scanned_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_dsar_identity_maps_request_id ON dsar_identity_maps (request_id);

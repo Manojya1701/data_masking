@@ -24,6 +24,7 @@ const dbProtectionService = require('../services/db-protection-service');
 const privacyDeletionService = require('../services/privacy-deletion-service');
 const emailSearchService = require('../services/email-search-service');
 const dsarService = require('../services/dsar-service');
+const dsarDiscoveryService = require('../services/dsar-discovery-service');
 
 const router = express.Router();
 
@@ -781,6 +782,35 @@ router.get('/dsar/requests', async (req, res) => {
 router.get('/dsar/requests/:id', async (req, res) => {
   try {
     const result = await dsarService.getDsarRequestById(req.params.id);
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── DSAR STEP 2 IDENTITY DISCOVERY ROUTES ──────────────────────────────────
+
+// POST /api/dsar/discovery/scan — Perform identity resolution & PII discovery scan
+router.post('/dsar/discovery/scan', async (req, res) => {
+  try {
+    const { requestId } = req.body || {};
+    const result = await dsarDiscoveryService.performIdentityDiscovery(requestId);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/discovery/:id — Fetch discovered Data Map for a tracking ID
+router.get('/dsar/discovery/:id', async (req, res) => {
+  try {
+    const result = await dsarDiscoveryService.getDsarDiscoveryDataMap(req.params.id);
     if (!result.success) {
       return jsonError(res, result.notFound ? 404 : 400, result.message);
     }
