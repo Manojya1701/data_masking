@@ -7,8 +7,13 @@
 
 const dsarService = require('../backend/services/dsar-service');
 const dsarDiscoveryService = require('../backend/services/dsar-discovery-service');
+const { resetPrivacyDeletionCustomers } = require('../backend/services/privacy-deletion-service');
 
 describe('DSAR Step 2: Identity Resolution & Data Discovery Service', () => {
+
+  beforeEach(async () => {
+    await resetPrivacyDeletionCustomers();
+  });
 
   test('performIdentityDiscovery should fail if tracking ID is invalid or missing', async () => {
     const res = await dsarDiscoveryService.performIdentityDiscovery('');

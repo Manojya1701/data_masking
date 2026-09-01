@@ -53,7 +53,7 @@ async function resetPrivacyDeletionCustomers() {
     { first_name: 'Divya', last_name: 'Das', email: 'divya.das@example.com' }
   ];
 
-  if (db.isConfigured()) {
+  if (db.isPostgresConfigured()) {
     try {
       await db.query(`
         INSERT INTO privacy_deletion_customers (first_name, last_name, email) VALUES
@@ -81,6 +81,15 @@ async function resetPrivacyDeletionCustomers() {
     email: c.email,
     created_at: new Date().toISOString()
   }));
+
+  try {
+    const localDb = require('../database/local-db');
+    const store = localDb.loadStore();
+    if (store) {
+      store.privacy_deletion_customers = JSON.parse(JSON.stringify(DELETION_SAMPLE_CUSTOMERS));
+      localDb.saveStore();
+    }
+  } catch { /* ignore */ }
 
   return { success: true, count: DELETION_SAMPLE_CUSTOMERS.length, records: JSON.parse(JSON.stringify(DELETION_SAMPLE_CUSTOMERS)) };
 }
