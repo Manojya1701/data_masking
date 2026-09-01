@@ -176,7 +176,10 @@ async function performIdentityDiscovery(requestId) {
       if (!h) return false;
       const file = (h.original_file_name || '').toLowerCase();
       const out = (h.output_file_name || '').toLowerCase();
-      return file.includes(targetEmail) || out.includes(targetEmail) || file.includes('customer') || out.includes('customer');
+      const emailMatch = targetEmail && targetEmail.length >= 3 && (file.includes(targetEmail) || out.includes(targetEmail));
+      const nameMatch = targetName && targetName.length >= 3 && (file.includes(targetName.toLowerCase()) || out.includes(targetName.toLowerCase()));
+      const idMatch = targetCustomerId && targetCustomerId.length >= 3 && (file.includes(targetCustomerId.toLowerCase()) || out.includes(targetCustomerId.toLowerCase()));
+      return Boolean(emailMatch || nameMatch || idMatch);
     });
 
     if (matchedHist.length > 0) {
