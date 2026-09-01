@@ -38,6 +38,32 @@ function updateStepperActiveStep(stepNumber) {
   });
 }
 
+function formatRowIdsPill(rowIds) {
+  if (!rowIds || !Array.isArray(rowIds) || rowIds.length === 0) {
+    return '<span style="color:var(--text-muted); font-size:0.8rem;">-</span>';
+  }
+  if (rowIds.length <= 4) {
+    return `<span class="meta-pill primary" style="font-family:monospace; font-size:0.75rem; background:rgba(6,182,212,0.08); color:var(--cyan); border:1px solid rgba(6,182,212,0.25);">Row IDs: [ ${rowIds.join(', ')} ]</span>`;
+  }
+  const minId = Math.min(...rowIds);
+  const maxId = Math.max(...rowIds);
+  const tooltip = `Matching Row IDs (${rowIds.length}): ${rowIds.join(', ')}`;
+  return `<span class="meta-pill primary" style="font-family:monospace; font-size:0.75rem; background:rgba(6,182,212,0.08); color:var(--cyan); border:1px solid rgba(6,182,212,0.25); cursor:help;" title="${escapeHtml(tooltip)}">${rowIds.length} Row IDs (#${minId}–#${maxId})</span>`;
+}
+
+function formatSystemName(systemName, tableName) {
+  const isFile = (systemName || '').toLowerCase().includes('file') || (tableName || '').toLowerCase().includes('history');
+  const typeLabel = isFile ? '📁 File Storage & Audit Logs' : '🗄️ PostgreSQL Database';
+  const nameLabel = tableName || systemName || 'System Table';
+
+  return `
+    <div style="display:flex; flex-direction:column; gap:2px;">
+      <div style="font-weight:700; color:var(--text-bright); font-size:0.88rem; font-family:monospace;">${escapeHtml(nameLabel)}</div>
+      <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">${escapeHtml(typeLabel)}</div>
+    </div>
+  `;
+}
+
 function renderDataMapTable(dataMap) {
   const tbody = document.getElementById('dsar-discovery-table-body');
   if (!tbody) return;
@@ -58,24 +84,23 @@ function renderDataMapTable(dataMap) {
   tbody.innerHTML = tables.map(t => {
     const isFound = t.recordCount > 0;
     const statusBadge = isFound
-      ? '<span class="meta-pill badge-verified">✓ PII DISCOVERED</span>'
-      : '<span class="meta-pill" style="opacity:0.6;">NO PII MATCH</span>';
+      ? '<span class="meta-pill badge-verified" style="font-size:0.75rem;">✓ PII DISCOVERED</span>'
+      : '<span class="meta-pill" style="opacity:0.5; font-size:0.75rem;">NO PII MATCH</span>';
 
     const fieldsBadge = (t.matchedFields || []).length > 0
-      ? t.matchedFields.map(f => `<span class="meta-pill primary" style="font-size:0.75rem;">${escapeHtml(f)}</span>`).join(' ')
+      ? t.matchedFields.map(f => `<span class="meta-pill primary" style="font-size:0.72rem; margin-right:4px;">${escapeHtml(f)}</span>`).join('')
       : '<span style="color:var(--text-muted); font-size:0.8rem;">-</span>';
 
-    const rowIdsStr = (t.matchedRowIds || []).length > 0
-      ? `<span style="font-family:monospace; color:var(--cyan); font-weight:700;">[ ${t.matchedRowIds.join(', ')} ]</span>`
-      : '<span style="color:var(--text-muted); font-size:0.8rem;">-</span>';
+    const rowIdsPill = formatRowIdsPill(t.matchedRowIds);
+    const systemBadge = formatSystemName(t.systemName, t.tableName);
 
     return `
-      <tr>
-        <td style="font-weight:700; color:var(--text-bright);">${escapeHtml(t.systemName || t.tableName)}</td>
-        <td>${fieldsBadge}</td>
-        <td>${rowIdsStr}</td>
-        <td style="font-weight:700; color:${isFound ? 'var(--emerald)' : 'var(--text-muted)'};">${t.recordCount} Record${t.recordCount === 1 ? '' : 's'}</td>
-        <td>${statusBadge}</td>
+      <tr style="vertical-align:middle;">
+        <td style="padding:12px 16px;">${systemBadge}</td>
+        <td style="padding:12px 16px;">${fieldsBadge}</td>
+        <td style="padding:12px 16px;">${rowIdsPill}</td>
+        <td style="padding:12px 16px; font-weight:700; color:${isFound ? 'var(--emerald)' : 'var(--text-muted)'};">${t.recordCount} Record${t.recordCount === 1 ? '' : 's'}</td>
+        <td style="padding:12px 16px;">${statusBadge}</td>
       </tr>
     `;
   }).join('');
