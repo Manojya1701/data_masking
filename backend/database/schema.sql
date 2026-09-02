@@ -133,3 +133,31 @@ CREATE TABLE IF NOT EXISTS dsar_impact_reports (
 );
 
 CREATE INDEX IF NOT EXISTS idx_dsar_impact_reports_request_id ON dsar_impact_reports (request_id);
+
+-- Connected Enterprise Systems Physical SQL Tables
+CREATE TABLE IF NOT EXISTS billing_invoices_ledger (
+    id BIGSERIAL PRIMARY KEY,
+    customer_email VARCHAR(150) NOT NULL,
+    invoice_number VARCHAR(100) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    tax_retention_required BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS legal_holds_and_disputes (
+    id BIGSERIAL PRIMARY KEY,
+    customer_email VARCHAR(150) NOT NULL,
+    case_reference VARCHAR(100) NOT NULL,
+    dispute_type VARCHAR(100) NOT NULL,
+    hold_status VARCHAR(50) DEFAULT 'ACTIVE_HOLD',
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS active_escrow_transactions (
+    id BIGSERIAL PRIMARY KEY,
+    customer_email VARCHAR(150) NOT NULL,
+    escrow_id VARCHAR(100) NOT NULL,
+    escrow_amount DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'PENDING_CLEARANCE',
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);

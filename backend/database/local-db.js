@@ -33,6 +33,17 @@ const DEFAULT_STORE = {
   protected_customer_data: [],
   processing_history: [],
   privacy_scan_history: [],
+  billing_invoices_ledger: [
+    { id: 1, customer_email: 'john.doe@example.com', invoice_number: 'INV-2026-901', amount: 499.00, tax_retention_required: true, created_at: '2026-08-15T10:00:00.000Z' },
+    { id: 2, customer_email: 'john.doe@example.com', invoice_number: 'INV-2026-902', amount: 1250.00, tax_retention_required: true, created_at: '2026-08-20T11:30:00.000Z' },
+    { id: 3, customer_email: 'vikram.legal@company.com', invoice_number: 'INV-2026-999', amount: 8900.00, tax_retention_required: true, created_at: '2026-08-25T14:15:00.000Z' }
+  ],
+  legal_holds_and_disputes: [
+    { id: 1, customer_email: 'vikram.legal@company.com', case_reference: 'CASE-SUBPOENA-2026-88', dispute_type: 'Court Proceedings & Regulatory Hold', hold_status: 'ACTIVE_HOLD', created_at: '2026-08-28T09:00:00.000Z' }
+  ],
+  active_escrow_transactions: [
+    { id: 1, customer_email: 'vikram.legal@company.com', escrow_id: 'ESCROW-7721', escrow_amount: 15000.00, status: 'PENDING_CLEARANCE', created_at: '2026-08-29T16:45:00.000Z' }
+  ],
   dsar_requests: [
     {
       id: 1,
@@ -397,6 +408,39 @@ async function query(text, params = []) {
     list.unshift(newRecord);
     saveStore();
     return { rows: [{ id: newRecord.id, request_id: newRecord.request_id }], rowCount: 1 };
+  }
+
+  // 22. SELECT FROM billing_invoices_ledger
+  if (lowerSql.startsWith('select') && lowerSql.includes('from billing_invoices_ledger')) {
+    const list = currentStore.billing_invoices_ledger || [];
+    if (lowerSql.includes('where') && params && params[0]) {
+      const targetEmail = String(params[0]).trim().toLowerCase();
+      const filtered = list.filter(m => m && String(m.customer_email || '').trim().toLowerCase() === targetEmail);
+      return { rows: JSON.parse(JSON.stringify(filtered)) };
+    }
+    return { rows: JSON.parse(JSON.stringify(list)) };
+  }
+
+  // 23. SELECT FROM legal_holds_and_disputes
+  if (lowerSql.startsWith('select') && lowerSql.includes('from legal_holds_and_disputes')) {
+    const list = currentStore.legal_holds_and_disputes || [];
+    if (lowerSql.includes('where') && params && params[0]) {
+      const targetEmail = String(params[0]).trim().toLowerCase();
+      const filtered = list.filter(m => m && String(m.customer_email || '').trim().toLowerCase() === targetEmail);
+      return { rows: JSON.parse(JSON.stringify(filtered)) };
+    }
+    return { rows: JSON.parse(JSON.stringify(list)) };
+  }
+
+  // 24. SELECT FROM active_escrow_transactions
+  if (lowerSql.startsWith('select') && lowerSql.includes('from active_escrow_transactions')) {
+    const list = currentStore.active_escrow_transactions || [];
+    if (lowerSql.includes('where') && params && params[0]) {
+      const targetEmail = String(params[0]).trim().toLowerCase();
+      const filtered = list.filter(m => m && String(m.customer_email || '').trim().toLowerCase() === targetEmail);
+      return { rows: JSON.parse(JSON.stringify(filtered)) };
+    }
+    return { rows: JSON.parse(JSON.stringify(list)) };
   }
 
   return { rows: [] };

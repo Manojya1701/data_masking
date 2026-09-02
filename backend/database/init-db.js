@@ -118,6 +118,28 @@ async function initializeSchema() {
     console.warn('[DB Init] DSAR requests seeding warning:', dsarErr.message);
   }
 
+  // Seed connected enterprise systems physical tables
+  try {
+    await db.query(`
+      INSERT INTO billing_invoices_ledger (customer_email, invoice_number, amount, tax_retention_required) VALUES
+        ('john.doe@example.com', 'INV-2026-901', 499.00, true),
+        ('john.doe@example.com', 'INV-2026-902', 1250.00, true),
+        ('vikram.legal@company.com', 'INV-2026-999', 8900.00, true)
+      ON CONFLICT DO NOTHING;
+
+      INSERT INTO legal_holds_and_disputes (customer_email, case_reference, dispute_type, hold_status) VALUES
+        ('vikram.legal@company.com', 'CASE-SUBPOENA-2026-88', 'Court Proceedings & Regulatory Hold', 'ACTIVE_HOLD')
+      ON CONFLICT DO NOTHING;
+
+      INSERT INTO active_escrow_transactions (customer_email, escrow_id, escrow_amount, status) VALUES
+        ('vikram.legal@company.com', 'ESCROW-7721', 15000.00, 'PENDING_CLEARANCE')
+      ON CONFLICT DO NOTHING;
+    `);
+    console.log('[DB Init] ✅ Seeded physical billing ledgers, legal holds, and escrow tables.');
+  } catch (entSeedErr) {
+    console.warn('[DB Init] Enterprise tables seeding warning:', entSeedErr.message);
+  }
+
   console.log(
     '[DB Init] ✅ Database tables ready.'
   );
