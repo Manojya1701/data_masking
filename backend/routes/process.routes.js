@@ -25,6 +25,7 @@ const privacyDeletionService = require('../services/privacy-deletion-service');
 const emailSearchService = require('../services/email-search-service');
 const dsarService = require('../services/dsar-service');
 const dsarDiscoveryService = require('../services/dsar-discovery-service');
+const dsarImpactService = require('../services/dsar-impact-service');
 
 const router = express.Router();
 
@@ -811,6 +812,35 @@ router.post('/dsar/discovery/scan', async (req, res) => {
 router.get('/dsar/discovery/:id', async (req, res) => {
   try {
     const result = await dsarDiscoveryService.getDsarDiscoveryDataMap(req.params.id);
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── DSAR STEP 3 IMPACT ANALYSIS & DEPENDENCY MAPPING ROUTES ────────────────
+
+// POST /api/dsar/impact/analyze — Perform impact analysis & dependency risk scoring
+router.post('/api/dsar/impact/analyze', async (req, res) => {
+  try {
+    const { requestId } = req.body || {};
+    const result = await dsarImpactService.performImpactAnalysis(requestId);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/impact/:id — Fetch saved Impact Analysis Report for a tracking ID
+router.get('/api/dsar/impact/:id', async (req, res) => {
+  try {
+    const result = await dsarImpactService.getDsarImpactReport(req.params.id);
     if (!result.success) {
       return jsonError(res, result.notFound ? 404 : 400, result.message);
     }

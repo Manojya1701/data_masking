@@ -337,6 +337,42 @@ async function query(text, params = []) {
     return { rows: [{ id: newRecord.id, request_id: newRecord.request_id }], rowCount: 1 };
   }
 
+  // 20. SELECT FROM dsar_impact_reports
+  if (lowerSql.startsWith('select') && lowerSql.includes('from dsar_impact_reports')) {
+    const list = currentStore.dsar_impact_reports || [];
+    if (lowerSql.includes('where')) {
+      const targetId = params && params[0] ? String(params[0]).trim().toLowerCase() : '';
+      const match = list.find(m => m && String(m.request_id || '').trim().toLowerCase() === targetId);
+      return { rows: match ? [JSON.parse(JSON.stringify(match))] : [] };
+    }
+    return { rows: JSON.parse(JSON.stringify(list)) };
+  }
+
+  // 21. INSERT INTO dsar_impact_reports
+  if (lowerSql.startsWith('insert into dsar_impact_reports')) {
+    if (!currentStore.dsar_impact_reports) currentStore.dsar_impact_reports = [];
+    const list = currentStore.dsar_impact_reports;
+    const newRecord = {
+      id: list.length > 0 ? Math.max(...list.map(r => r.id || 0)) + 1 : 1,
+      request_id: params[0],
+      risk_level: params[1] || 'LOW',
+      risk_score: params[2] || 0,
+      recommended_action: params[3] || 'IN_PLACE_ANONYMIZATION',
+      dependencies_found_count: params[4] || 0,
+      impact_report_json: typeof params[5] === 'string' ? JSON.parse(params[5]) : (params[5] || {}),
+      status: params[6] || 'IMPACT_ANALYSIS_COMPLETED',
+      analyzed_at: new Date().toISOString()
+    };
+    // Remove old report if exists for re-analysis
+    const existingIdx = list.findIndex(m => m && String(m.request_id).trim().toLowerCase() === String(newRecord.request_id).trim().toLowerCase());
+    if (existingIdx !== -1) {
+      list.splice(existingIdx, 1);
+    }
+    list.unshift(newRecord);
+    saveStore();
+    return { rows: [{ id: newRecord.id, request_id: newRecord.request_id }], rowCount: 1 };
+  }
+
   return { rows: [] };
 }
 

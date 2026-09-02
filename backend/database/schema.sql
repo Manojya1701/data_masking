@@ -118,3 +118,18 @@ CREATE TABLE IF NOT EXISTS dsar_identity_maps (
 );
 
 CREATE INDEX IF NOT EXISTS idx_dsar_identity_maps_request_id ON dsar_identity_maps (request_id);
+
+-- DSAR Step 3 Impact Analysis & Dependency Mapping Table
+CREATE TABLE IF NOT EXISTS dsar_impact_reports (
+    id BIGSERIAL PRIMARY KEY,
+    request_id VARCHAR(50) NOT NULL REFERENCES dsar_requests(request_id) ON DELETE CASCADE,
+    risk_level VARCHAR(20) NOT NULL DEFAULT 'LOW',
+    risk_score INT NOT NULL DEFAULT 0,
+    recommended_action VARCHAR(100) NOT NULL DEFAULT 'IN_PLACE_ANONYMIZATION',
+    dependencies_found_count INT DEFAULT 0,
+    impact_report_json JSONB NOT NULL,
+    status VARCHAR(50) DEFAULT 'IMPACT_ANALYSIS_COMPLETED',
+    analyzed_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_dsar_impact_reports_request_id ON dsar_impact_reports (request_id);
