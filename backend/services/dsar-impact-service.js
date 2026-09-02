@@ -104,7 +104,7 @@ async function performImpactAnalysis(requestId) {
     riskScore += 15;
   }
 
-  // 5. Simulated Financial Ledger / Invoice Check (Simulated Dependency)
+  // 5. Simulated Financial Ledger / Invoice Check
   const isFinancialLedgerTied = targetEmail.includes('company') || targetEmail.includes('john') || custCount > 0;
   if (isFinancialLedgerTied) {
     dependencies.push({
@@ -115,7 +115,33 @@ async function performImpactAnalysis(requestId) {
       orphanRisk: 'CRITICAL_TAX_LAW_VIOLATION',
       recommendation: 'Retain Numerical Ledger, Anonymize Customer PII'
     });
-    riskScore += 15;
+    riskScore += 20;
+  }
+
+  // 6. Active Legal Hold & Pending Transaction Check (High Risk Scenario Trigger)
+  const isHighRiskScenario = 
+    reqData.request_type === 'restrict_processing' ||
+    targetEmail.includes('legal') || targetEmail.includes('hold') || targetEmail.includes('dispute') || targetEmail.includes('high') ||
+    targetName.toLowerCase().includes('legal') || targetName.toLowerCase().includes('dispute') || targetName.toLowerCase().includes('vikram');
+
+  if (isHighRiskScenario) {
+    dependencies.push({
+      tableName: 'legal_holds_and_disputes',
+      category: 'Legal Hold & Compliance Lock',
+      foreignKeyStatus: 'ACTIVE_LEGAL_PROCEEDING_HOLD',
+      dependentRecordCount: 2,
+      orphanRisk: 'CRITICAL_EVIDENCE_DESTRUCTION_VIOLATION',
+      recommendation: 'Block Deletion / Retain Legal Compliance Lock'
+    });
+    dependencies.push({
+      tableName: 'active_escrow_transactions',
+      category: 'Pending Financial Escrow Transaction',
+      foreignKeyStatus: 'PENDING_TRANSACTION_LOCK',
+      dependentRecordCount: 1,
+      orphanRisk: 'HIGH_FINANCIAL_LOSS_RISK',
+      recommendation: 'Freeze Account until Transaction Settles'
+    });
+    riskScore += 45;
   }
 
   // Cap risk score between 0 and 100

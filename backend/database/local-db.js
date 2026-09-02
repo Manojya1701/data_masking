@@ -43,9 +43,35 @@ const DEFAULT_STORE = {
       customer_id: 'CUST-8842',
       request_type: 'full_erasure',
       subject_category: 'customer',
-      verification_evidence: 'Government ID Verified (Pass: #ID-892)',
+      verification_evidence: 'Government ID Verified (#ID-892)',
       status: 'RECEIVED',
       created_at: '2026-08-30T10:00:00.000Z'
+    },
+    {
+      id: 2,
+      request_id: 'DSAR-2026-000456',
+      full_name: 'Alice Smith',
+      email: 'alice.smith@example.com',
+      phone: '+91 91234 56789',
+      customer_id: 'CUST-9011',
+      request_type: 'full_erasure',
+      subject_category: 'former_customer',
+      verification_evidence: 'Email OTP Verified (#OTP-334)',
+      status: 'RECEIVED',
+      created_at: '2026-08-30T10:15:00.000Z'
+    },
+    {
+      id: 3,
+      request_id: 'DSAR-2026-000789',
+      full_name: 'Vikram Malhotra (Legal Hold Demo)',
+      email: 'vikram.legal@company.com',
+      phone: '+91 99887 76655',
+      customer_id: 'CUST-1044',
+      request_type: 'restrict_processing',
+      subject_category: 'customer',
+      verification_evidence: 'Court Subpoena & Legal Compliance Lock (#LEGAL-990)',
+      status: 'RECEIVED',
+      created_at: '2026-08-30T10:30:00.000Z'
     }
   ]
 };
