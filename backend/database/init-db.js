@@ -101,23 +101,19 @@ async function initializeSchema() {
     console.warn('[DB Init] Privacy deletion seeding warning:', delSeedErr.message);
   }
 
-  // Seed initial sample DSAR requests into dsar_requests table if empty
+  // Seed initial sample DSAR requests into dsar_requests table
   try {
-    const dsarCountRes = await db.query('SELECT COUNT(*) AS total FROM dsar_requests;');
-    const dsarTotal = parseInt(dsarCountRes?.rows?.[0]?.total || '0', 10);
-    if (dsarTotal === 0) {
-      console.log('[DB Init] Seeding initial sample DSAR intake requests…');
-      await db.query(`
-        INSERT INTO dsar_requests (
-          request_id, full_name, email, phone, customer_id, request_type, subject_category, verification_evidence, status
-        ) VALUES 
-          ('DSAR-2026-000123', 'John Doe', 'john.doe@example.com', '+91 98765 43210', 'CUST-8842', 'full_erasure', 'customer', 'Government ID Verified (#ID-892)', 'RECEIVED'),
-          ('DSAR-2026-000456', 'Alice Smith (Low Risk Demo)', 'alice.smith@example.com', '+91 91234 56789', 'CUST-9011', 'full_erasure', 'former_customer', 'Email OTP Verified (#OTP-334)', 'RECEIVED'),
-          ('DSAR-2026-000789', 'Vikram Malhotra (High Risk Demo)', 'vikram.legal@company.com', '+91 99887 76655', 'CUST-1044', 'restrict_processing', 'customer', 'Court Subpoena & Legal Compliance Lock (#LEGAL-990)', 'RECEIVED')
-        ON CONFLICT (request_id) DO NOTHING;
-      `);
-      console.log('[DB Init] ✅ Seeded initial sample DSAR intake requests.');
-    }
+    console.log('[DB Init] Ensuring demo DSAR intake requests are seeded…');
+    await db.query(`
+      INSERT INTO dsar_requests (
+        request_id, full_name, email, phone, customer_id, request_type, subject_category, verification_evidence, status
+      ) VALUES 
+        ('DSAR-2026-000123', 'John Doe', 'john.doe@example.com', '+91 98765 43210', 'CUST-8842', 'full_erasure', 'customer', 'Government ID Verified (#ID-892)', 'RECEIVED'),
+        ('DSAR-2026-000456', 'Alice Smith (Low Risk Demo)', 'alice.smith@example.com', '+91 91234 56789', 'CUST-9011', 'full_erasure', 'former_customer', 'Email OTP Verified (#OTP-334)', 'RECEIVED'),
+        ('DSAR-2026-000789', 'Vikram Malhotra (High Risk Demo)', 'vikram.legal@company.com', '+91 99887 76655', 'CUST-1044', 'restrict_processing', 'customer', 'Court Subpoena & Legal Compliance Lock (#LEGAL-990)', 'RECEIVED')
+      ON CONFLICT (request_id) DO NOTHING;
+    `);
+    console.log('[DB Init] ✅ Seeded sample DSAR intake requests.');
   } catch (dsarErr) {
     console.warn('[DB Init] DSAR requests seeding warning:', dsarErr.message);
   }
