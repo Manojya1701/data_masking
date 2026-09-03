@@ -95,6 +95,12 @@ function loadStore() {
     if (fs.existsSync(DB_FILE)) {
       const raw = fs.readFileSync(DB_FILE, 'utf8');
       store = JSON.parse(raw);
+      // Ensure all default tables exist and are seeded if empty
+      for (const key of Object.keys(DEFAULT_STORE)) {
+        if (!store[key] || !Array.isArray(store[key]) || (store[key].length === 0 && DEFAULT_STORE[key].length > 0)) {
+          store[key] = JSON.parse(JSON.stringify(DEFAULT_STORE[key]));
+        }
+      }
     } else {
       store = JSON.parse(JSON.stringify(DEFAULT_STORE));
       saveStore();
