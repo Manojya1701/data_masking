@@ -850,4 +850,19 @@ router.get('/dsar/impact/:id', async (req, res) => {
   }
 });
 
+// GET /api/dsar/impact/:id/export — Download Official Certified PIA Audit Report
+router.get('/dsar/impact/:id/export', async (req, res) => {
+  try {
+    const result = await dsarImpactService.exportDsarImpactReport(req.params.id);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="${result.reportId || 'PIA-Audit-Report'}.json"`);
+    return res.json(result.exportPayload);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 module.exports = router;
