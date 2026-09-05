@@ -307,16 +307,21 @@ async function performIdentityDiscovery(requestId) {
   const dataMap = {
     requestId: cleanReqId,
     targetDataSubject: targetName,
+    fullName: targetName,
     targetEmail,
+    email: targetEmail,
     targetPhone,
+    phone: targetPhone,
     targetCustomerId,
+    customerId: targetCustomerId,
+    systemsScanned: discoveredTables.length,
+    discoveredSystemsCount: discoveredTables.filter(t => t.recordCount > 0).length,
+    totalPiiRecordsFound,
+    discoveredTables,
     aiNormalization: {
       aliases: targetAliases,
       engine: aiNormResult ? 'Python FastAPI AI Engine (Port 8000)' : 'Native Fallback Engine'
     },
-    discoveredSystemsCount: discoveredTables.filter(t => t.recordCount > 0).length,
-    totalPiiRecordsFound,
-    discoveredTables,
     scannedAt: new Date().toISOString()
   };
 
