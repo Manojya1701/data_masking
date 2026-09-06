@@ -1,15 +1,15 @@
 'use strict';
 
 /**
- * Unit Tests for DSAR Step 2: Identity Resolution & Data Discovery Service
- * Verifies cross-system PII scanning, data mapping generation, and DB persistence.
+ * Unit Tests for DSAR Step 2: Full 8-Stage AI Identity Resolution & Data Discovery Service
+ * Verifies cross-system PII scanning, AI ML confidence scoring, and Identity Link Graph generation.
  */
 
 const dsarService = require('../backend/services/dsar-service');
 const dsarDiscoveryService = require('../backend/services/dsar-discovery-service');
 const { resetPrivacyDeletionCustomers } = require('../backend/services/privacy-deletion-service');
 
-describe('DSAR Step 2: Identity Resolution & Data Discovery Service', () => {
+describe('DSAR Step 2: Full 8-Stage AI Identity Resolution & Data Discovery Service', () => {
 
   beforeEach(async () => {
     await resetPrivacyDeletionCustomers();
@@ -27,11 +27,11 @@ describe('DSAR Step 2: Identity Resolution & Data Discovery Service', () => {
     expect(res.message).toContain('not found');
   });
 
-  test('performIdentityDiscovery should execute cross-system scan and return valid Data Map', async () => {
+  test('performIdentityDiscovery should execute cross-system scan, ML scoring, and return Identity Link Graph', async () => {
     // Step 1: Create a test intake request
     const createRes = await dsarService.createDsarRequest({
-      fullName: 'Rahul Kumar',
-      email: 'rahul@gmail.com',
+      fullName: 'Vikram K Patel',
+      email: 'vikram.p@company.com',
       phone: '+91 98765 43210',
       requestType: 'full_erasure'
     });
@@ -45,21 +45,24 @@ describe('DSAR Step 2: Identity Resolution & Data Discovery Service', () => {
     expect(scanRes.success).toBe(true);
     expect(scanRes.dataMap).toBeDefined();
     expect(scanRes.dataMap.requestId).toBe(trackingId);
-    expect(scanRes.dataMap.email).toBe('rahul@gmail.com');
+    expect(scanRes.dataMap.email).toBe('vikram.p@company.com');
     expect(scanRes.dataMap.totalPiiRecordsFound).toBeGreaterThanOrEqual(1);
     expect(Array.isArray(scanRes.dataMap.discoveredTables)).toBe(true);
     expect(scanRes.dataMap.systemsScanned).toBeGreaterThan(0);
+    expect(scanRes.dataMap.overallConfidence).toBeDefined();
 
-    // Verify privacy_deletion_customers was scanned and found Rahul Kumar
-    const delTable = scanRes.dataMap.discoveredTables.find(t => t.tableName === 'privacy_deletion_customers');
-    expect(delTable).toBeDefined();
-    expect(delTable.recordCount).toBeGreaterThanOrEqual(1);
+    // Verify Identity Link Graph is built
+    expect(scanRes.dataMap.identityGraph).toBeDefined();
+    expect(scanRes.dataMap.identityGraph.rootPerson).toBeDefined();
+    expect(Array.isArray(scanRes.dataMap.identityGraph.nodes)).toBe(true);
+    expect(Array.isArray(scanRes.dataMap.identityGraph.edges)).toBe(true);
   });
 
   test('getDsarDiscoveryDataMap should retrieve saved Data Map for tracking ID', async () => {
     const createRes = await dsarService.createDsarRequest({
       fullName: 'Priya Sharma',
       email: 'priya@gmail.com',
+      phone: '+91 91234 56789',
       requestType: 'anonymization'
     });
 

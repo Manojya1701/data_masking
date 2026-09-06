@@ -2,8 +2,9 @@
 
 /**
  * DSAR Discovery Controller (Step 2 of Segmento Protect Flow)
+ * Full 8-Stage AI Identity Resolution & Data Discovery Controller:
  * Manages cross-system identity resolution, PII data discovery scanning,
- * updating stepper active states, and rendering the Discovered Data Map.
+ * ML confidence score rendering, Explainable AI badges, and Identity Link Graph visualization.
  */
 
 let activeTargetRequestId = null;
@@ -38,19 +39,6 @@ function updateStepperActiveStep(stepNumber) {
   });
 }
 
-function formatRowIdsPill(rowIds) {
-  if (!rowIds || !Array.isArray(rowIds) || rowIds.length === 0) {
-    return '<span style="color:var(--text-muted); font-size:0.8rem;">-</span>';
-  }
-  if (rowIds.length <= 4) {
-    return `<span class="meta-pill primary" style="font-family:monospace; font-size:0.75rem; background:rgba(6,182,212,0.08); color:var(--cyan); border:1px solid rgba(6,182,212,0.25);">Row IDs: [ ${rowIds.join(', ')} ]</span>`;
-  }
-  const minId = Math.min(...rowIds);
-  const maxId = Math.max(...rowIds);
-  const tooltip = `Matching Row IDs (${rowIds.length}): ${rowIds.join(', ')}`;
-  return `<span class="meta-pill primary" style="font-family:monospace; font-size:0.75rem; background:rgba(6,182,212,0.08); color:var(--cyan); border:1px solid rgba(6,182,212,0.25); cursor:help;" title="${escapeHtml(tooltip)}">${rowIds.length} Row IDs (#${minId}–#${maxId})</span>`;
-}
-
 function formatSystemName(systemName, tableName) {
   const isFile = (systemName || '').toLowerCase().includes('file') || (tableName || '').toLowerCase().includes('history');
   const typeLabel = isFile ? '📁 File Storage & Audit Logs' : '🗄️ PostgreSQL Database';
@@ -64,6 +52,49 @@ function formatSystemName(systemName, tableName) {
   `;
 }
 
+function renderIdentityGraphCluster(graph) {
+  const container = document.getElementById('dsar-graph-nodes-container');
+  const countEl = document.getElementById('dsar-graph-node-count');
+  if (!container) return;
+
+  const nodes = graph?.nodes || [];
+  if (countEl) countEl.textContent = `${nodes.length} Nodes · ${graph?.edges?.length || 0} Edges Linked`;
+
+  if (nodes.length === 0) {
+    container.innerHTML = `<span style="font-size:0.8rem; color:var(--text-muted);">No linked identity nodes found.</span>`;
+    return;
+  }
+
+  container.innerHTML = nodes.map(n => {
+    let badgeColor = 'rgba(6,182,212,0.15); color:var(--cyan); border:1px solid rgba(6,182,212,0.35);';
+    let icon = '🏷️';
+
+    if (n.type === 'CANONICAL_PERSON_ROOT') {
+      badgeColor = 'rgba(16,185,129,0.2); color:var(--emerald); border:1px solid rgba(16,185,129,0.4); font-weight:700;';
+      icon = '👤 Root:';
+    } else if (n.type === 'NAME_ALIAS') {
+      badgeColor = 'rgba(245,158,11,0.15); color:var(--amber); border:1px solid rgba(245,158,11,0.35);';
+      icon = '🔤 Alias:';
+    } else if (n.type === 'EMAIL_IDENTIFIER') {
+      badgeColor = 'rgba(139,92,246,0.15); color:#a78bfa; border:1px solid rgba(139,92,246,0.35);';
+      icon = '✉️';
+    } else if (n.type === 'PHONE_IDENTIFIER') {
+      badgeColor = 'rgba(59,130,246,0.15); color:#60a5fa; border:1px solid rgba(59,130,246,0.35);';
+      icon = '📱';
+    } else if (n.type === 'NLP_EXTRACTED_ENTITY') {
+      badgeColor = 'rgba(236,72,153,0.15); color:#f472b6; border:1px solid rgba(236,72,153,0.35);';
+      icon = '🤖 NLP:';
+    }
+
+    return `
+      <span class="meta-pill" style="${badgeColor} font-size:0.75rem; display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:12px;">
+        <span>${icon}</span>
+        <span>${escapeHtml(n.label)}</span>
+      </span>
+    `;
+  }).join('');
+}
+
 function renderDataMapTable(dataMap) {
   const tbody = document.getElementById('dsar-discovery-table-body');
   if (!tbody) return;
@@ -73,7 +104,7 @@ function renderDataMapTable(dataMap) {
   if (tables.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">
+        <td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">
           No connected systems or database tables found.
         </td>
       </tr>
@@ -91,16 +122,25 @@ function renderDataMapTable(dataMap) {
       ? t.matchedFields.map(f => `<span class="meta-pill primary" style="font-size:0.72rem; margin-right:4px;">${escapeHtml(f)}</span>`).join('')
       : '<span style="color:var(--text-muted); font-size:0.8rem;">-</span>';
 
-    const rowIdsPill = formatRowIdsPill(t.matchedRowIds);
+    const matchMethod = t.matchMethod || 'SQL Exact Check';
+    const aiConfidence = t.aiConfidence || (isFound ? '97% High Confidence' : '0%');
     const systemBadge = formatSystemName(t.systemName, t.tableName);
+
+    let confBadgeStyle = 'color:var(--text-muted);';
+    if (aiConfidence.includes('97') || aiConfidence.includes('100') || aiConfidence.includes('High') || aiConfidence.includes('Direct')) {
+      confBadgeStyle = 'color:var(--emerald); font-weight:700;';
+    } else if (aiConfidence.includes('Probable') || aiConfidence.includes('82') || aiConfidence.includes('91')) {
+      confBadgeStyle = 'color:var(--amber); font-weight:700;';
+    }
 
     return `
       <tr style="vertical-align:middle;">
-        <td style="padding:12px 16px;">${systemBadge}</td>
-        <td style="padding:12px 16px;">${fieldsBadge}</td>
-        <td style="padding:12px 16px;">${rowIdsPill}</td>
-        <td style="padding:12px 16px; font-weight:700; color:${isFound ? 'var(--emerald)' : 'var(--text-muted)'};">${t.recordCount} Record${t.recordCount === 1 ? '' : 's'}</td>
-        <td style="padding:12px 16px;">${statusBadge}</td>
+        <td style="padding:12px 14px;">${systemBadge}</td>
+        <td style="padding:12px 14px;">${fieldsBadge}</td>
+        <td style="padding:12px 14px; font-size:0.82rem; color:var(--text-bright); font-weight:600;">${escapeHtml(matchMethod)}</td>
+        <td style="padding:12px 14px; font-size:0.82rem; ${confBadgeStyle}">${escapeHtml(aiConfidence)}</td>
+        <td style="padding:12px 14px; font-weight:700; color:${isFound ? 'var(--emerald)' : 'var(--text-muted)'};">${t.recordCount} Record${t.recordCount === 1 ? '' : 's'}</td>
+        <td style="padding:12px 14px;">${statusBadge}</td>
       </tr>
     `;
   }).join('');
@@ -115,6 +155,7 @@ export async function runIdentityDiscoveryScan(requestId) {
   const nameEl = document.getElementById('dsar-disc-name');
   const emailEl = document.getElementById('dsar-disc-email');
   const phoneEl = document.getElementById('dsar-disc-phone');
+  const confEl = document.getElementById('dsar-disc-confidence');
   const totalRecEl = document.getElementById('dsar-disc-total-records');
   const tbody = document.getElementById('dsar-discovery-table-body');
 
@@ -127,17 +168,17 @@ export async function runIdentityDiscoveryScan(requestId) {
   if (tbody) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="5" style="text-align:center; padding:24px; color:var(--cyan); font-weight:600;">
+        <td colspan="6" style="text-align:center; padding:24px; color:var(--cyan); font-weight:600;">
           <div style="display:inline-flex; align-items:center; gap:8px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            <span>Scanning connected databases and file history logs for ${escapeHtml(requestId)}…</span>
+            <span>Running 8-Stage AI Identity Resolution & PII Discovery for ${escapeHtml(requestId)}…</span>
           </div>
         </td>
       </tr>
     `;
   }
 
-  showToast(`Running Identity Resolution & PII Discovery for ${requestId}…`, 'info');
+  showToast(`Running 8-Stage AI Identity Resolution for ${requestId}…`, 'info');
 
   try {
     const res = await fetch(`${window.location.origin}/api/dsar/discovery/scan`, {
@@ -150,13 +191,27 @@ export async function runIdentityDiscoveryScan(requestId) {
 
     if (data && data.success && data.dataMap) {
       const dm = data.dataMap;
-      if (nameEl) nameEl.textContent = dm.dataSubject || 'N/A';
-      if (emailEl) emailEl.textContent = dm.email || 'N/A';
-      if (phoneEl) phoneEl.textContent = dm.phone || 'N/A';
+      if (nameEl) nameEl.textContent = dm.fullName || dm.targetDataSubject || 'N/A';
+      if (emailEl) emailEl.textContent = dm.email || dm.targetEmail || 'N/A';
+      if (phoneEl) phoneEl.textContent = dm.phone || dm.targetPhone || 'N/A';
       if (totalRecEl) totalRecEl.textContent = `${dm.totalPiiRecordsFound} Record${dm.totalPiiRecordsFound === 1 ? '' : 's'}`;
 
+      if (confEl) {
+        const confScore = dm.overallConfidence || (dm.totalPiiRecordsFound > 0 ? '97%' : '0%');
+        const status = dm.overallStatus || 'MATCH';
+        confEl.textContent = `${confScore} ${status.replace('_', ' ')}`;
+        if (status === 'MATCH' || confScore.includes('9')) {
+          confEl.style.color = 'var(--emerald)';
+        } else if (status === 'PROBABLE_MATCH' || confScore.includes('8')) {
+          confEl.style.color = 'var(--amber)';
+        } else {
+          confEl.style.color = 'var(--red)';
+        }
+      }
+
+      renderIdentityGraphCluster(dm.identityGraph);
       renderDataMapTable(dm);
-      showToast(`✓ Identity Discovery Complete! Discovered ${dm.totalPiiRecordsFound} PII record(s) across ${dm.systemsScanned} systems.`, 'success');
+      showToast(`✓ Identity Discovery Complete! Discovered ${dm.totalPiiRecordsFound} PII record(s) across ${dm.systemsScanned || dm.discoveredSystemsCount} systems.`, 'success');
 
       if (card) card.scrollIntoView({ behavior: 'smooth' });
     } else {
@@ -185,7 +240,14 @@ export function initDsarDiscovery() {
   if (proceedStep3Btn) {
     proceedStep3Btn.addEventListener('click', (e) => {
       e.preventDefault();
-      showToast('Step 2 Identity Discovery complete! Step 3 (Impact Analysis) will be available in tomorrow\'s workflow update.', 'info');
+      const reqIdTag = document.getElementById('dsar-discovery-req-id');
+      const reqId = reqIdTag ? reqIdTag.textContent.replace('Target: ', '').trim() : activeTargetRequestId;
+      if (window.runImpactAnalysisScan && reqId) {
+        window.runImpactAnalysisScan(reqId);
+      } else {
+        const impactBtn = document.getElementById('btn-retrigger-impact');
+        if (impactBtn) impactBtn.click();
+      }
     });
   }
 

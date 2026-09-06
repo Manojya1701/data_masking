@@ -1227,9 +1227,13 @@
             <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">TARGET PHONE PII</div>
             <div id="dsar-disc-phone" style="font-weight:600; color:var(--text-bright); font-size:0.88rem;">-</div>
           </div>
+          <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--amber);">
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">AI MATCH CONFIDENCE</div>
+            <div id="dsar-disc-confidence" style="font-weight:700; color:var(--amber); font-size:1.05rem;">-</div>
+          </div>
           <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--cyan);">
             <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">TOTAL SYSTEMS SCANNED</div>
-            <div id="dsar-disc-systems" style="font-weight:700; color:var(--text-bright); font-size:0.95rem;">4 Systems</div>
+            <div id="dsar-disc-systems" style="font-weight:700; color:var(--text-bright); font-size:0.95rem;">6 Systems</div>
           </div>
           <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--emerald);">
             <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">TOTAL PII RECORDS FOUND</div>
@@ -1237,10 +1241,23 @@
           </div>
         </div>
 
+        <!-- Identity Link Graph Cluster Box -->
+        <div id="dsar-identity-graph-card" style="margin-bottom:20px; padding:14px 16px; background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.25); border-radius:var(--radius-md);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--cyan); text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:6px;">
+              🕸️ Stage 8: Unified Identity Link Graph
+            </span>
+            <span id="dsar-graph-node-count" style="font-size:0.75rem; color:var(--text-muted);">0 Nodes Linked</span>
+          </div>
+          <div id="dsar-graph-nodes-container" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+            <span style="font-size:0.8rem; color:var(--text-muted);">Identity graph will be synthesized upon scanning…</span>
+          </div>
+        </div>
+
         <!-- Discovered PII Data Map Table -->
         <div style="margin-bottom:16px;">
           <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">
-            📋 System Data Mapping Breakdown
+            📋 System Data Mapping & Explainable AI Breakdown
           </div>
           <div class="table-wrap">
             <table class="db-table" id="dsar-discovery-table">
@@ -1248,14 +1265,15 @@
                 <tr>
                   <th>CONNECTED SYSTEM / TABLE NAME</th>
                   <th>MATCHED PII FIELDS</th>
-                  <th>MATCHING ROW IDS</th>
+                  <th>MATCH METHOD & REASONING</th>
+                  <th>AI CONFIDENCE</th>
                   <th>RECORDS DISCOVERED</th>
                   <th>DISCOVERY STATUS</th>
                 </tr>
               </thead>
               <tbody id="dsar-discovery-table-body">
                 <tr>
-                  <td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">
+                  <td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">
                     Click "Proceed (Step 2)" on any request in the queue to run identity discovery.
                   </td>
                 </tr>
@@ -1268,7 +1286,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-top:12px; border-top:1px solid var(--border);">
           <div style="font-size:0.8rem; color:var(--emerald); font-weight:600; display:flex; align-items:center; gap:6px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Step 2 Complete: Identity Resolution & Data Map generated successfully.</span>
+            <span>Step 2 Complete: 8-Stage AI Identity Resolution & Data Map generated successfully.</span>
           </div>
           <button type="button" id="btn-proceed-step3" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px;">
             <span>Proceed to Impact Analysis (Step 3) ➔</span>
