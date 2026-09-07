@@ -52,6 +52,120 @@ function formatSystemName(systemName, tableName) {
   `;
 }
 
+function renderVisualSvgGraph(nodes, edges) {
+  const canvas = document.getElementById('dsar-graph-visual-canvas');
+  if (!canvas) return;
+
+  if (!nodes || nodes.length === 0) {
+    canvas.innerHTML = `<span style="font-size:0.8rem; color:var(--text-muted);">No graph nodes to display.</span>`;
+    return;
+  }
+
+  const width = canvas.clientWidth || 620;
+  const height = canvas.clientHeight || 240;
+  const cx = width / 2;
+  const cy = height / 2;
+
+  // Identify root node
+  const rootNode = nodes.find(n => n.type === 'CANONICAL_PERSON_ROOT') || nodes[0];
+  const orbitNodes = nodes.filter(n => n !== rootNode);
+  const totalOrbit = orbitNodes.length || 1;
+  const radiusX = Math.min(width * 0.38, 220);
+  const radiusY = Math.min(height * 0.36, 85);
+
+  const nodePositions = new Map();
+  nodePositions.set(rootNode.id, { x: cx, y: cy, node: rootNode });
+
+  orbitNodes.forEach((n, idx) => {
+    const angle = (2 * Math.PI * idx) / totalOrbit - Math.PI / 2;
+    const x = cx + radiusX * Math.cos(angle);
+    const y = cy + radiusY * Math.sin(angle);
+    nodePositions.set(n.id, { x, y, node: n });
+  });
+
+  // Build SVG lines for edges
+  let svgLines = '';
+  (edges || []).forEach(e => {
+    const src = nodePositions.get(e.source) || { x: cx, y: cy };
+    const tgt = nodePositions.get(e.target) || { x: cx, y: cy };
+    const midX = (src.x + tgt.x) / 2;
+    const midY = (src.y + tgt.y) / 2;
+    const relText = (e.relationship || '').replace('HAS_', '').replace('_', ' ');
+
+    svgLines += `
+      <g>
+        <line x1="${src.x}" y1="${src.y}" x2="${tgt.x}" y2="${tgt.y}" stroke="rgba(6,182,212,0.4)" stroke-width="1.8" stroke-dasharray="3,3" />
+        <rect x="${midX - 32}" y="${midY - 8}" width="64" height="14" rx="3" fill="#0b1329" stroke="rgba(6,182,212,0.3)" stroke-width="0.8" />
+        <text x="${midX}" y="${midY + 2.5}" fill="#38bdf8" font-size="8" font-family="monospace" font-weight="600" text-anchor="middle">${escapeHtml(relText)}</text>
+      </g>
+    `;
+  });
+
+  // Build SVG circles and labels for nodes
+  let svgNodes = '';
+  nodePositions.forEach((pos) => {
+    const n = pos.node;
+    const isRoot = n.type === 'CANONICAL_PERSON_ROOT';
+    const r = isRoot ? 22 : 16;
+
+    let fill = '#0ea5e9';
+    let stroke = '#38bdf8';
+    let icon = '🏷️';
+
+    if (isRoot) {
+      fill = 'rgba(16,185,129,0.3)';
+      stroke = '#10b981';
+      icon = '👤';
+    } else if (n.type === 'NAME_ALIAS') {
+      fill = 'rgba(245,158,11,0.25)';
+      stroke = '#f59e0b';
+      icon = '🔤';
+    } else if (n.type === 'EMAIL_IDENTIFIER') {
+      fill = 'rgba(139,92,246,0.25)';
+      stroke = '#8b5cf6';
+      icon = '✉️';
+    } else if (n.type === 'PHONE_IDENTIFIER') {
+      fill = 'rgba(59,130,246,0.25)';
+      stroke = '#3b82f6';
+      icon = '📱';
+    } else if (n.type === 'SYSTEM_RECORD' || n.type === 'DISCOVERED_RECORD') {
+      fill = 'rgba(20,184,166,0.25)';
+      stroke = '#14b8a6';
+      icon = '🗄️';
+    } else if (n.type === 'NLP_EXTRACTED_ENTITY') {
+      fill = 'rgba(236,72,153,0.25)';
+      stroke = '#ec4899';
+      icon = '🤖';
+    }
+
+    const shortLabel = (n.label || '').length > 18 ? (n.label || '').slice(0, 16) + '…' : (n.label || '');
+
+    svgNodes += `
+      <g style="cursor:pointer;" class="graph-node-group">
+        <circle cx="${pos.x}" cy="${pos.y}" r="${r + 4}" fill="${stroke}" opacity="0.15" />
+        <circle cx="${pos.x}" cy="${pos.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="2" />
+        <text x="${pos.x}" y="${pos.y + 4}" font-size="${isRoot ? 14 : 11}" text-anchor="middle">${icon}</text>
+        <rect x="${pos.x - 45}" y="${pos.y + r + 3}" width="90" height="15" rx="3" fill="rgba(15,23,42,0.85)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+        <text x="${pos.x}" y="${pos.y + r + 13}" fill="#f1f5f9" font-size="9" font-weight="${isRoot ? '700' : '500'}" font-family="sans-serif" text-anchor="middle">${escapeHtml(shortLabel)}</text>
+      </g>
+    `;
+  });
+
+  canvas.innerHTML = `
+    <svg width="100%" height="100%" viewBox="0 0 ${width} ${height}" style="overflow:visible;">
+      <defs>
+        <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="${cx}" cy="${cy}" r="${radiusX + 40}" fill="url(#glowGrad)" />
+      ${svgLines}
+      ${svgNodes}
+    </svg>
+  `;
+}
+
 function renderIdentityGraphCluster(graph) {
   const container = document.getElementById('dsar-graph-nodes-container');
   const countEl = document.getElementById('dsar-graph-node-count');
@@ -59,12 +173,17 @@ function renderIdentityGraphCluster(graph) {
   if (!container) return;
 
   const nodes = graph?.nodes || [];
-  if (countEl) countEl.textContent = `${nodes.length} Nodes · ${graph?.edges?.length || 0} Edges Linked (Neo4j)`;
+  const edges = graph?.edges || [];
+  if (countEl) countEl.textContent = `${nodes.length} Nodes · ${edges.length} Edges Linked (Neo4j)`;
 
   if (cypherCodeEl && graph?.cypherScript) {
     cypherCodeEl.textContent = graph.cypherScript;
   }
 
+  // 1. Render Visual SVG Canvas
+  renderVisualSvgGraph(nodes, edges);
+
+  // 2. Render Node Breakdown Badges
   if (nodes.length === 0) {
     container.innerHTML = `<span style="font-size:0.8rem; color:var(--text-muted);">No linked identity nodes found.</span>`;
     return;
@@ -283,4 +402,44 @@ export function initDsarDiscovery() {
       }
     }
   });
+
+  // Pre-render initial Neo4j Knowledge Graph immediately on page load
+  const initialDemoGraph = {
+    rootPerson: 'Vikram Patel',
+    nodes: [
+      { id: 'person:vikram_patel', label: 'Vikram Patel', type: 'CANONICAL_PERSON_ROOT' },
+      { id: 'email:vikram@gmail.com', label: 'vikram@gmail.com', type: 'EMAIL_IDENTIFIER' },
+      { id: 'phone:9876543210', label: '+91 9876543210', type: 'PHONE_IDENTIFIER' },
+      { id: 'alias:v_patel', label: 'V. Patel', type: 'NAME_ALIAS' },
+      { id: 'record:customers:1', label: 'customers (Row #1)', type: 'SYSTEM_RECORD' },
+      { id: 'nlp:mumbai', label: 'Mumbai (GPE)', type: 'NLP_EXTRACTED_ENTITY' }
+    ],
+    edges: [
+      { source: 'person:vikram_patel', target: 'email:vikram@gmail.com', relationship: 'HAS_PRIMARY_EMAIL', confidence: '100%' },
+      { source: 'person:vikram_patel', target: 'phone:9876543210', relationship: 'HAS_PRIMARY_PHONE', confidence: '100%' },
+      { source: 'person:vikram_patel', target: 'alias:v_patel', relationship: 'HAS_ALIAS', confidence: '95%' },
+      { source: 'person:vikram_patel', target: 'record:customers:1', relationship: 'LINKS_TO_RECORD', confidence: '97%' },
+      { source: 'person:vikram_patel', target: 'nlp:mumbai', relationship: 'EXTRACTED_FROM_LOGS', confidence: '91%' }
+    ],
+    cypherScript: `// ========================================================
+// Neo4j Cypher Graph Script: Identity Cluster for 'Vikram Patel'
+// Auto-Generated by Segmento Protect AI Knowledge Graph Engine
+// ========================================================
+
+MERGE (person_vikram_patel:PersonRoot {id: "person_vikram_patel", name: "Vikram Patel"})
+MERGE (email_vikram_gmail_com:EmailIdentifier {id: "email_vikram_gmail_com", email: "vikram@gmail.com"})
+MERGE (phone_9876543210:PhoneIdentifier {id: "phone_9876543210", phone: "+91 9876543210"})
+MERGE (alias_v_patel:NameAlias {id: "alias_v_patel", alias: "V. Patel"})
+MERGE (record_customers_1:DatabaseRecord {id: "record_customers_1", record: "customers (Row #1)"})
+
+MERGE (person_vikram_patel)-[:HAS_PRIMARY_EMAIL {confidence: "100%"}]->(email_vikram_gmail_com)
+MERGE (person_vikram_patel)-[:HAS_PRIMARY_PHONE {confidence: "100%"}]->(phone_9876543210)
+MERGE (person_vikram_patel)-[:HAS_ALIAS {confidence: "95%"}]->(alias_v_patel)
+MERGE (person_vikram_patel)-[:LINKS_TO_RECORD {confidence: "97%"}]->(record_customers_1)
+
+MATCH (root:PersonRoot)-[r*1..2]-(connected) RETURN root, r, connected;`
+  };
+
+  renderIdentityGraphCluster(initialDemoGraph);
 }
+
