@@ -5,56 +5,49 @@
       "first_name": "Rahul",
       "last_name": "Kumar",
       "email": "rahul@gmail.com",
-      "created_at": "2026-09-07T05:11:00.643Z"
+      "created_at": "2026-09-07T05:44:05.596Z"
     },
     {
       "id": 2,
       "first_name": "Priya",
       "last_name": "Sharma",
       "email": "priya@gmail.com",
-      "created_at": "2026-09-07T05:11:00.643Z"
+      "created_at": "2026-09-07T05:44:05.596Z"
     },
     {
       "id": 3,
       "first_name": "Arjun",
       "last_name": "Reddy",
       "email": "arjun@gmail.com",
-      "created_at": "2026-09-07T05:11:00.643Z"
+      "created_at": "2026-09-07T05:44:05.596Z"
     },
     {
       "id": 4,
       "first_name": "Sneha",
       "last_name": "Patel",
       "email": "sneha.p@gmail.com",
-      "created_at": "2026-09-07T05:11:00.643Z"
+      "created_at": "2026-09-07T05:44:05.596Z"
     },
     {
       "id": 5,
       "first_name": "Vikram",
       "last_name": "Verma",
       "email": "vikram.v@example.com",
-      "created_at": "2026-09-07T05:11:00.643Z"
+      "created_at": "2026-09-07T05:44:05.596Z"
     },
     {
       "id": 6,
       "first_name": "Ananya",
       "last_name": "Roy",
       "email": "ananya.roy@example.com",
-      "created_at": "2026-09-07T05:11:00.643Z"
+      "created_at": "2026-09-07T05:44:05.596Z"
     },
     {
       "id": 7,
       "first_name": "Karthik",
       "last_name": "Nair",
       "email": "karthik.n@gmail.com",
-      "created_at": "2026-09-07T05:11:00.643Z"
-    },
-    {
-      "id": 8,
-      "first_name": "Divya",
-      "last_name": "Das",
-      "email": "divya.das@example.com",
-      "created_at": "2026-09-07T05:11:00.643Z"
+      "created_at": "2026-09-07T05:44:05.596Z"
     }
   ],
   "customers": [
@@ -110,6 +103,66 @@
     }
   ],
   "protected_customer_data": [
+    {
+      "id": 145,
+      "source_customer_id": 5,
+      "operation": "tokenization",
+      "name": "TKN_NAME_CC5F18",
+      "email": "TKN_EMAIL_409764",
+      "phone": "TKN_PHONE_B1586D",
+      "aadhaar": "TKN_AADHAAR_4C1807",
+      "pan": "TKN_PAN_63C107",
+      "address": "TKN_DATA_0AAB4B",
+      "created_at": "2026-09-07T05:44:04.268Z"
+    },
+    {
+      "id": 144,
+      "source_customer_id": 4,
+      "operation": "tokenization",
+      "name": "TKN_NAME_4E53FA",
+      "email": "TKN_EMAIL_1313CC",
+      "phone": "TKN_PHONE_03CB3E",
+      "aadhaar": "TKN_AADHAAR_710C33",
+      "pan": "TKN_PAN_52ECFE",
+      "address": "TKN_DATA_7C17F4",
+      "created_at": "2026-09-07T05:44:04.242Z"
+    },
+    {
+      "id": 143,
+      "source_customer_id": 3,
+      "operation": "tokenization",
+      "name": "TKN_NAME_DBA417",
+      "email": "TKN_EMAIL_F7C407",
+      "phone": "TKN_PHONE_EF570E",
+      "aadhaar": "TKN_AADHAAR_3001F9",
+      "pan": "TKN_PAN_437A03",
+      "address": "TKN_DATA_160B7B",
+      "created_at": "2026-09-07T05:44:04.216Z"
+    },
+    {
+      "id": 142,
+      "source_customer_id": 2,
+      "operation": "tokenization",
+      "name": "TKN_NAME_27119A",
+      "email": "TKN_EMAIL_EB57FC",
+      "phone": "TKN_PHONE_F71DBD",
+      "aadhaar": "TKN_AADHAAR_96C86E",
+      "pan": "TKN_PAN_3E1EA7",
+      "address": "TKN_DATA_2ABB2B",
+      "created_at": "2026-09-07T05:44:04.185Z"
+    },
+    {
+      "id": 141,
+      "source_customer_id": 1,
+      "operation": "tokenization",
+      "name": "TKN_NAME_312272",
+      "email": "TKN_EMAIL_31F6B3",
+      "phone": "TKN_PHONE_F73DEF",
+      "aadhaar": "TKN_AADHAAR_D953DF",
+      "pan": "TKN_PAN_851A08",
+      "address": "TKN_DATA_0F59D0",
+      "created_at": "2026-09-07T05:44:04.165Z"
+    },
     {
       "id": 140,
       "source_customer_id": 5,
@@ -1792,6 +1845,486 @@
     }
   ],
   "processing_history": [
+    {
+      "id": 461,
+      "job_id": "test-job-123",
+      "original_file_name": "test.pdf",
+      "file_format": "pdf",
+      "file_size": 1024,
+      "operation": "mask",
+      "masking_type": "tokenization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 0,
+      "processed_count": 5,
+      "risk_level": "MEDIUM",
+      "processing_time_seconds": 0,
+      "output_file_name": null,
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:06.285Z"
+    },
+    {
+      "id": 460,
+      "job_id": "DEL_PRIV_8",
+      "original_file_name": "privacy_deletion_customers",
+      "file_format": "postgresql_table",
+      "file_size": 0,
+      "operation": "privacy_deletion",
+      "masking_type": null,
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 1,
+      "processed_count": 1,
+      "risk_level": "HIGH",
+      "processing_time_seconds": 0,
+      "output_file_name": "deleted_customer_8",
+      "status": "SUCCESS",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:05.683Z"
+    },
+    {
+      "id": 459,
+      "job_id": "OP_HASHING_PRIV_7",
+      "original_file_name": "privacy_deletion_customers",
+      "file_format": "postgresql_table",
+      "file_size": 0,
+      "operation": "hashing",
+      "masking_type": null,
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 3,
+      "processed_count": 1,
+      "risk_level": "MEDIUM",
+      "processing_time_seconds": 0,
+      "output_file_name": "hashing_customer_7",
+      "status": "SUCCESS",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:05.581Z"
+    },
+    {
+      "id": 458,
+      "job_id": "OP_ENCRYPTION_PRIV_6",
+      "original_file_name": "privacy_deletion_customers",
+      "file_format": "postgresql_table",
+      "file_size": 0,
+      "operation": "encryption",
+      "masking_type": null,
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 3,
+      "processed_count": 1,
+      "risk_level": "MEDIUM",
+      "processing_time_seconds": 0,
+      "output_file_name": "encryption_customer_6",
+      "status": "SUCCESS",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:05.495Z"
+    },
+    {
+      "id": 457,
+      "job_id": "OP_REDACTION_PRIV_5",
+      "original_file_name": "privacy_deletion_customers",
+      "file_format": "postgresql_table",
+      "file_size": 0,
+      "operation": "redaction",
+      "masking_type": null,
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 3,
+      "processed_count": 1,
+      "risk_level": "MEDIUM",
+      "processing_time_seconds": 0,
+      "output_file_name": "redaction_customer_5",
+      "status": "SUCCESS",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:05.455Z"
+    },
+    {
+      "id": 456,
+      "job_id": "OP_PSEUDONYMIZATION_PRIV_4",
+      "original_file_name": "privacy_deletion_customers",
+      "file_format": "postgresql_table",
+      "file_size": 0,
+      "operation": "pseudonymization",
+      "masking_type": null,
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 3,
+      "processed_count": 1,
+      "risk_level": "MEDIUM",
+      "processing_time_seconds": 0,
+      "output_file_name": "pseudonymization_customer_4",
+      "status": "SUCCESS",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:05.418Z"
+    },
+    {
+      "id": 455,
+      "job_id": "OP_ANONYMIZATION_PRIV_3",
+      "original_file_name": "privacy_deletion_customers",
+      "file_format": "postgresql_table",
+      "file_size": 0,
+      "operation": "anonymization",
+      "masking_type": null,
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 3,
+      "processed_count": 1,
+      "risk_level": "MEDIUM",
+      "processing_time_seconds": 0,
+      "output_file_name": "anonymization_customer_3",
+      "status": "SUCCESS",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:05.268Z"
+    },
+    {
+      "id": 454,
+      "job_id": "OP_TOKENIZATION_PRIV_2",
+      "original_file_name": "privacy_deletion_customers",
+      "file_format": "postgresql_table",
+      "file_size": 0,
+      "operation": "tokenization",
+      "masking_type": null,
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 3,
+      "processed_count": 1,
+      "risk_level": "MEDIUM",
+      "processing_time_seconds": 0,
+      "output_file_name": "tokenization_customer_2",
+      "status": "SUCCESS",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:05.215Z"
+    },
+    {
+      "id": 453,
+      "job_id": "OP_MASKING_PRIV_1",
+      "original_file_name": "privacy_deletion_customers",
+      "file_format": "postgresql_table",
+      "file_size": 0,
+      "operation": "masking",
+      "masking_type": null,
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 3,
+      "processed_count": 1,
+      "risk_level": "MEDIUM",
+      "processing_time_seconds": 0,
+      "output_file_name": "masking_customer_1",
+      "status": "SUCCESS",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:05.136Z"
+    },
+    {
+      "id": 452,
+      "job_id": "8fb12b6d-a08f-411b-8117-a1971923499c",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "tokenization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_tokenization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:04.072Z"
+    },
+    {
+      "id": 451,
+      "job_id": "289848af-845b-41ce-a7fc-caa1571252f3",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "hashing",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_hashing",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.848Z"
+    },
+    {
+      "id": 450,
+      "job_id": "0db6d4e9-2ce0-45a7-966e-8e65624d1abb",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "encryption",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_encryption",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.750Z"
+    },
+    {
+      "id": 449,
+      "job_id": "20945129-ad45-49ce-a55c-9335585f6788",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "redaction",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_redaction",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.721Z"
+    },
+    {
+      "id": 448,
+      "job_id": "91293c31-1125-40b3-8b57-d0574ed785ec",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "pseudonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_pseudonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.703Z"
+    },
+    {
+      "id": 447,
+      "job_id": "5dedbcd7-bd4c-44a2-b0cb-79c816bcb670",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "anonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_anonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.681Z"
+    },
+    {
+      "id": 446,
+      "job_id": "5648621c-77fb-4ca3-a8ec-64e9b05d3876",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "tokenization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_tokenization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.655Z"
+    },
+    {
+      "id": 445,
+      "job_id": "9042dc1d-47f3-4c38-bd3c-2e2fe579fde9",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "masking",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_masking",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.600Z"
+    },
+    {
+      "id": 444,
+      "job_id": "0420f5ec-47a9-4062-9f61-7c28d3083568",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "hashing",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_hashing",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.571Z"
+    },
+    {
+      "id": 443,
+      "job_id": "8434641f-b5df-4d5b-a909-c30be9a1b980",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "encryption",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_encryption",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.423Z"
+    },
+    {
+      "id": 442,
+      "job_id": "4b29a99b-b2e4-498d-a2d2-89d233d94a6f",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "redaction",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_redaction",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.228Z"
+    },
+    {
+      "id": 441,
+      "job_id": "554cc60d-ceb9-42e9-b265-3dd3de4ae353",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "pseudonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_pseudonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.204Z"
+    },
+    {
+      "id": 440,
+      "job_id": "5bf1e0cc-c7cc-4c40-981a-0635523a10b4",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "anonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_anonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.165Z"
+    },
+    {
+      "id": 439,
+      "job_id": "5e639007-e209-4428-9115-a5ddf9b07784",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "tokenization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_tokenization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:03.076Z"
+    },
+    {
+      "id": 438,
+      "job_id": "18ecbc33-e7e0-4502-8e75-b0019fb7d807",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "masking",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_masking",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:44:02.990Z"
+    },
     {
       "id": 437,
       "job_id": "test-job-123",
@@ -10536,6 +11069,658 @@
   "privacy_scan_history": [],
   "dsar_identity_maps": [
     {
+      "id": 72,
+      "request_id": "DSAR-2026-696128",
+      "target_email": "priya@gmail.com",
+      "target_name": "priya sharma",
+      "target_phone": "9123456789",
+      "target_customer_id": null,
+      "discovered_systems_count": 2,
+      "total_pii_records_found": 2,
+      "data_map_json": {
+        "requestId": "DSAR-2026-696128",
+        "targetDataSubject": "priya sharma",
+        "fullName": "priya sharma",
+        "targetEmail": "priya@gmail.com",
+        "email": "priya@gmail.com",
+        "targetPhone": "9123456789",
+        "phone": "9123456789",
+        "targetCustomerId": "",
+        "customerId": "",
+        "overallStatus": "PROBABLE_MATCH",
+        "overallConfidence": "80%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 2,
+        "totalPiiRecordsFound": 2,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [
+              "name",
+              "email",
+              "phone",
+              "aadhaar",
+              "pan"
+            ],
+            "recordCount": 1,
+            "matchedRowIds": [
+              2
+            ],
+            "matchMethod": "SQL Exact & Alias Match",
+            "aiConfidence": "97% High Confidence",
+            "status": "DISCOVERED",
+            "sampleMatches": [
+              {
+                "id": 2,
+                "name": "Ravi Kumar",
+                "email": "ravi.k@example.com"
+              }
+            ]
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [
+              "first_name",
+              "last_name",
+              "email"
+            ],
+            "recordCount": 1,
+            "matchedRowIds": [
+              2
+            ],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "100% Direct Match",
+            "status": "DISCOVERED",
+            "sampleMatches": [
+              {
+                "id": 2,
+                "name": "Priya Sharma",
+                "email": "priya@gmail.com"
+              }
+            ]
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "PROBABLE_MATCH",
+          "confidenceScore": "80%"
+        },
+        "identityGraph": {
+          "rootPerson": "priya sharma",
+          "totalNodes": 10,
+          "totalEdges": 9,
+          "nodes": [
+            {
+              "id": "person:priya_sharma",
+              "label": "priya sharma",
+              "type": "CANONICAL_PERSON_ROOT",
+              "metadata": {
+                "customerId": "TARGET_ROOT",
+                "isRoot": true
+              }
+            },
+            {
+              "id": "alias:p_sharma",
+              "label": "P Sharma",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "p sharma"
+              }
+            },
+            {
+              "id": "alias:p._sharma",
+              "label": "P. Sharma",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "p. sharma"
+              }
+            },
+            {
+              "id": "alias:priya_sharma",
+              "label": "Priya Sharma",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "priya sharma"
+              }
+            },
+            {
+              "id": "alias:priya.sharma",
+              "label": "Priya.Sharma",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "priya.sharma"
+              }
+            },
+            {
+              "id": "alias:sharma_priya",
+              "label": "Sharma Priya",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "sharma priya"
+              }
+            },
+            {
+              "id": "email:priya@gmail.com",
+              "label": "priya@gmail.com",
+              "type": "EMAIL_IDENTIFIER",
+              "metadata": {
+                "email": "priya@gmail.com"
+              }
+            },
+            {
+              "id": "phone:9123456789",
+              "label": "+91 9123456789",
+              "type": "PHONE_IDENTIFIER",
+              "metadata": {
+                "phone": "9123456789"
+              }
+            },
+            {
+              "id": "record:customers:2",
+              "label": "customers (Row #2)",
+              "type": "SYSTEM_RECORD",
+              "metadata": {
+                "sourceSystem": "customers",
+                "recordId": 2,
+                "decision": "PROBABLE_MATCH"
+              }
+            },
+            {
+              "id": "record:customers:5",
+              "label": "customers (Row #5)",
+              "type": "SYSTEM_RECORD",
+              "metadata": {
+                "sourceSystem": "customers",
+                "recordId": 5,
+                "decision": "PROBABLE_MATCH"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "source": "person:priya_sharma",
+              "target": "alias:p_sharma",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:priya_sharma",
+              "target": "alias:p._sharma",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:priya_sharma",
+              "target": "alias:priya_sharma",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:priya_sharma",
+              "target": "alias:priya.sharma",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:priya_sharma",
+              "target": "alias:sharma_priya",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:priya_sharma",
+              "target": "email:priya@gmail.com",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "matchType": "Exact Match",
+              "confidence": "100%"
+            },
+            {
+              "source": "person:priya_sharma",
+              "target": "phone:9123456789",
+              "relationship": "HAS_PRIMARY_PHONE",
+              "matchType": "Exact Match",
+              "confidence": "100%"
+            },
+            {
+              "source": "person:priya_sharma",
+              "target": "record:customers:2",
+              "relationship": "LINKS_TO_RECORD",
+              "matchType": "Probable Match",
+              "confidence": "80%"
+            },
+            {
+              "source": "person:priya_sharma",
+              "target": "record:customers:5",
+              "relationship": "LINKS_TO_RECORD",
+              "matchType": "Probable Match",
+              "confidence": "80%"
+            }
+          ],
+          "graphEngine": "Neo4j Graph Database & Cypher Schema",
+          "cypherScript": "// ========================================================\n// Neo4j Cypher Graph Script: Identity Cluster for 'priya sharma'\n// Auto-Generated by Segmento Protect AI Knowledge Graph Engine\n// ========================================================\n\n// 1. Nodes (Roots, Identifiers, Systems, Entities)\nMERGE (person:priya_sharma:PersonRoot {id: \"person:priya_sharma\", name: \"priya sharma\"})\nMERGE (alias:p_sharma:NameAlias {id: \"alias:p_sharma\", alias: \"P Sharma\"})\nMERGE (alias:p__sharma:NameAlias {id: \"alias:p__sharma\", alias: \"P. Sharma\"})\nMERGE (alias:priya_sharma:NameAlias {id: \"alias:priya_sharma\", alias: \"Priya Sharma\"})\nMERGE (alias:priya_sharma:NameAlias {id: \"alias:priya_sharma\", alias: \"Priya.Sharma\"})\nMERGE (alias:sharma_priya:NameAlias {id: \"alias:sharma_priya\", alias: \"Sharma Priya\"})\nMERGE (email:priya_gmail_com:EmailIdentifier {id: \"email:priya_gmail_com\", email: \"priya@gmail.com\"})\nMERGE (phone:9123456789:PhoneIdentifier {id: \"phone:9123456789\", phone: \"+91 9123456789\"})\nMERGE (record:customers:2:IdentityNode {id: \"record:customers:2\", label: \"customers (Row #2)\"})\nMERGE (record:customers:5:IdentityNode {id: \"record:customers:5\", label: \"customers (Row #5)\"})\n\n// 2. Relationships & Link Graph Traversal\nMERGE (person:priya_sharma)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:p_sharma)\nMERGE (person:priya_sharma)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:p__sharma)\nMERGE (person:priya_sharma)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:priya_sharma)\nMERGE (person:priya_sharma)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:priya_sharma)\nMERGE (person:priya_sharma)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:sharma_priya)\nMERGE (person:priya_sharma)-[:HAS_PRIMARY_EMAIL {confidence: \"100%\"}]->(email:priya_gmail_com)\nMERGE (person:priya_sharma)-[:HAS_PRIMARY_PHONE {confidence: \"100%\"}]->(phone:9123456789)\nMERGE (person:priya_sharma)-[:LINKS_TO_RECORD {confidence: \"80%\"}]->(record:customers:2)\nMERGE (person:priya_sharma)-[:LINKS_TO_RECORD {confidence: \"80%\"}]->(record:customers:5)\n\n// 3. Query Neighborhood Return\nMATCH (root:PersonRoot)-[r*1..2]-(connected) RETURN root, r, connected;",
+          "neo4jStatus": "Neo4j In-Memory Graph & Cypher Generator"
+        },
+        "scannedAt": "2026-09-07T05:44:02.279Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-07T05:44:02.279Z"
+    },
+    {
+      "id": 71,
+      "request_id": "DSAR-2026-956490",
+      "target_email": "vikram.p@company.com",
+      "target_name": "vikram k patel",
+      "target_phone": "9876543210",
+      "target_customer_id": null,
+      "discovered_systems_count": 1,
+      "total_pii_records_found": 2,
+      "data_map_json": {
+        "requestId": "DSAR-2026-956490",
+        "targetDataSubject": "vikram k patel",
+        "fullName": "vikram k patel",
+        "targetEmail": "vikram.p@company.com",
+        "email": "vikram.p@company.com",
+        "targetPhone": "9876543210",
+        "phone": "9876543210",
+        "targetCustomerId": "",
+        "customerId": "",
+        "overallStatus": "MATCH",
+        "overallConfidence": "97%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 1,
+        "totalPiiRecordsFound": 2,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [
+              "name",
+              "email",
+              "phone",
+              "aadhaar",
+              "pan"
+            ],
+            "recordCount": 2,
+            "matchedRowIds": [
+              1,
+              4
+            ],
+            "matchMethod": "SQL Exact & Alias Match",
+            "aiConfidence": "97% High Confidence",
+            "status": "DISCOVERED",
+            "sampleMatches": [
+              {
+                "id": 1,
+                "name": "Harika",
+                "email": "harika@example.com"
+              },
+              {
+                "id": 4,
+                "name": "Vikram Patel",
+                "email": "vikram.p@example.com"
+              }
+            ]
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "MATCH",
+          "confidenceScore": "97%"
+        },
+        "identityGraph": {
+          "rootPerson": "Vikram K Patel",
+          "totalNodes": 3,
+          "totalEdges": 2,
+          "nodes": [
+            {
+              "id": "root",
+              "label": "Vikram K Patel",
+              "type": "CANONICAL_PERSON_ROOT"
+            },
+            {
+              "id": "email",
+              "label": "vikram.p@company.com",
+              "type": "EMAIL_IDENTIFIER"
+            },
+            {
+              "id": "phone",
+              "label": "+91 98765 43210",
+              "type": "PHONE_IDENTIFIER"
+            }
+          ],
+          "edges": [
+            {
+              "source": "root",
+              "target": "email",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "confidence": "100%"
+            },
+            {
+              "source": "root",
+              "target": "phone",
+              "relationship": "HAS_PRIMARY_PHONE",
+              "confidence": "100%"
+            }
+          ]
+        },
+        "scannedAt": "2026-09-07T05:44:01.684Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-07T05:44:01.684Z"
+    },
+    {
+      "id": 70,
+      "request_id": "DSAR-2026-000456",
+      "target_email": "alice.smith@example.com",
+      "target_name": "alice smith low risk demo",
+      "target_phone": "9123456789",
+      "target_customer_id": "CUST-9011",
+      "discovered_systems_count": 1,
+      "total_pii_records_found": 1,
+      "data_map_json": {
+        "requestId": "DSAR-2026-000456",
+        "targetDataSubject": "alice smith low risk demo",
+        "fullName": "alice smith low risk demo",
+        "targetEmail": "alice.smith@example.com",
+        "email": "alice.smith@example.com",
+        "targetPhone": "9123456789",
+        "phone": "9123456789",
+        "targetCustomerId": "CUST-9011",
+        "customerId": "CUST-9011",
+        "overallStatus": "PROBABLE_MATCH",
+        "overallConfidence": "80%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 1,
+        "totalPiiRecordsFound": 1,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [
+              "name",
+              "email",
+              "phone",
+              "aadhaar",
+              "pan"
+            ],
+            "recordCount": 1,
+            "matchedRowIds": [
+              2
+            ],
+            "matchMethod": "SQL Exact & Alias Match",
+            "aiConfidence": "97% High Confidence",
+            "status": "DISCOVERED",
+            "sampleMatches": [
+              {
+                "id": 2,
+                "name": "Ravi Kumar",
+                "email": "ravi.k@example.com"
+              }
+            ]
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "PROBABLE_MATCH",
+          "confidenceScore": "80%"
+        },
+        "identityGraph": {
+          "rootPerson": "alice smith low risk demo",
+          "totalNodes": 10,
+          "totalEdges": 9,
+          "nodes": [
+            {
+              "id": "person:alice_smith_low_risk_demo",
+              "label": "alice smith low risk demo",
+              "type": "CANONICAL_PERSON_ROOT",
+              "metadata": {
+                "customerId": "CUST-9011",
+                "isRoot": true
+              }
+            },
+            {
+              "id": "alias:a_demo",
+              "label": "A Demo",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "a demo"
+              }
+            },
+            {
+              "id": "alias:a._demo",
+              "label": "A. Demo",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "a. demo"
+              }
+            },
+            {
+              "id": "alias:alice_demo",
+              "label": "Alice Demo",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "alice demo"
+              }
+            },
+            {
+              "id": "alias:alice_s_demo",
+              "label": "Alice S Demo",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "alice s demo"
+              }
+            },
+            {
+              "id": "alias:alice_s._demo",
+              "label": "Alice S. Demo",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "alice s. demo"
+              }
+            },
+            {
+              "id": "alias:alice_smith_low_risk_demo",
+              "label": "Alice Smith Low Risk Demo",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "alice smith low risk demo"
+              }
+            },
+            {
+              "id": "email:alice.smith@example.com",
+              "label": "alice.smith@example.com",
+              "type": "EMAIL_IDENTIFIER",
+              "metadata": {
+                "email": "alice.smith@example.com"
+              }
+            },
+            {
+              "id": "phone:9123456789",
+              "label": "+91 9123456789",
+              "type": "PHONE_IDENTIFIER",
+              "metadata": {
+                "phone": "9123456789"
+              }
+            },
+            {
+              "id": "record:customers:2",
+              "label": "customers (Row #2)",
+              "type": "SYSTEM_RECORD",
+              "metadata": {
+                "sourceSystem": "customers",
+                "recordId": 2,
+                "decision": "PROBABLE_MATCH"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "source": "person:alice_smith_low_risk_demo",
+              "target": "alias:a_demo",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:alice_smith_low_risk_demo",
+              "target": "alias:a._demo",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:alice_smith_low_risk_demo",
+              "target": "alias:alice_demo",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:alice_smith_low_risk_demo",
+              "target": "alias:alice_s_demo",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:alice_smith_low_risk_demo",
+              "target": "alias:alice_s._demo",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:alice_smith_low_risk_demo",
+              "target": "alias:alice_smith_low_risk_demo",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:alice_smith_low_risk_demo",
+              "target": "email:alice.smith@example.com",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "matchType": "Exact Match",
+              "confidence": "100%"
+            },
+            {
+              "source": "person:alice_smith_low_risk_demo",
+              "target": "phone:9123456789",
+              "relationship": "HAS_PRIMARY_PHONE",
+              "matchType": "Exact Match",
+              "confidence": "100%"
+            },
+            {
+              "source": "person:alice_smith_low_risk_demo",
+              "target": "record:customers:2",
+              "relationship": "LINKS_TO_RECORD",
+              "matchType": "Probable Match",
+              "confidence": "80%"
+            }
+          ],
+          "graphEngine": "Neo4j Graph Database & Cypher Schema",
+          "cypherScript": "// ========================================================\n// Neo4j Cypher Graph Script: Identity Cluster for 'alice smith low risk demo'\n// Auto-Generated by Segmento Protect AI Knowledge Graph Engine\n// ========================================================\n\n// 1. Nodes (Roots, Identifiers, Systems, Entities)\nMERGE (person:alice_smith_low_risk_demo:PersonRoot {id: \"person:alice_smith_low_risk_demo\", name: \"alice smith low risk demo\"})\nMERGE (alias:a_demo:NameAlias {id: \"alias:a_demo\", alias: \"A Demo\"})\nMERGE (alias:a__demo:NameAlias {id: \"alias:a__demo\", alias: \"A. Demo\"})\nMERGE (alias:alice_demo:NameAlias {id: \"alias:alice_demo\", alias: \"Alice Demo\"})\nMERGE (alias:alice_s_demo:NameAlias {id: \"alias:alice_s_demo\", alias: \"Alice S Demo\"})\nMERGE (alias:alice_s__demo:NameAlias {id: \"alias:alice_s__demo\", alias: \"Alice S. Demo\"})\nMERGE (alias:alice_smith_low_risk_demo:NameAlias {id: \"alias:alice_smith_low_risk_demo\", alias: \"Alice Smith Low Risk Demo\"})\nMERGE (email:alice_smith_example_com:EmailIdentifier {id: \"email:alice_smith_example_com\", email: \"alice.smith@example.com\"})\nMERGE (phone:9123456789:PhoneIdentifier {id: \"phone:9123456789\", phone: \"+91 9123456789\"})\nMERGE (record:customers:2:IdentityNode {id: \"record:customers:2\", label: \"customers (Row #2)\"})\n\n// 2. Relationships & Link Graph Traversal\nMERGE (person:alice_smith_low_risk_demo)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:a_demo)\nMERGE (person:alice_smith_low_risk_demo)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:a__demo)\nMERGE (person:alice_smith_low_risk_demo)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:alice_demo)\nMERGE (person:alice_smith_low_risk_demo)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:alice_s_demo)\nMERGE (person:alice_smith_low_risk_demo)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:alice_s__demo)\nMERGE (person:alice_smith_low_risk_demo)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:alice_smith_low_risk_demo)\nMERGE (person:alice_smith_low_risk_demo)-[:HAS_PRIMARY_EMAIL {confidence: \"100%\"}]->(email:alice_smith_example_com)\nMERGE (person:alice_smith_low_risk_demo)-[:HAS_PRIMARY_PHONE {confidence: \"100%\"}]->(phone:9123456789)\nMERGE (person:alice_smith_low_risk_demo)-[:LINKS_TO_RECORD {confidence: \"80%\"}]->(record:customers:2)\n\n// 3. Query Neighborhood Return\nMATCH (root:PersonRoot)-[r*1..2]-(connected) RETURN root, r, connected;",
+          "neo4jStatus": "Neo4j In-Memory Graph & Cypher Generator"
+        },
+        "scannedAt": "2026-09-07T05:41:57.118Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-07T05:41:57.128Z"
+    },
+    {
       "id": 69,
       "request_id": "DSAR-2026-153962",
       "target_email": "priya@gmail.com",
@@ -15590,6 +16775,45 @@
     }
   ],
   "dsar_requests": [
+    {
+      "id": 79,
+      "request_id": "DSAR-2026-696128",
+      "full_name": "Priya Sharma",
+      "email": "priya@gmail.com",
+      "phone": "+91 91234 56789",
+      "customer_id": null,
+      "request_type": "anonymization",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-07T05:44:01.787Z"
+    },
+    {
+      "id": 78,
+      "request_id": "DSAR-2026-956490",
+      "full_name": "Vikram K Patel",
+      "email": "vikram.p@company.com",
+      "phone": "+91 98765 43210",
+      "customer_id": null,
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-07T05:44:00.353Z"
+    },
+    {
+      "id": 77,
+      "request_id": "DSAR-2026-242608",
+      "full_name": "Ananya Sharma",
+      "email": "ananya@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-07T05:43:59.993Z"
+    },
     {
       "id": 76,
       "request_id": "DSAR-2026-161606",
