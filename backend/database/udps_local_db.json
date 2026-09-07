@@ -2,52 +2,59 @@
   "privacy_deletion_customers": [
     {
       "id": 1,
-      "first_name": "Rahul",
-      "last_name": "Kumar",
-      "email": "rahul@gmail.com",
-      "created_at": "2026-09-07T05:44:05.596Z"
+      "first_name": "R***l",
+      "last_name": "K***r",
+      "email": "r****@gmail.com",
+      "created_at": "2026-09-07T05:57:06.121Z"
     },
     {
       "id": 2,
       "first_name": "Priya",
       "last_name": "Sharma",
       "email": "priya@gmail.com",
-      "created_at": "2026-09-07T05:44:05.596Z"
+      "created_at": "2026-09-07T05:57:06.121Z"
     },
     {
       "id": 3,
       "first_name": "Arjun",
       "last_name": "Reddy",
       "email": "arjun@gmail.com",
-      "created_at": "2026-09-07T05:44:05.596Z"
+      "created_at": "2026-09-07T05:57:06.121Z"
     },
     {
       "id": 4,
       "first_name": "Sneha",
       "last_name": "Patel",
       "email": "sneha.p@gmail.com",
-      "created_at": "2026-09-07T05:44:05.596Z"
+      "created_at": "2026-09-07T05:57:06.121Z"
     },
     {
       "id": 5,
       "first_name": "Vikram",
       "last_name": "Verma",
       "email": "vikram.v@example.com",
-      "created_at": "2026-09-07T05:44:05.596Z"
+      "created_at": "2026-09-07T05:57:06.121Z"
     },
     {
       "id": 6,
       "first_name": "Ananya",
       "last_name": "Roy",
       "email": "ananya.roy@example.com",
-      "created_at": "2026-09-07T05:44:05.596Z"
+      "created_at": "2026-09-07T05:57:06.121Z"
     },
     {
       "id": 7,
       "first_name": "Karthik",
       "last_name": "Nair",
       "email": "karthik.n@gmail.com",
-      "created_at": "2026-09-07T05:44:05.596Z"
+      "created_at": "2026-09-07T05:57:06.121Z"
+    },
+    {
+      "id": 8,
+      "first_name": "Divya",
+      "last_name": "Das",
+      "email": "divya.das@example.com",
+      "created_at": "2026-09-07T05:57:06.121Z"
     }
   ],
   "customers": [
@@ -1845,6 +1852,286 @@
     }
   ],
   "processing_history": [
+    {
+      "id": 475,
+      "job_id": "fda2ad95-0159-444c-9c9f-ed18925ae5e3",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "hashing",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_hashing",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.854Z"
+    },
+    {
+      "id": 474,
+      "job_id": "7c66ad9c-4ca2-44e0-b249-50fd1826b522",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "encryption",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_encryption",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.811Z"
+    },
+    {
+      "id": 473,
+      "job_id": "39175524-1f65-4c0b-a49f-5765ffdcb6e2",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "redaction",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_redaction",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.759Z"
+    },
+    {
+      "id": 472,
+      "job_id": "958b57b1-5213-43e7-8c47-484886d6df39",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "pseudonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_pseudonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.740Z"
+    },
+    {
+      "id": 471,
+      "job_id": "79829b6a-e9b5-4171-9496-b67e11870b67",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "anonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_anonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.711Z"
+    },
+    {
+      "id": 470,
+      "job_id": "84b00216-00b1-4ba6-8bf8-9171de7e11b9",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "tokenization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_tokenization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.694Z"
+    },
+    {
+      "id": 469,
+      "job_id": "f7ddc60a-c25b-4743-b471-eef50787652a",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "masking",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_masking",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.645Z"
+    },
+    {
+      "id": 468,
+      "job_id": "0c764dbe-e86d-4427-9be0-ffb979fa8224",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "hashing",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_hashing",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.606Z"
+    },
+    {
+      "id": 467,
+      "job_id": "4f2aa8e4-e475-4930-ab79-bfd80df862d8",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "encryption",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_encryption",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.561Z"
+    },
+    {
+      "id": 466,
+      "job_id": "bd8af622-076f-47a0-a8ce-b097d4e832ac",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "redaction",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_redaction",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.517Z"
+    },
+    {
+      "id": 465,
+      "job_id": "13280482-97da-4e5f-89a1-227cc2201fb6",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "pseudonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_pseudonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.478Z"
+    },
+    {
+      "id": 464,
+      "job_id": "feeee1f4-c551-4c2f-bd70-cb7ca993e91f",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "anonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_anonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.441Z"
+    },
+    {
+      "id": 463,
+      "job_id": "b2a3f3ce-bacc-43a7-a77e-87b4c9d7f06e",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "tokenization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_tokenization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.386Z"
+    },
+    {
+      "id": 462,
+      "job_id": "5f9edeb1-ad62-4466-a699-8a3dff01bd79",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 5,
+      "operation": "mask",
+      "masking_type": "masking",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 30,
+      "processed_count": 30,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_masking",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-07T05:57:06.331Z"
+    },
     {
       "id": 461,
       "job_id": "test-job-123",
@@ -11069,6 +11356,720 @@
   "privacy_scan_history": [],
   "dsar_identity_maps": [
     {
+      "id": 75,
+      "request_id": "DSAR-2026-929558",
+      "target_email": "vikram.legal@company.com",
+      "target_name": "vikram malhotra high risk export test",
+      "target_phone": null,
+      "target_customer_id": null,
+      "discovered_systems_count": 0,
+      "total_pii_records_found": 0,
+      "data_map_json": {
+        "requestId": "DSAR-2026-929558",
+        "targetDataSubject": "vikram malhotra high risk export test",
+        "fullName": "vikram malhotra high risk export test",
+        "targetEmail": "vikram.legal@company.com",
+        "email": "vikram.legal@company.com",
+        "targetPhone": "",
+        "phone": "",
+        "targetCustomerId": "",
+        "customerId": "",
+        "overallStatus": "PROBABLE_MATCH",
+        "overallConfidence": "80%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 0,
+        "totalPiiRecordsFound": 0,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "PROBABLE_MATCH",
+          "confidenceScore": "80%"
+        },
+        "identityGraph": {
+          "rootPerson": "vikram malhotra high risk export test",
+          "totalNodes": 9,
+          "totalEdges": 8,
+          "nodes": [
+            {
+              "id": "person:vikram_malhotra_high_risk_export_test",
+              "label": "vikram malhotra high risk export test",
+              "type": "CANONICAL_PERSON_ROOT",
+              "metadata": {
+                "customerId": "TARGET_ROOT",
+                "isRoot": true
+              }
+            },
+            {
+              "id": "alias:v_test",
+              "label": "V Test",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "v test"
+              }
+            },
+            {
+              "id": "alias:v._test",
+              "label": "V. Test",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "v. test"
+              }
+            },
+            {
+              "id": "alias:vikram_m_test",
+              "label": "Vikram M Test",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "vikram m test"
+              }
+            },
+            {
+              "id": "alias:vikram_m._test",
+              "label": "Vikram M. Test",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "vikram m. test"
+              }
+            },
+            {
+              "id": "alias:vikram_malhotra_high_risk_export_test",
+              "label": "Vikram Malhotra High Risk Export Test",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "vikram malhotra high risk export test"
+              }
+            },
+            {
+              "id": "alias:vikram_test",
+              "label": "Vikram Test",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "vikram test"
+              }
+            },
+            {
+              "id": "email:vikram.legal@company.com",
+              "label": "vikram.legal@company.com",
+              "type": "EMAIL_IDENTIFIER",
+              "metadata": {
+                "email": "vikram.legal@company.com"
+              }
+            },
+            {
+              "id": "record:customers:4",
+              "label": "customers (Row #4)",
+              "type": "SYSTEM_RECORD",
+              "metadata": {
+                "sourceSystem": "customers",
+                "recordId": 4,
+                "decision": "PROBABLE_MATCH"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "source": "person:vikram_malhotra_high_risk_export_test",
+              "target": "alias:v_test",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_malhotra_high_risk_export_test",
+              "target": "alias:v._test",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_malhotra_high_risk_export_test",
+              "target": "alias:vikram_m_test",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_malhotra_high_risk_export_test",
+              "target": "alias:vikram_m._test",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_malhotra_high_risk_export_test",
+              "target": "alias:vikram_malhotra_high_risk_export_test",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_malhotra_high_risk_export_test",
+              "target": "alias:vikram_test",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_malhotra_high_risk_export_test",
+              "target": "email:vikram.legal@company.com",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "matchType": "Exact Match",
+              "confidence": "100%"
+            },
+            {
+              "source": "person:vikram_malhotra_high_risk_export_test",
+              "target": "record:customers:4",
+              "relationship": "LINKS_TO_RECORD",
+              "matchType": "Probable Match",
+              "confidence": "80%"
+            }
+          ],
+          "graphEngine": "Neo4j Graph Database & Cypher Schema",
+          "cypherScript": "// ========================================================\n// Neo4j Cypher Graph Script: Identity Cluster for 'vikram malhotra high risk export test'\n// Auto-Generated by Segmento Protect AI Knowledge Graph Engine\n// ========================================================\n\n// 1. Nodes (Roots, Identifiers, Systems, Entities)\nMERGE (person:vikram_malhotra_high_risk_export_test:PersonRoot {id: \"person:vikram_malhotra_high_risk_export_test\", name: \"vikram malhotra high risk export test\"})\nMERGE (alias:v_test:NameAlias {id: \"alias:v_test\", alias: \"V Test\"})\nMERGE (alias:v__test:NameAlias {id: \"alias:v__test\", alias: \"V. Test\"})\nMERGE (alias:vikram_m_test:NameAlias {id: \"alias:vikram_m_test\", alias: \"Vikram M Test\"})\nMERGE (alias:vikram_m__test:NameAlias {id: \"alias:vikram_m__test\", alias: \"Vikram M. Test\"})\nMERGE (alias:vikram_malhotra_high_risk_export_test:NameAlias {id: \"alias:vikram_malhotra_high_risk_export_test\", alias: \"Vikram Malhotra High Risk Export Test\"})\nMERGE (alias:vikram_test:NameAlias {id: \"alias:vikram_test\", alias: \"Vikram Test\"})\nMERGE (email:vikram_legal_company_com:EmailIdentifier {id: \"email:vikram_legal_company_com\", email: \"vikram.legal@company.com\"})\nMERGE (record:customers:4:IdentityNode {id: \"record:customers:4\", label: \"customers (Row #4)\"})\n\n// 2. Relationships & Link Graph Traversal\nMERGE (person:vikram_malhotra_high_risk_export_test)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:v_test)\nMERGE (person:vikram_malhotra_high_risk_export_test)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:v__test)\nMERGE (person:vikram_malhotra_high_risk_export_test)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:vikram_m_test)\nMERGE (person:vikram_malhotra_high_risk_export_test)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:vikram_m__test)\nMERGE (person:vikram_malhotra_high_risk_export_test)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:vikram_malhotra_high_risk_export_test)\nMERGE (person:vikram_malhotra_high_risk_export_test)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:vikram_test)\nMERGE (person:vikram_malhotra_high_risk_export_test)-[:HAS_PRIMARY_EMAIL {confidence: \"100%\"}]->(email:vikram_legal_company_com)\nMERGE (person:vikram_malhotra_high_risk_export_test)-[:LINKS_TO_RECORD {confidence: \"80%\"}]->(record:customers:4)\n\n// 3. Query Neighborhood Return\nMATCH (root:PersonRoot)-[r*1..2]-(connected) RETURN root, r, connected;",
+          "neo4jStatus": "Neo4j In-Memory Graph & Cypher Generator"
+        },
+        "scannedAt": "2026-09-07T05:57:05.045Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-07T05:57:05.045Z"
+    },
+    {
+      "id": 74,
+      "request_id": "DSAR-2026-836027",
+      "target_email": "vikram.p@example.com",
+      "target_name": "vikram patel",
+      "target_phone": null,
+      "target_customer_id": null,
+      "discovered_systems_count": 1,
+      "total_pii_records_found": 1,
+      "data_map_json": {
+        "requestId": "DSAR-2026-836027",
+        "targetDataSubject": "vikram patel",
+        "fullName": "vikram patel",
+        "targetEmail": "vikram.p@example.com",
+        "email": "vikram.p@example.com",
+        "targetPhone": "",
+        "phone": "",
+        "targetCustomerId": "",
+        "customerId": "",
+        "overallStatus": "MATCH",
+        "overallConfidence": "97%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 1,
+        "totalPiiRecordsFound": 1,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [
+              "name",
+              "email",
+              "phone",
+              "aadhaar",
+              "pan"
+            ],
+            "recordCount": 1,
+            "matchedRowIds": [
+              4
+            ],
+            "matchMethod": "SQL Exact & Alias Match",
+            "aiConfidence": "97% High Confidence",
+            "status": "DISCOVERED",
+            "sampleMatches": [
+              {
+                "id": 4,
+                "name": "Vikram Patel",
+                "email": "vikram.p@example.com"
+              }
+            ]
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "MATCH",
+          "confidenceScore": "97%"
+        },
+        "identityGraph": {
+          "rootPerson": "vikram patel",
+          "totalNodes": 9,
+          "totalEdges": 8,
+          "nodes": [
+            {
+              "id": "person:vikram_patel",
+              "label": "vikram patel",
+              "type": "CANONICAL_PERSON_ROOT",
+              "metadata": {
+                "customerId": "TARGET_ROOT",
+                "isRoot": true
+              }
+            },
+            {
+              "id": "alias:patel_vikram",
+              "label": "Patel Vikram",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "patel vikram"
+              }
+            },
+            {
+              "id": "alias:v_patel",
+              "label": "V Patel",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "v patel"
+              }
+            },
+            {
+              "id": "alias:v._patel",
+              "label": "V. Patel",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "v. patel"
+              }
+            },
+            {
+              "id": "alias:vikram_patel",
+              "label": "Vikram Patel",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "vikram patel"
+              }
+            },
+            {
+              "id": "alias:vikram.patel",
+              "label": "Vikram.Patel",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "vikram.patel"
+              }
+            },
+            {
+              "id": "email:vikram.p@example.com",
+              "label": "vikram.p@example.com",
+              "type": "EMAIL_IDENTIFIER",
+              "metadata": {
+                "email": "vikram.p@example.com"
+              }
+            },
+            {
+              "id": "record:customers:4",
+              "label": "customers (Row #4)",
+              "type": "SYSTEM_RECORD",
+              "metadata": {
+                "sourceSystem": "customers",
+                "recordId": 4,
+                "decision": "MATCH"
+              }
+            },
+            {
+              "id": "record:active_escrow_transactions:4",
+              "label": "active_escrow_transactions (Row #4)",
+              "type": "SYSTEM_RECORD",
+              "metadata": {
+                "sourceSystem": "active_escrow_transactions",
+                "recordId": 4,
+                "decision": "MATCH"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "source": "person:vikram_patel",
+              "target": "alias:patel_vikram",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_patel",
+              "target": "alias:v_patel",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_patel",
+              "target": "alias:v._patel",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_patel",
+              "target": "alias:vikram_patel",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_patel",
+              "target": "alias:vikram.patel",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:vikram_patel",
+              "target": "email:vikram.p@example.com",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "matchType": "Exact Match",
+              "confidence": "100%"
+            },
+            {
+              "source": "person:vikram_patel",
+              "target": "record:customers:4",
+              "relationship": "LINKS_TO_RECORD",
+              "matchType": "AI ML Probabilistic Match",
+              "confidence": "97%"
+            },
+            {
+              "source": "person:vikram_patel",
+              "target": "record:active_escrow_transactions:4",
+              "relationship": "LINKS_TO_RECORD",
+              "matchType": "AI ML Probabilistic Match",
+              "confidence": "97%"
+            }
+          ],
+          "graphEngine": "Neo4j Graph Database & Cypher Schema",
+          "cypherScript": "// ========================================================\n// Neo4j Cypher Graph Script: Identity Cluster for 'vikram patel'\n// Auto-Generated by Segmento Protect AI Knowledge Graph Engine\n// ========================================================\n\n// 1. Nodes (Roots, Identifiers, Systems, Entities)\nMERGE (person:vikram_patel:PersonRoot {id: \"person:vikram_patel\", name: \"vikram patel\"})\nMERGE (alias:patel_vikram:NameAlias {id: \"alias:patel_vikram\", alias: \"Patel Vikram\"})\nMERGE (alias:v_patel:NameAlias {id: \"alias:v_patel\", alias: \"V Patel\"})\nMERGE (alias:v__patel:NameAlias {id: \"alias:v__patel\", alias: \"V. Patel\"})\nMERGE (alias:vikram_patel:NameAlias {id: \"alias:vikram_patel\", alias: \"Vikram Patel\"})\nMERGE (alias:vikram_patel:NameAlias {id: \"alias:vikram_patel\", alias: \"Vikram.Patel\"})\nMERGE (email:vikram_p_example_com:EmailIdentifier {id: \"email:vikram_p_example_com\", email: \"vikram.p@example.com\"})\nMERGE (record:customers:4:IdentityNode {id: \"record:customers:4\", label: \"customers (Row #4)\"})\nMERGE (record:active_escrow_transactions:4:IdentityNode {id: \"record:active_escrow_transactions:4\", label: \"active_escrow_transactions (Row #4)\"})\n\n// 2. Relationships & Link Graph Traversal\nMERGE (person:vikram_patel)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:patel_vikram)\nMERGE (person:vikram_patel)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:v_patel)\nMERGE (person:vikram_patel)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:v__patel)\nMERGE (person:vikram_patel)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:vikram_patel)\nMERGE (person:vikram_patel)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:vikram_patel)\nMERGE (person:vikram_patel)-[:HAS_PRIMARY_EMAIL {confidence: \"100%\"}]->(email:vikram_p_example_com)\nMERGE (person:vikram_patel)-[:LINKS_TO_RECORD {confidence: \"97%\"}]->(record:customers:4)\nMERGE (person:vikram_patel)-[:LINKS_TO_RECORD {confidence: \"97%\"}]->(record:active_escrow_transactions:4)\n\n// 3. Query Neighborhood Return\nMATCH (root:PersonRoot)-[r*1..2]-(connected) RETURN root, r, connected;",
+          "neo4jStatus": "Neo4j In-Memory Graph & Cypher Generator"
+        },
+        "scannedAt": "2026-09-07T05:57:04.640Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-07T05:57:04.640Z"
+    },
+    {
+      "id": 73,
+      "request_id": "DSAR-2026-848143",
+      "target_email": "ananya@example.com",
+      "target_name": "ananya sharma",
+      "target_phone": null,
+      "target_customer_id": null,
+      "discovered_systems_count": 1,
+      "total_pii_records_found": 1,
+      "data_map_json": {
+        "requestId": "DSAR-2026-848143",
+        "targetDataSubject": "ananya sharma",
+        "fullName": "ananya sharma",
+        "targetEmail": "ananya@example.com",
+        "email": "ananya@example.com",
+        "targetPhone": "",
+        "phone": "",
+        "targetCustomerId": "",
+        "customerId": "",
+        "overallStatus": "MATCH",
+        "overallConfidence": "97%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 1,
+        "totalPiiRecordsFound": 1,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [
+              "name",
+              "email",
+              "phone",
+              "aadhaar",
+              "pan"
+            ],
+            "recordCount": 1,
+            "matchedRowIds": [
+              3
+            ],
+            "matchMethod": "SQL Exact & Alias Match",
+            "aiConfidence": "97% High Confidence",
+            "status": "DISCOVERED",
+            "sampleMatches": [
+              {
+                "id": 3,
+                "name": "Ananya Sharma",
+                "email": "ananya@example.com"
+              }
+            ]
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "MATCH",
+          "confidenceScore": "97%"
+        },
+        "identityGraph": {
+          "rootPerson": "ananya sharma",
+          "totalNodes": 10,
+          "totalEdges": 9,
+          "nodes": [
+            {
+              "id": "person:ananya_sharma",
+              "label": "ananya sharma",
+              "type": "CANONICAL_PERSON_ROOT",
+              "metadata": {
+                "customerId": "TARGET_ROOT",
+                "isRoot": true
+              }
+            },
+            {
+              "id": "alias:a_sharma",
+              "label": "A Sharma",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "a sharma"
+              }
+            },
+            {
+              "id": "alias:a._sharma",
+              "label": "A. Sharma",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "a. sharma"
+              }
+            },
+            {
+              "id": "alias:ananya_sharma",
+              "label": "Ananya Sharma",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "ananya sharma"
+              }
+            },
+            {
+              "id": "alias:ananya.sharma",
+              "label": "Ananya.Sharma",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "ananya.sharma"
+              }
+            },
+            {
+              "id": "alias:sharma_ananya",
+              "label": "Sharma Ananya",
+              "type": "NAME_ALIAS",
+              "metadata": {
+                "aliasName": "sharma ananya"
+              }
+            },
+            {
+              "id": "email:ananya@example.com",
+              "label": "ananya@example.com",
+              "type": "EMAIL_IDENTIFIER",
+              "metadata": {
+                "email": "ananya@example.com"
+              }
+            },
+            {
+              "id": "record:customers:3",
+              "label": "customers (Row #3)",
+              "type": "SYSTEM_RECORD",
+              "metadata": {
+                "sourceSystem": "customers",
+                "recordId": 3,
+                "decision": "MATCH"
+              }
+            },
+            {
+              "id": "record:legal_holds_and_disputes:3",
+              "label": "legal_holds_and_disputes (Row #3)",
+              "type": "SYSTEM_RECORD",
+              "metadata": {
+                "sourceSystem": "legal_holds_and_disputes",
+                "recordId": 3,
+                "decision": "MATCH"
+              }
+            },
+            {
+              "id": "record:active_escrow_transactions:3",
+              "label": "active_escrow_transactions (Row #3)",
+              "type": "SYSTEM_RECORD",
+              "metadata": {
+                "sourceSystem": "active_escrow_transactions",
+                "recordId": 3,
+                "decision": "MATCH"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "source": "person:ananya_sharma",
+              "target": "alias:a_sharma",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:ananya_sharma",
+              "target": "alias:a._sharma",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:ananya_sharma",
+              "target": "alias:ananya_sharma",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:ananya_sharma",
+              "target": "alias:ananya.sharma",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:ananya_sharma",
+              "target": "alias:sharma_ananya",
+              "relationship": "HAS_ALIAS",
+              "matchType": "Phonetic / Permutation",
+              "confidence": "95%"
+            },
+            {
+              "source": "person:ananya_sharma",
+              "target": "email:ananya@example.com",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "matchType": "Exact Match",
+              "confidence": "100%"
+            },
+            {
+              "source": "person:ananya_sharma",
+              "target": "record:customers:3",
+              "relationship": "LINKS_TO_RECORD",
+              "matchType": "AI ML Probabilistic Match",
+              "confidence": "97%"
+            },
+            {
+              "source": "person:ananya_sharma",
+              "target": "record:legal_holds_and_disputes:3",
+              "relationship": "LINKS_TO_RECORD",
+              "matchType": "AI ML Probabilistic Match",
+              "confidence": "97%"
+            },
+            {
+              "source": "person:ananya_sharma",
+              "target": "record:active_escrow_transactions:3",
+              "relationship": "LINKS_TO_RECORD",
+              "matchType": "AI ML Probabilistic Match",
+              "confidence": "97%"
+            }
+          ],
+          "graphEngine": "Neo4j Graph Database & Cypher Schema",
+          "cypherScript": "// ========================================================\n// Neo4j Cypher Graph Script: Identity Cluster for 'ananya sharma'\n// Auto-Generated by Segmento Protect AI Knowledge Graph Engine\n// ========================================================\n\n// 1. Nodes (Roots, Identifiers, Systems, Entities)\nMERGE (person:ananya_sharma:PersonRoot {id: \"person:ananya_sharma\", name: \"ananya sharma\"})\nMERGE (alias:a_sharma:NameAlias {id: \"alias:a_sharma\", alias: \"A Sharma\"})\nMERGE (alias:a__sharma:NameAlias {id: \"alias:a__sharma\", alias: \"A. Sharma\"})\nMERGE (alias:ananya_sharma:NameAlias {id: \"alias:ananya_sharma\", alias: \"Ananya Sharma\"})\nMERGE (alias:ananya_sharma:NameAlias {id: \"alias:ananya_sharma\", alias: \"Ananya.Sharma\"})\nMERGE (alias:sharma_ananya:NameAlias {id: \"alias:sharma_ananya\", alias: \"Sharma Ananya\"})\nMERGE (email:ananya_example_com:EmailIdentifier {id: \"email:ananya_example_com\", email: \"ananya@example.com\"})\nMERGE (record:customers:3:IdentityNode {id: \"record:customers:3\", label: \"customers (Row #3)\"})\nMERGE (record:legal_holds_and_disputes:3:IdentityNode {id: \"record:legal_holds_and_disputes:3\", label: \"legal_holds_and_disputes (Row #3)\"})\nMERGE (record:active_escrow_transactions:3:IdentityNode {id: \"record:active_escrow_transactions:3\", label: \"active_escrow_transactions (Row #3)\"})\n\n// 2. Relationships & Link Graph Traversal\nMERGE (person:ananya_sharma)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:a_sharma)\nMERGE (person:ananya_sharma)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:a__sharma)\nMERGE (person:ananya_sharma)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:ananya_sharma)\nMERGE (person:ananya_sharma)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:ananya_sharma)\nMERGE (person:ananya_sharma)-[:HAS_ALIAS {confidence: \"95%\"}]->(alias:sharma_ananya)\nMERGE (person:ananya_sharma)-[:HAS_PRIMARY_EMAIL {confidence: \"100%\"}]->(email:ananya_example_com)\nMERGE (person:ananya_sharma)-[:LINKS_TO_RECORD {confidence: \"97%\"}]->(record:customers:3)\nMERGE (person:ananya_sharma)-[:LINKS_TO_RECORD {confidence: \"97%\"}]->(record:legal_holds_and_disputes:3)\nMERGE (person:ananya_sharma)-[:LINKS_TO_RECORD {confidence: \"97%\"}]->(record:active_escrow_transactions:3)\n\n// 3. Query Neighborhood Return\nMATCH (root:PersonRoot)-[r*1..2]-(connected) RETURN root, r, connected;",
+          "neo4jStatus": "Neo4j In-Memory Graph & Cypher Generator"
+        },
+        "scannedAt": "2026-09-07T05:57:04.165Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-07T05:57:04.165Z"
+    },
+    {
       "id": 72,
       "request_id": "DSAR-2026-696128",
       "target_email": "priya@gmail.com",
@@ -16776,6 +17777,45 @@
   ],
   "dsar_requests": [
     {
+      "id": 82,
+      "request_id": "DSAR-2026-929558",
+      "full_name": "Vikram Malhotra (High Risk Export Test)",
+      "email": "vikram.legal@company.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "restrict_processing",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-07T05:57:04.677Z"
+    },
+    {
+      "id": 81,
+      "request_id": "DSAR-2026-836027",
+      "full_name": "Vikram Patel",
+      "email": "vikram.p@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "anonymization",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-07T05:57:04.205Z"
+    },
+    {
+      "id": 80,
+      "request_id": "DSAR-2026-848143",
+      "full_name": "Ananya Sharma",
+      "email": "ananya@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-07T05:57:03.640Z"
+    },
+    {
       "id": 79,
       "request_id": "DSAR-2026-696128",
       "full_name": "Priya Sharma",
@@ -17804,6 +18844,195 @@
     }
   ],
   "dsar_impact_reports": [
+    {
+      "id": 29,
+      "request_id": "DSAR-2026-929558",
+      "risk_level": "HIGH",
+      "risk_score": 80,
+      "recommended_action": "LEGAL_HOLD_REQUIRED",
+      "dependencies_found_count": 3,
+      "impact_report_json": {
+        "requestId": "DSAR-2026-929558",
+        "dataSubject": "Vikram Malhotra (High Risk Export Test)",
+        "email": "vikram.legal@company.com",
+        "riskLevel": "HIGH",
+        "riskScore": 80,
+        "recommendedAction": "LEGAL_HOLD_REQUIRED",
+        "actionDescription": "High risk: Active legal hold or pending financial escrow transaction detected. Deletion BLOCKED under GDPR Art. 17(3)(e) & DPDP Sec. 8.",
+        "dependenciesFoundCount": 3,
+        "dependencies": [
+          {
+            "tableName": "billing_invoices_ledger",
+            "category": "Financial Accounting & Tax Ledger",
+            "foreignKeyStatus": "FOREIGN_KEY_CASCADE_RESTRICT",
+            "foreignKeyConstraint": "ON_DELETE_RESTRICT_STATUTORY_LOCK",
+            "referentialFailureMode": "CRITICAL_ACCOUNTING_LEDGER_CORRUPTION",
+            "dependentRecordCount": 1,
+            "orphanRisk": "CRITICAL_TAX_LAW_VIOLATION",
+            "recommendation": "Retain Numerical Ledger, Anonymize Customer PII (Wipe Name/Email)",
+            "statutoryStatute": "Income Tax Act Sec. 44AA & GST Act Sec. 36 (7-Year Accounting Retention)",
+            "statutoryPeriod": "7 Years from Transaction Date",
+            "retentionExpiryDate": "2033-09-07T05:57:04.677Z",
+            "yearsRemaining": "7.0 Years",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_STATUTORY_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_TAX_LEGAL_OBLIGATION (GDPR Art. 17(3)(b))"
+          },
+          {
+            "tableName": "legal_holds_and_disputes",
+            "category": "Legal Hold & Compliance Lock",
+            "foreignKeyStatus": "ACTIVE_LEGAL_PROCEEDING_HOLD",
+            "foreignKeyConstraint": "COURT_ORDER_SUBPOENA_MANDATORY_HOLD",
+            "referentialFailureMode": "CRITICAL_ILLEGAL_EVIDENCE_DESTRUCTION",
+            "dependentRecordCount": 1,
+            "orphanRisk": "CRITICAL_EVIDENCE_DESTRUCTION_VIOLATION",
+            "recommendation": "Block Deletion / Maintain Mandatory Compliance Lock",
+            "statutoryStatute": "Indian Evidence Act & DPDP Act Sec. 8(5) / GDPR Art. 17(3)(e)",
+            "statutoryPeriod": "Indefinite Hold until Judicial Resolution",
+            "retentionExpiryDate": "INDEFINITE_HOLD",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_JUDICIAL_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_LEGAL_DISPUTE_DEFENSE (GDPR Art. 17(3)(e))"
+          },
+          {
+            "tableName": "active_escrow_transactions",
+            "category": "Pending Financial Escrow Transaction",
+            "foreignKeyStatus": "PENDING_TRANSACTION_LOCK",
+            "foreignKeyConstraint": "ESCROW_CLEARING_WINDOW_LOCK",
+            "referentialFailureMode": "FINANCIAL_ESCROW_LOSS_RISK",
+            "dependentRecordCount": 1,
+            "orphanRisk": "HIGH_FINANCIAL_LOSS_RISK",
+            "recommendation": "Freeze Account until Transaction Settles",
+            "statutoryStatute": "Payment Settlement Systems Act 2007",
+            "statutoryPeriod": "0.1 Years from Transaction Date",
+            "retentionExpiryDate": "2027-09-07T05:57:04.677Z",
+            "yearsRemaining": "1.0 Years",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_STATUTORY_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_CONTRACTUAL_ESCROW_PERFORMANCE"
+          }
+        ],
+        "sha256Checksum": "dd5746c49af20944ce0f8f64fcbdd9800fcda698b340b23a80758e9d0f2db05a",
+        "analyzedAt": "2026-09-07T05:57:05.064Z"
+      },
+      "status": "IMPACT_ANALYSIS_COMPLETED",
+      "analyzed_at": "2026-09-07T05:57:05.064Z"
+    },
+    {
+      "id": 28,
+      "request_id": "DSAR-2026-836027",
+      "risk_level": "HIGH",
+      "risk_score": 80,
+      "recommended_action": "LEGAL_HOLD_REQUIRED",
+      "dependencies_found_count": 3,
+      "impact_report_json": {
+        "requestId": "DSAR-2026-836027",
+        "dataSubject": "Vikram Patel",
+        "email": "vikram.p@example.com",
+        "riskLevel": "HIGH",
+        "riskScore": 80,
+        "recommendedAction": "LEGAL_HOLD_REQUIRED",
+        "actionDescription": "High risk: Active legal hold or pending financial escrow transaction detected. Deletion BLOCKED under GDPR Art. 17(3)(e) & DPDP Sec. 8.",
+        "dependenciesFoundCount": 3,
+        "dependencies": [
+          {
+            "tableName": "customers",
+            "category": "Primary Profile Database",
+            "foreignKeyStatus": "DIRECT_PRIMARY_KEY",
+            "foreignKeyConstraint": "PRIMARY_KEY_PARENT_RECORD",
+            "referentialFailureMode": "CASCADE_ORPHAN_CHILD_RISK",
+            "dependentRecordCount": 1,
+            "orphanRisk": "HIGH_IF_HARD_DELETED",
+            "recommendation": "Soft Delete / In-Place Anonymization",
+            "statutoryStatute": "General User Profile (GDPR Art. 17 / DPDP Sec. 8)",
+            "statutoryPeriod": "1 Year from Transaction Date",
+            "retentionExpiryDate": "2027-09-07T05:57:04.205Z",
+            "yearsRemaining": "1.0 Years",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_STATUTORY_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_NONE_RIGHT_TO_ERASURE_APPLIES"
+          },
+          {
+            "tableName": "legal_holds_and_disputes",
+            "category": "Legal Hold & Compliance Lock",
+            "foreignKeyStatus": "ACTIVE_LEGAL_PROCEEDING_HOLD",
+            "foreignKeyConstraint": "COURT_ORDER_SUBPOENA_MANDATORY_HOLD",
+            "referentialFailureMode": "CRITICAL_ILLEGAL_EVIDENCE_DESTRUCTION",
+            "dependentRecordCount": 2,
+            "orphanRisk": "CRITICAL_EVIDENCE_DESTRUCTION_VIOLATION",
+            "recommendation": "Block Deletion / Maintain Mandatory Compliance Lock",
+            "statutoryStatute": "Indian Evidence Act & DPDP Act Sec. 8(5) / GDPR Art. 17(3)(e)",
+            "statutoryPeriod": "Indefinite Hold until Judicial Resolution",
+            "retentionExpiryDate": "INDEFINITE_HOLD",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_JUDICIAL_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_LEGAL_DISPUTE_DEFENSE (GDPR Art. 17(3)(e))"
+          },
+          {
+            "tableName": "active_escrow_transactions",
+            "category": "Pending Financial Escrow Transaction",
+            "foreignKeyStatus": "PENDING_TRANSACTION_LOCK",
+            "foreignKeyConstraint": "ESCROW_CLEARING_WINDOW_LOCK",
+            "referentialFailureMode": "FINANCIAL_ESCROW_LOSS_RISK",
+            "dependentRecordCount": 1,
+            "orphanRisk": "HIGH_FINANCIAL_LOSS_RISK",
+            "recommendation": "Freeze Account until Transaction Settles",
+            "statutoryStatute": "Payment Settlement Systems Act 2007",
+            "statutoryPeriod": "0.1 Years from Transaction Date",
+            "retentionExpiryDate": "2027-09-07T05:57:04.205Z",
+            "yearsRemaining": "1.0 Years",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_STATUTORY_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_CONTRACTUAL_ESCROW_PERFORMANCE"
+          }
+        ],
+        "sha256Checksum": "b68d43b363b66e0348529080353164f39242c4178ddf9c9443ba6d96e63f0334",
+        "analyzedAt": "2026-09-07T05:57:04.656Z"
+      },
+      "status": "IMPACT_ANALYSIS_COMPLETED",
+      "analyzed_at": "2026-09-07T05:57:04.656Z"
+    },
+    {
+      "id": 27,
+      "request_id": "DSAR-2026-848143",
+      "risk_level": "LOW",
+      "risk_score": 20,
+      "recommended_action": "HARD_DELETE",
+      "dependencies_found_count": 1,
+      "impact_report_json": {
+        "requestId": "DSAR-2026-848143",
+        "dataSubject": "Ananya Sharma",
+        "email": "ananya@example.com",
+        "riskLevel": "LOW",
+        "riskScore": 20,
+        "recommendedAction": "HARD_DELETE",
+        "actionDescription": "Safe for permanent hard deletion. No financial accounting or critical database dependencies found.",
+        "dependenciesFoundCount": 1,
+        "dependencies": [
+          {
+            "tableName": "customers",
+            "category": "Primary Profile Database",
+            "foreignKeyStatus": "DIRECT_PRIMARY_KEY",
+            "foreignKeyConstraint": "PRIMARY_KEY_PARENT_RECORD",
+            "referentialFailureMode": "CASCADE_ORPHAN_CHILD_RISK",
+            "dependentRecordCount": 1,
+            "orphanRisk": "HIGH_IF_HARD_DELETED",
+            "recommendation": "Soft Delete / In-Place Anonymization",
+            "statutoryStatute": "General User Profile (GDPR Art. 17 / DPDP Sec. 8)",
+            "statutoryPeriod": "1 Year from Transaction Date",
+            "retentionExpiryDate": "2027-09-07T05:57:03.640Z",
+            "yearsRemaining": "1.0 Years",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_STATUTORY_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_NONE_RIGHT_TO_ERASURE_APPLIES"
+          }
+        ],
+        "sha256Checksum": "d9733f86036e52d9b67766ac353c18307738ad510339280aba3ccd0aa9a96c1b",
+        "analyzedAt": "2026-09-07T05:57:04.186Z"
+      },
+      "status": "IMPACT_ANALYSIS_COMPLETED",
+      "analyzed_at": "2026-09-07T05:57:04.186Z"
+    },
     {
       "id": 26,
       "request_id": "DSAR-2026-443713",
