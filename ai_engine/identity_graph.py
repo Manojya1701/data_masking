@@ -5,6 +5,7 @@ and multi-system records for the resolved person.
 """
 
 from typing import Dict, Any, List, Set
+from neo4j_service import neo4j_service
 
 
 def construct_identity_graph(
@@ -13,7 +14,7 @@ def construct_identity_graph(
     nlp_extractions: List[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
-    Build a Node-Edge Identity Link Graph.
+    Build a Node-Edge Identity Link Graph with Neo4j Knowledge Graph persistence & Cypher generation.
     Nodes: Canonical Subject, Aliases, Emails, Phones, System Records.
     Edges: Connectors with Match Method and Confidence Percentage.
     """
@@ -148,10 +149,18 @@ def construct_identity_graph(
                         "confidence": "91%"
                     })
 
-    return {
+    graph_result = {
         "rootPerson": canonical_name,
         "totalNodes": len(nodes),
         "totalEdges": len(edges),
         "nodes": nodes,
-        "edges": edges
+        "edges": edges,
+        "graphEngine": "Neo4j Graph Database & Cypher Schema"
     }
+
+    # Automatically generate Cypher script and sync to Neo4j
+    neo_res = neo4j_service.sync_identity_graph(graph_result)
+    graph_result["cypherScript"] = neo_res.get("cypherScript", "")
+    graph_result["neo4jStatus"] = neo_res.get("engine", "Neo4j Graph Engine")
+
+    return graph_result

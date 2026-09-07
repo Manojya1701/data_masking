@@ -11,14 +11,16 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from normalizer import normalize_text, normalize_email, normalize_phone, generate_alias_permutations, normalize_identity_payload
 from blocker import get_soundex, get_metaphone, generate_blocking_keys, retrieve_candidate_records
+from elastic_service import elastic_service
 from nlp_extractor import extract_emails, extract_phones, extract_locations, extract_person_names, extract_entities_from_unstructured_text
 from feature_extractor import compute_name_similarity, compute_email_similarity, compute_phone_similarity, extract_feature_vector
 from model import calculate_match_probability, evaluate_candidate_decision, rank_and_filter_candidates
 from identity_graph import construct_identity_graph
+from neo4j_service import neo4j_service
 
 
 def run_tests():
-    print(">> Running Python AI Identity Engine Tests (Stages 1 to 8)...")
+    print(">> Running Python AI Identity Engine Tests (Stages 1 to 8 + Elasticsearch + Neo4j)...")
     passed = 0
     total = 0
 
@@ -43,7 +45,7 @@ def run_tests():
     norm_res = normalize_identity_payload({"fullName": "Vikram Patel", "email": "vikram@gmail.com", "phone": "+91 9876543210"})
     test("Stage 1: Identity Payload Normalization", norm_res["normalized"]["phone"] == "9876543210")
 
-    # ── STAGE 3: PHONETIC BLOCKING ──────────────────────────────────────────
+    # ── STAGE 3: ELASTICSEARCH & PHONETIC BLOCKING ──────────────────────────
     s1 = get_soundex("Vikram")
     s2 = get_soundex("Vikrm")
     test("Stage 3: Soundex Typo Matching (Vikram == Vikrm)", s1 == s2 and s1 == "V265")
@@ -54,9 +56,18 @@ def run_tests():
         {"id": 2, "name": "V. Patel", "email": "v.patel@work.com", "phone": "9876543210"},
         {"id": 3, "name": "John Doe", "email": "john@example.com", "phone": "9123456780"}
     ]
+    
+    # Test direct Elasticsearch indexing and search
+    idx_res = elastic_service.index_records(pool)
+    test("Stage 3: Elasticsearch Indexing Service", idx_res["status"] == "success" and idx_res["indexed_count"] >= 3)
+    
+    es_candidates = elastic_service.search_candidates(target)
+    es_ids = [c["id"] for c in es_candidates if "id" in c]
+    test("Stage 3: Elasticsearch Candidate Query Match", 1 in es_ids or 2 in es_ids)
+
     candidates = retrieve_candidate_records(target, pool)
-    cand_ids = [c["id"] for c in candidates]
-    test("Stage 3: Candidate Phonetic Blocking Retrieval", 1 in cand_ids and 2 in cand_ids)
+    cand_ids = [c.get("id") for c in candidates if "id" in c]
+    test("Stage 3: Candidate Retrieval Pipeline", 1 in cand_ids and 2 in cand_ids)
 
     # ── STAGE 4: NLP ENTITY EXTRACTION ──────────────────────────────────────
     sample_text = (
@@ -113,7 +124,7 @@ def run_tests():
     )
     test("Stage 6/7: Example 3 -> 54% UNKNOWN REJECTION", res_ex3["decision"] == "UNKNOWN_REJECTED" and res_ex3["matchProbability"] < 0.70 and not res_ex3["isMatched"])
 
-    # ── STAGE 8: IDENTITY GRAPH LINKING ─────────────────────────────────────
+    # ── STAGE 8: IDENTITY GRAPH & NEO4J CYPHER ──────────────────────────────
     graph = construct_identity_graph(
         {"name": "Vikram Patel", "customerId": "CUST-1024", "email": "vikram@gmail.com", "phone": "9876543210", "aliases": ["v patel", "vikram k patel"]},
         [res_ex1, res_ex2]
@@ -121,6 +132,15 @@ def run_tests():
     test("Stage 8: Identity Link Graph Root Node", graph["rootPerson"] == "Vikram Patel")
     test("Stage 8: Identity Link Graph Nodes >= 4", graph["totalNodes"] >= 4)
     test("Stage 8: Identity Link Graph Edges >= 3", graph["totalEdges"] >= 3)
+    test("Stage 8: Neo4j Graph Engine Tagged", "Neo4j" in graph.get("graphEngine", ""))
+    test("Stage 8: Neo4j Cypher Script Generated", "MERGE" in graph.get("cypherScript", "") and "PersonRoot" in graph.get("cypherScript", ""))
+
+    # Test direct Neo4j service methods
+    cypher_out = neo4j_service.generate_cypher_script(graph)
+    test("Stage 8: Neo4j Cypher DDL/DML Syntax", "PersonRoot" in cypher_out and "RETURN" in cypher_out)
+    
+    sync_res = neo4j_service.sync_identity_graph(graph)
+    test("Stage 8: Neo4j Sync Status Success", sync_res["status"] == "success" and sync_res["nodesSynced"] >= 4)
 
     print(f"\n>> All Tests Finished: {passed}/{total} tests passed (100%)!\n")
     if passed != total:

@@ -55,10 +55,15 @@ function formatSystemName(systemName, tableName) {
 function renderIdentityGraphCluster(graph) {
   const container = document.getElementById('dsar-graph-nodes-container');
   const countEl = document.getElementById('dsar-graph-node-count');
+  const cypherCodeEl = document.getElementById('dsar-cypher-code');
   if (!container) return;
 
   const nodes = graph?.nodes || [];
-  if (countEl) countEl.textContent = `${nodes.length} Nodes · ${graph?.edges?.length || 0} Edges Linked`;
+  if (countEl) countEl.textContent = `${nodes.length} Nodes · ${graph?.edges?.length || 0} Edges Linked (Neo4j)`;
+
+  if (cypherCodeEl && graph?.cypherScript) {
+    cypherCodeEl.textContent = graph.cypherScript;
+  }
 
   if (nodes.length === 0) {
     container.innerHTML = `<span style="font-size:0.8rem; color:var(--text-muted);">No linked identity nodes found.</span>`;
@@ -81,6 +86,9 @@ function renderIdentityGraphCluster(graph) {
     } else if (n.type === 'PHONE_IDENTIFIER') {
       badgeColor = 'rgba(59,130,246,0.15); color:#60a5fa; border:1px solid rgba(59,130,246,0.35);';
       icon = '📱';
+    } else if (n.type === 'SYSTEM_RECORD' || n.type === 'DISCOVERED_RECORD') {
+      badgeColor = 'rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.35);';
+      icon = '🗄️ Record:';
     } else if (n.type === 'NLP_EXTRACTED_ENTITY') {
       badgeColor = 'rgba(236,72,153,0.15); color:#f472b6; border:1px solid rgba(236,72,153,0.35);';
       icon = '🤖 NLP:';
@@ -225,6 +233,19 @@ export async function runIdentityDiscoveryScan(requestId) {
 export function initDsarDiscovery() {
   const retriggerBtn = document.getElementById('btn-retrigger-discovery');
   const proceedStep3Btn = document.getElementById('btn-proceed-step3');
+  const toggleCypherBtn = document.getElementById('btn-toggle-cypher');
+  const cypherBox = document.getElementById('dsar-cypher-box');
+
+  if (toggleCypherBtn && cypherBox) {
+    toggleCypherBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isHidden = cypherBox.style.display === 'none';
+      cypherBox.style.display = isHidden ? 'block' : 'none';
+      toggleCypherBtn.innerHTML = isHidden
+        ? '<span>🙈 Hide Cypher</span>'
+        : '<span>📜 View Cypher (.cql)</span>';
+    });
+  }
 
   if (retriggerBtn) {
     retriggerBtn.addEventListener('click', (e) => {

@@ -347,6 +347,7 @@ async function performIdentityDiscovery(requestId) {
     discoveredTables,
     aiModel: {
       engine: 'Python FastAPI AI Engine (Port 8000)',
+      searchEngine: 'Elasticsearch & Inverted Phonetic Index (Stage 3 Active)',
       stagesActive: 'Stages 1 to 8 (Full Pipeline)',
       overallDecision: overallStatus,
       confidenceScore: overallConfidence

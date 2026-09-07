@@ -5,6 +5,7 @@ Implements Soundex and Metaphone algorithms to index and retrieve candidate reco
 
 import re
 from typing import List, Dict, Any, Set
+from elastic_service import elastic_service
 
 
 def get_soundex(name: str) -> str:
@@ -114,8 +115,18 @@ def generate_blocking_keys(name: str, email: str = "", phone: str = "") -> Set[s
 
 def retrieve_candidate_records(target: Dict[str, Any], pool: List[Dict[str, Any]], max_candidates: int = 50) -> List[Dict[str, Any]]:
     """
-    Filter large record pool down to candidate blocks matching any blocking key.
+    Filter large record pool down to candidate blocks using Elasticsearch / Phonetic Inverted Index.
     """
+    # 1. Index pool into Elasticsearch service if not already indexed
+    if pool:
+        elastic_service.index_records(pool)
+
+    # 2. Try Elasticsearch search
+    es_candidates = elastic_service.search_candidates(target, limit=max_candidates)
+    if es_candidates:
+        return es_candidates
+
+    # 3. Fallback to direct blocking key matching
     target_name = target.get("name") or target.get("fullName") or ""
     target_email = target.get("email") or ""
     target_phone = target.get("phone") or ""
@@ -130,7 +141,6 @@ def retrieve_candidate_records(target: Dict[str, Any], pool: List[Dict[str, Any]
 
         rec_keys = generate_blocking_keys(rec_name, rec_email, rec_phone)
         
-        # Check set intersection
         shared_keys = target_keys.intersection(rec_keys)
         if shared_keys:
             candidate_copy = dict(record)

@@ -9,6 +9,8 @@ from typing import List, Dict, Any, Optional, Tuple
 
 from normalizer import normalize_identity_payload, generate_alias_permutations
 from blocker import retrieve_candidate_records, generate_blocking_keys, get_soundex, get_metaphone
+from elastic_service import elastic_service
+from neo4j_service import neo4j_service
 from nlp_extractor import extract_entities_from_unstructured_text
 from feature_extractor import extract_feature_vector
 from model import evaluate_candidate_decision, rank_and_filter_candidates
@@ -16,8 +18,8 @@ from identity_graph import construct_identity_graph
 
 app = FastAPI(
     title="Segmento Protect - AI Identity Resolution Service",
-    description="Microservice providing Full 8-Stage AI Identity Resolution, NLP, and ML Probabilistic Matching for DSAR Step 2",
-    version="2.0.0"
+    description="Microservice providing Full 8-Stage AI Identity Resolution, Elasticsearch, spaCy NLP, XGBoost ML, and Neo4j Graph DB for DSAR Step 2",
+    version="2.2.0"
 )
 
 
@@ -34,6 +36,24 @@ class BlockerRequest(BaseModel):
     target: Dict[str, Any] = Field(..., description="Target identity query")
     pool: List[Dict[str, Any]] = Field(default=[], description="List of records to search within")
     maxCandidates: Optional[int] = Field(default=50, description="Max candidates to return")
+
+
+class ElasticIndexRequest(BaseModel):
+    records: List[Dict[str, Any]] = Field(..., description="List of records to index")
+    sourceSystem: Optional[str] = Field(default="customers", description="Source system name")
+
+
+class ElasticSearchRequest(BaseModel):
+    query: Dict[str, Any] = Field(..., description="Target identity query fields (name, email, phone)")
+    limit: Optional[int] = Field(default=50, description="Max candidate records to return")
+
+
+class Neo4jSyncRequest(BaseModel):
+    graphData: Dict[str, Any] = Field(..., description="Identity Link Graph node/edge payload")
+
+
+class Neo4jCypherRequest(BaseModel):
+    graphData: Dict[str, Any] = Field(..., description="Identity Link Graph to translate to Cypher script")
 
 
 class NlpExtractRequest(BaseModel):
@@ -61,18 +81,85 @@ def health_check():
     return {
         "status": "healthy",
         "service": "Segmento Protect AI Identity Engine",
-        "version": "2.0.0",
+        "version": "2.2.0",
+        "searchEngine": "Elasticsearch & Phonetic Inverted Index",
+        "nlpEngine": "spaCy Named Entity Recognition",
+        "mlEngine": "XGBoost Classifier (xgb.XGBClassifier)",
+        "graphEngine": "Neo4j Graph Database & Cypher Schema",
         "activeStages": [
             "Stage 1: Data Normalization",
             "Stage 2: Exact Matching Fast-Path",
-            "Stage 3: Phonetic Candidate Blocking",
-            "Stage 4: NLP / Named Entity Recognition",
-            "Stage 5: Multi-Attribute Feature Engineering",
-            "Stage 6: ML Entity Resolution Scorer",
-            "Stage 7: Confidence Threshold & Decision Logic",
-            "Stage 8: Identity Link Graph"
-        ]
+            "Stage 3: Elasticsearch & Phonetic Candidate Retrieval",
+            "Stage 4: spaCy NLP / Named Entity Recognition",
+            "Stage 5: Multi-Attribute Feature Engineering (RapidFuzz)",
+            "Stage 6: XGBoost ML Entity Resolution Scorer",
+            "Stage 7: Confidence Threshold & Explainable AI (XAI)",
+            "Stage 8: Neo4j Identity Graph & Cypher Relational Cluster"
+        ],
+        "elasticsearch": elastic_service.get_cluster_status(),
+        "neo4j": neo4j_service.get_cluster_status()
     }
+
+
+@app.get("/api/ai/elastic/health")
+def elastic_health():
+    """Get Elasticsearch cluster connection and index status."""
+    return elastic_service.get_cluster_status()
+
+
+@app.get("/api/ai/neo4j/health")
+def neo4j_health():
+    """Get Neo4j Graph Database cluster connection and node counts."""
+    return neo4j_service.get_cluster_status()
+
+
+@app.post("/api/ai/neo4j/sync")
+def neo4j_sync_endpoint(payload: Neo4jSyncRequest):
+    """Sync Identity Link Graph nodes and edges to Neo4j."""
+    try:
+        res = neo4j_service.sync_identity_graph(payload.graphData)
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/ai/neo4j/cypher")
+def neo4j_cypher_endpoint(payload: Neo4jCypherRequest):
+    """Generate Cypher (.cql) query script for an identity graph."""
+    try:
+        script = neo4j_service.generate_cypher_script(payload.graphData)
+        return {
+            "success": True,
+            "engine": "Neo4j Cypher DDL/DML Generator",
+            "cypherScript": script
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/ai/elastic/index")
+def elastic_index_endpoint(payload: ElasticIndexRequest):
+    """Index customer/candidate records into Elasticsearch index."""
+    try:
+        res = elastic_service.index_records(payload.records, payload.sourceSystem)
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/ai/elastic/search")
+def elastic_search_endpoint(payload: ElasticSearchRequest):
+    """Fuzzy/Phonetic candidate query on Elasticsearch index."""
+    try:
+        candidates = elastic_service.search_candidates(payload.query, payload.limit)
+        return {
+            "success": True,
+            "engine": "Elasticsearch Candidate Search Engine",
+            "count": len(candidates),
+            "candidates": candidates
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/api/ai/normalize")
