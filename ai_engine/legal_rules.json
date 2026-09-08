@@ -1,0 +1,92 @@
+{
+  "INDIA_DPDP_2023": {
+    "jurisdiction": "IN",
+    "shortName": "DPDP Act 2023",
+    "title": "Digital Personal Data Protection Act, 2023 (India)",
+    "primarySection": "Section 12(3) - Right to Correction and Erasure of Personal Data",
+    "exceptionsSection": "Section 17 - Exemptions for legal compliance, statutory obligations & legal claims",
+    "retentionPolicy": "Data must be erased immediately upon withdrawal of consent, unless retention is mandated by law.",
+    "maxPenalty": "₹250 Crores per violation",
+    "categories": {
+      "MARKETING_PII": {
+        "action": "FULL_HARD_DELETE",
+        "lockActive": false,
+        "retentionYears": 0,
+        "legalBasis": "DPDP Sec. 12(3) - Consent withdrawn, no statutory obligation to retain."
+      },
+      "CUSTOMER_PROFILE": {
+        "action": "ANONYMIZE_OR_DELETE",
+        "lockActive": false,
+        "retentionYears": 0,
+        "legalBasis": "DPDP Sec. 12(3) - In-place pseudonymization or erasure of contact identifiers."
+      }
+    }
+  },
+  "INDIA_BANKING_RBI_PMLA": {
+    "jurisdiction": "IN",
+    "shortName": "RBI KYC / PMLA 2002",
+    "title": "RBI Master Direction - KYC (2016) & Prevention of Money Laundering Act, 2002",
+    "primarySection": "PMLA Section 12(1) & RBI Master Direction Sec. 38 - Maintenance of Records",
+    "mandatoryRetentionYears": 5,
+    "triggerEvent": "5 years after cessation of business relationship (account closure)",
+    "retentionPolicy": "Mandatory statutory retention of customer identification data, KYC records, and account files for 5 years.",
+    "categories": {
+      "BANKING_KYC": {
+        "action": "STATUTORY_RETENTION_LOCK_RESTRICTED",
+        "lockActive": true,
+        "retentionYears": 5,
+        "legalBasis": "RBI Master Direction KYC Sec. 38 & PMLA Sec. 12 - Mandatory 5-year post-closure retention."
+      },
+      "ACCOUNT_AUDIT_LOGS": {
+        "action": "STATUTORY_RETENTION_LOCK_READONLY",
+        "lockActive": true,
+        "retentionYears": 5,
+        "legalBasis": "Banking Regulation Act Sec. 45Y & PMLA 2002 - Anti-money laundering audit trail protection."
+      }
+    }
+  },
+  "INDIA_TAX_GST_INCOME_TAX": {
+    "jurisdiction": "IN",
+    "shortName": "GST Act 2017 / IT Act (7-Yr Rule)",
+    "title": "Central Goods and Services Tax (CGST) Act 2017 & Income Tax Act 1961",
+    "primarySection": "CGST Act Section 36 & Income Tax Act Section 44AA / 285BA",
+    "mandatoryRetentionYears": 7,
+    "retentionPolicy": "Mandatory retention of books of account, invoices, vouchers, and tax invoices for a period of 72 months (6-7 financial years).",
+    "categories": {
+      "FINANCIAL_INVOICE_LEDGER": {
+        "action": "PSEUDONYMIZE_DIRECT_PII_RETAIN_FINANCIALS",
+        "lockActive": true,
+        "retentionYears": 7,
+        "legalBasis": "CGST Act 2017 Sec. 36 & Income Tax Sec. 44AA - 7-year statutory financial invoice retention."
+      },
+      "PAYMENT_TRANSACTIONS": {
+        "action": "PSEUDONYMIZE_DIRECT_PII_RETAIN_FINANCIALS",
+        "lockActive": true,
+        "retentionYears": 7,
+        "legalBasis": "Payment and Settlement Systems Act 2007 & GST Act Sec. 36 - Statutory financial trail."
+      }
+    }
+  },
+  "EU_GDPR": {
+    "jurisdiction": "EU",
+    "shortName": "EU GDPR",
+    "title": "General Data Protection Regulation (EU) 2016/679",
+    "primarySection": "Article 17(1) - Right to Erasure ('Right to be Forgotten')",
+    "exceptionsSection": "Article 17(3)(b) & Article 17(3)(e) - Compliance with legal obligation & defense of legal claims",
+    "maxPenalty": "€20 Million or 4% of Global Annual Turnover",
+    "categories": {
+      "MARKETING_PII": {
+        "action": "FULL_HARD_DELETE",
+        "lockActive": false,
+        "retentionYears": 0,
+        "legalBasis": "GDPR Art. 17(1)(b) - Withdrawal of consent where no other legal ground applies."
+      },
+      "CONTRACTUAL_OBLIGATION": {
+        "action": "RESTRICTED_PROCESSING",
+        "lockActive": true,
+        "retentionYears": 3,
+        "legalBasis": "GDPR Art. 17(3)(e) - Establishment, exercise, or defense of legal claims."
+      }
+    }
+  }
+}

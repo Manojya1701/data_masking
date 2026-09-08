@@ -200,7 +200,14 @@ export function initDsarImpact() {
   if (proceedStep4Btn) {
     proceedStep4Btn.addEventListener('click', (e) => {
       e.preventDefault();
-      showToast('Step 3 Impact Analysis complete! Step 4 (Compliance Policy Check) will be available in tomorrow\'s workflow update.', 'info');
+      const reqIdTag = document.getElementById('dsar-impact-req-id');
+      const reqId = reqIdTag ? reqIdTag.textContent.replace('Target: ', '').trim() : activeImpactRequestId;
+      if (window.runLegalPolicyEvaluation && reqId) {
+        window.runLegalPolicyEvaluation(reqId);
+      } else {
+        const policyBtn = document.getElementById('btn-retrigger-policy');
+        if (policyBtn) policyBtn.click();
+      }
     });
   }
 }

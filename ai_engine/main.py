@@ -15,11 +15,12 @@ from nlp_extractor import extract_entities_from_unstructured_text
 from feature_extractor import extract_feature_vector
 from model import evaluate_candidate_decision, rank_and_filter_candidates
 from identity_graph import construct_identity_graph
+from legal_policy_engine import evaluate_legal_policy, load_legal_rules
 
 app = FastAPI(
-    title="Segmento Protect - AI Identity Resolution Service",
-    description="Microservice providing Full 8-Stage AI Identity Resolution, Elasticsearch, spaCy NLP, XGBoost ML, and Neo4j Graph DB for DSAR Step 2",
-    version="2.2.0"
+    title="Segmento Protect - AI Identity & Legal Policy Service",
+    description="Microservice providing Full 8-Stage AI Identity Resolution, Elasticsearch, spaCy NLP, XGBoost ML, Neo4j Graph DB, and DPDP/RBI/GST/GDPR Legal Policy Evaluation",
+    version="2.3.0"
 )
 
 
@@ -71,6 +72,12 @@ class FullResolveRequest(BaseModel):
     target: Dict[str, Any] = Field(..., description="Target identity input from Step 1")
     databasePools: Dict[str, List[Dict[str, Any]]] = Field(default={}, description="Dict of system table records")
     unstructuredLogs: Optional[List[str]] = Field(default=[], description="List of raw log texts")
+
+
+class PolicyEvaluateRequest(BaseModel):
+    targetSubject: Dict[str, Any] = Field(..., description="Target data subject identity metadata")
+    discoveredDataMap: Optional[Dict[str, Any]] = Field(default=None, description="Discovered tables and PII records from Step 2")
+    impactReport: Optional[Dict[str, Any]] = Field(default=None, description="Impact analysis report from Step 3")
 
 
 # ── REST ENDPOINTS ──────────────────────────────────────────────────────────
@@ -314,6 +321,29 @@ def resolve_full_identity(payload: FullResolveRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/ai/policy/evaluate")
+def evaluate_policy_endpoint(payload: PolicyEvaluateRequest):
+    """
+    Step 4: Evaluates statutory laws (DPDP Act 2023, RBI KYC Directions, PMLA 2002, GST Act 2017, EU GDPR)
+    against discovered PII tables to enforce statutory retention locks and determine DPO approval requirements.
+    """
+    try:
+        result = evaluate_legal_policy(
+            payload.targetSubject,
+            payload.discoveredDataMap,
+            payload.impactReport
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/ai/policy/rules")
+def get_legal_rules_endpoint():
+    """Returns statutory legal rules catalog."""
+    return load_legal_rules()
 
 
 if __name__ == "__main__":

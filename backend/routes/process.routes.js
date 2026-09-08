@@ -26,6 +26,7 @@ const emailSearchService = require('../services/email-search-service');
 const dsarService = require('../services/dsar-service');
 const dsarDiscoveryService = require('../services/dsar-discovery-service');
 const dsarImpactService = require('../services/dsar-impact-service');
+const dsarPolicyService = require('../services/dsar-policy-service');
 
 const router = express.Router();
 
@@ -865,4 +866,48 @@ router.get('/dsar/impact/:id/export', async (req, res) => {
   }
 });
 
+// ── DSAR STEP 4 LEGAL COMPLIANCE POLICY & APPROVAL ROUTES ─────────────────
+
+// POST /api/dsar/policy/evaluate — Perform multi-statute legal policy check
+router.post('/dsar/policy/evaluate', async (req, res) => {
+  try {
+    const { requestId } = req.body || {};
+    const result = await dsarPolicyService.evaluateLegalPolicy(requestId);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/policy/:id — Fetch saved Legal Policy Evaluation Report
+router.get('/api/dsar/policy/:id', async (req, res) => {
+  try {
+    const result = await dsarPolicyService.getDsarPolicyReport(req.params.id);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/policy/approve — DPO / Compliance Officer Digital Approval
+router.post('/dsar/policy/approve', async (req, res) => {
+  try {
+    const { requestId, dpoNotes, approverName } = req.body || {};
+    const result = await dsarPolicyService.approvePolicyCompliance(requestId, dpoNotes, approverName);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 module.exports = router;
+

@@ -142,6 +142,38 @@ def run_tests():
     sync_res = neo4j_service.sync_identity_graph(graph)
     test("Stage 8: Neo4j Sync Status Success", sync_res["status"] == "success" and sync_res["nodesSynced"] >= 4)
 
+    # ── STEP 4: LEGAL POLICY ENGINE & STATUTORY RULES ────────────────────────
+    from legal_policy_engine import evaluate_legal_policy, load_legal_rules, detect_jurisdiction, classify_table_legal_category
+
+    rules = load_legal_rules()
+    test("Step 4: Load Statutory Rules Catalog", "INDIA_DPDP_2023" in rules and "INDIA_TAX_GST_INCOME_TAX" in rules)
+
+    jur = detect_jurisdiction({"phone": "+91 9876543210", "email": "vikram@gmail.com"})
+    test("Step 4: Detect India Jurisdictions (DPDP, GST, RBI)", "INDIA_DPDP_2023" in jur and "INDIA_TAX_GST_INCOME_TAX" in jur)
+
+    inv_class = classify_table_legal_category("orders", ["amount", "invoice_no"])
+    test("Step 4: Classify 7-Year GST Tax Lock", inv_class["statutoryYears"] == 7 and inv_class["lockActive"] is True)
+
+    kyc_class = classify_table_legal_category("kyc_records", ["pan_number"])
+    test("Step 4: Classify 5-Year RBI KYC Lock", kyc_class["statutoryYears"] == 5 and kyc_class["lockActive"] is True)
+
+    cust_class = classify_table_legal_category("customers", ["email", "phone"])
+    test("Step 4: Classify Marketing Profile Erasure", cust_class["statutoryYears"] == 0 and cust_class["lockActive"] is False)
+
+    # Evaluate full policy on hybrid data map (Customers + Orders)
+    policy_res = evaluate_legal_policy(
+        {"requestId": "DSAR-2026-000001", "fullName": "Vikram Patel", "phone": "+91 9876543210"},
+        {"discoveredTables": [
+            {"tableName": "customers", "recordCount": 1},
+            {"tableName": "orders", "recordCount": 2}
+        ]}
+    )
+    test("Step 4: Policy Evaluation Result Success", policy_res["success"] is True)
+    test("Step 4: Policy Matrix Generated", len(policy_res["policyMatrix"]) == 2)
+    test("Step 4: Statutory Locks Count == 1", policy_res["statutoryLocksCount"] == 1)
+    test("Step 4: DPO Approval Routing Activated", policy_res["approvalMode"] == "DPO_SIGN_OFF_REQUIRED")
+    test("Step 4: Court-Admissible Defense Statement", "DPDP Act 2023" in policy_res["legalDefenseStatement"] and "GST" in policy_res["legalDefenseStatement"])
+
     print(f"\n>> All Tests Finished: {passed}/{total} tests passed (100%)!\n")
     if passed != total:
         sys.exit(1)
@@ -149,3 +181,4 @@ def run_tests():
 
 if __name__ == "__main__":
     run_tests()
+
