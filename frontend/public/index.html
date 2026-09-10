@@ -1573,10 +1573,22 @@
       <!-- Active DSAR Requests Queue Table -->
       <div class="db-card">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
-          <span class="meta-pill primary" style="background:rgba(6,182,212,0.12); color:var(--cyan); border:1px solid rgba(6,182,212,0.3); font-weight:700;">
-            Active DSAR Intake Queue
-          </span>
-          <span id="dsar-queue-count" style="font-size:0.8rem; color:var(--text-muted);">0 Requests</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="meta-pill primary" style="background:rgba(6,182,212,0.12); color:var(--cyan); border:1px solid rgba(6,182,212,0.3); font-weight:700;">
+              Active DSAR Intake Queue
+            </span>
+            <span id="dsar-queue-count" style="font-size:0.8rem; color:var(--text-muted);">0 Requests</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" id="btn-reset-dsar-queue" class="btn-ghost btn-sm" style="font-size:0.75rem; color:var(--text-muted); border-color:rgba(255,255,255,0.15);" title="Reset queue to clean minimal demo records">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px; margin-right:4px;"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              <span>Reset Clean Demo Records</span>
+            </button>
+            <button type="button" id="btn-refresh-dsar-requests" class="btn-ghost btn-sm" style="font-size:0.75rem; color:var(--cyan); border-color:rgba(6,182,212,0.3);" title="Refresh queue">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px; margin-right:4px;"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+              <span>Refresh Queue</span>
+            </button>
+          </div>
         </div>
 
         <div class="table-wrap">

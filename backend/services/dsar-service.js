@@ -11,34 +11,34 @@ const db = require('../database/db');
 let FALLBACK_DSAR_REQUESTS = [
   {
     id: 1,
-    request_id: 'DSAR-2026-000123',
-    full_name: 'John Doe',
-    email: 'john.doe@example.com',
+    request_id: 'DSAR-2026-000101',
+    full_name: 'Vikram Patel',
+    email: 'vikram.patel@example.in',
     phone: '+91 98765 43210',
-    customer_id: 'CUST-8842',
+    customer_id: 'CUST-8891',
     request_type: 'full_erasure',
     subject_category: 'customer',
-    verification_evidence: 'Government ID Verified (#ID-892)',
+    verification_evidence: 'Government ID & Aadhaar Verified (#ID-8891)',
     status: 'RECEIVED',
-    created_at: '2026-08-30T10:00:00.000Z'
+    created_at: '2026-09-01T10:00:00.000Z'
   },
   {
     id: 2,
     request_id: 'DSAR-2026-000456',
-    full_name: 'Alice Smith (Low Risk Demo)',
+    full_name: 'Alice Smith',
     email: 'alice.smith@example.com',
-    phone: '+91 91234 56789',
-    customer_id: 'CUST-9011',
+    phone: '+91 99887 76655',
+    customer_id: 'CUST-9901',
     request_type: 'full_erasure',
-    subject_category: 'former_customer',
+    subject_category: 'customer',
     verification_evidence: 'Email OTP Verified (#OTP-334)',
     status: 'RECEIVED',
-    created_at: '2026-08-30T10:15:00.000Z'
+    created_at: '2026-09-02T11:15:00.000Z'
   },
   {
     id: 3,
     request_id: 'DSAR-2026-000789',
-    full_name: 'Vikram Malhotra (High Risk Demo)',
+    full_name: 'Vikram Malhotra',
     email: 'vikram.legal@company.com',
     phone: '+91 99887 76655',
     customer_id: 'CUST-1044',
@@ -46,7 +46,20 @@ let FALLBACK_DSAR_REQUESTS = [
     subject_category: 'customer',
     verification_evidence: 'Court Subpoena & Legal Compliance Lock (#LEGAL-990)',
     status: 'RECEIVED',
-    created_at: '2026-08-30T10:30:00.000Z'
+    created_at: '2026-09-03T14:30:00.000Z'
+  },
+  {
+    id: 4,
+    request_id: 'DSAR-2026-000518',
+    full_name: 'Priya Sharma',
+    email: 'priya@gmail.com',
+    phone: '+91 91234 56789',
+    customer_id: 'CUST-7712',
+    request_type: 'anonymization',
+    subject_category: 'customer',
+    verification_evidence: 'Mobile OTP Verified (#OTP-518)',
+    status: 'RECEIVED',
+    created_at: '2026-09-04T09:45:00.000Z'
   }
 ];
 
@@ -170,9 +183,93 @@ async function getDsarRequestById(requestId) {
   return { success: false, notFound: true, message: 'DSAR Request not found' };
 }
 
+/**
+ * Reset DSAR queue to clean minimal demo records.
+ */
+async function resetDsarRequests() {
+  const cleanRecords = [
+    {
+      id: 1,
+      request_id: 'DSAR-2026-000101',
+      full_name: 'Vikram Patel',
+      email: 'vikram.patel@example.in',
+      phone: '+91 98765 43210',
+      customer_id: 'CUST-8891',
+      request_type: 'full_erasure',
+      subject_category: 'customer',
+      verification_evidence: 'Government ID & Aadhaar Verified (#ID-8891)',
+      status: 'RECEIVED',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 2,
+      request_id: 'DSAR-2026-000456',
+      full_name: 'Alice Smith',
+      email: 'alice.smith@example.com',
+      phone: '+91 99887 76655',
+      customer_id: 'CUST-9901',
+      request_type: 'full_erasure',
+      subject_category: 'customer',
+      verification_evidence: 'Email OTP Verified (#OTP-334)',
+      status: 'RECEIVED',
+      created_at: new Date(Date.now() - 3600000).toISOString()
+    },
+    {
+      id: 3,
+      request_id: 'DSAR-2026-000789',
+      full_name: 'Vikram Malhotra',
+      email: 'vikram.legal@company.com',
+      phone: '+91 99887 76655',
+      customer_id: 'CUST-1044',
+      request_type: 'restrict_processing',
+      subject_category: 'customer',
+      verification_evidence: 'Court Subpoena & Legal Compliance Lock (#LEGAL-990)',
+      status: 'RECEIVED',
+      created_at: new Date(Date.now() - 7200000).toISOString()
+    },
+    {
+      id: 4,
+      request_id: 'DSAR-2026-000518',
+      full_name: 'Priya Sharma',
+      email: 'priya@gmail.com',
+      phone: '+91 91234 56789',
+      customer_id: 'CUST-7712',
+      request_type: 'anonymization',
+      subject_category: 'customer',
+      verification_evidence: 'Mobile OTP Verified (#OTP-518)',
+      status: 'RECEIVED',
+      created_at: new Date(Date.now() - 10800000).toISOString()
+    }
+  ];
+
+  FALLBACK_DSAR_REQUESTS = JSON.parse(JSON.stringify(cleanRecords));
+
+  if (db.isConfigured()) {
+    try {
+      await db.query('DELETE FROM dsar_identity_maps;');
+      await db.query('DELETE FROM dsar_impact_reports;');
+      await db.query('DELETE FROM dsar_requests;');
+      for (const r of cleanRecords) {
+        await db.query(`
+          INSERT INTO dsar_requests (
+            request_id, full_name, email, phone, customer_id, request_type, subject_category, verification_evidence, status, created_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        `, [
+          r.request_id, r.full_name, r.email, r.phone, r.customer_id, r.request_type, r.subject_category, r.verification_evidence, r.status, r.created_at
+        ]);
+      }
+    } catch (err) {
+      console.warn('[DSAR Service Warning] DB reset error:', err.message);
+    }
+  }
+
+  return { success: true, message: 'DSAR requests queue successfully reset to clean demo records', count: cleanRecords.length, records: cleanRecords };
+}
+
 module.exports = {
   createDsarRequest,
   getDsarRequests,
   getDsarRequestById,
+  resetDsarRequests,
   generateDsarTrackingId
 };

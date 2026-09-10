@@ -781,6 +781,16 @@ router.get('/dsar/requests', async (req, res) => {
   }
 });
 
+// POST /api/dsar/requests/reset — Reset DSAR queue to clean minimal demo records
+router.post('/dsar/requests/reset', async (req, res) => {
+  try {
+    const result = await dsarService.resetDsarRequests();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 // GET /api/dsar/requests/:id — Fetch details for a specific DSAR tracking ID
 router.get('/dsar/requests/:id', async (req, res) => {
   try {

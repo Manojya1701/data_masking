@@ -46,11 +46,24 @@ function formatDsarRequestType(type) {
 }
 
 function formatDsarStatus(status) {
-  const st = (status || 'RECEIVED').toUpperCase();
+  let raw = typeof status === 'string' ? status.trim() : 'RECEIVED';
+  // Guard against any JSON string or oversized payload
+  if (raw.startsWith('{') || raw.startsWith('[') || raw.length > 35) {
+    raw = 'RECEIVED';
+  }
+  const st = raw.toUpperCase();
   if (st === 'RECEIVED') {
     return '<span class="meta-pill badge-received">RECEIVED</span>';
   } else if (st === 'VERIFIED') {
     return '<span class="meta-pill badge-verified">VERIFIED</span>';
+  } else if (st === 'APPROVED' || st === 'DPO_APPROVED') {
+    return '<span class="meta-pill" style="background:rgba(34,197,94,0.12); color:var(--emerald); border:1px solid rgba(34,197,94,0.3);">APPROVED</span>';
+  } else if (st === 'EXECUTED' || st === 'DELETED') {
+    return '<span class="meta-pill" style="background:rgba(168,85,247,0.12); color:#c084fc; border:1px solid rgba(168,85,247,0.3);">EXECUTED</span>';
+  } else if (st === 'DISCOVERY_COMPLETED') {
+    return '<span class="meta-pill" style="background:rgba(6,182,212,0.12); color:var(--cyan); border:1px solid rgba(6,182,212,0.3);">DISCOVERED</span>';
+  } else if (st === 'IMPACT_ANALYSIS_COMPLETED') {
+    return '<span class="meta-pill" style="background:rgba(245,158,11,0.12); color:var(--amber); border:1px solid rgba(245,158,11,0.3);">ASSESSED</span>';
   }
   return `<span class="meta-pill">${escapeHtml(st)}</span>`;
 }
@@ -233,6 +246,8 @@ export function initDsarIntake() {
     });
   });
 
+  const resetBtn = document.getElementById('btn-reset-dsar-queue');
+
   if (form) {
     form.addEventListener('submit', handleDsarSubmit);
   }
@@ -242,6 +257,25 @@ export function initDsarIntake() {
       e.preventDefault();
       showToast('Refreshing DSAR intake queue…', 'info');
       loadDsarRequests();
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      showToast('Resetting DSAR queue to clean demo records…', 'info');
+      try {
+        const res = await fetch(`${window.location.origin}/api/dsar/requests/reset`, { method: 'POST' });
+        const data = await res.json();
+        if (data && data.success) {
+          showToast('✓ DSAR queue reset to clean demo records', 'success');
+          await loadDsarRequests();
+        } else {
+          showToast(data.message || 'Failed to reset queue', 'error');
+        }
+      } catch (err) {
+        showToast(`Reset error: ${err.message}`, 'error');
+      }
     });
   }
 

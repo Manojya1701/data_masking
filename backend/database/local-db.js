@@ -47,34 +47,34 @@ const DEFAULT_STORE = {
   dsar_requests: [
     {
       id: 1,
-      request_id: 'DSAR-2026-000123',
-      full_name: 'John Doe',
-      email: 'john.doe@example.com',
+      request_id: 'DSAR-2026-000101',
+      full_name: 'Vikram Patel',
+      email: 'vikram.patel@example.in',
       phone: '+91 98765 43210',
-      customer_id: 'CUST-8842',
+      customer_id: 'CUST-8891',
       request_type: 'full_erasure',
       subject_category: 'customer',
-      verification_evidence: 'Government ID Verified (#ID-892)',
+      verification_evidence: 'Government ID & Aadhaar Verified (#ID-8891)',
       status: 'RECEIVED',
-      created_at: '2026-08-30T10:00:00.000Z'
+      created_at: '2026-09-01T10:00:00.000Z'
     },
     {
       id: 2,
       request_id: 'DSAR-2026-000456',
       full_name: 'Alice Smith',
       email: 'alice.smith@example.com',
-      phone: '+91 91234 56789',
-      customer_id: 'CUST-9011',
+      phone: '+91 99887 76655',
+      customer_id: 'CUST-9901',
       request_type: 'full_erasure',
-      subject_category: 'former_customer',
+      subject_category: 'customer',
       verification_evidence: 'Email OTP Verified (#OTP-334)',
       status: 'RECEIVED',
-      created_at: '2026-08-30T10:15:00.000Z'
+      created_at: '2026-09-02T11:15:00.000Z'
     },
     {
       id: 3,
       request_id: 'DSAR-2026-000789',
-      full_name: 'Vikram Malhotra (Legal Hold Demo)',
+      full_name: 'Vikram Malhotra',
       email: 'vikram.legal@company.com',
       phone: '+91 99887 76655',
       customer_id: 'CUST-1044',
@@ -82,7 +82,20 @@ const DEFAULT_STORE = {
       subject_category: 'customer',
       verification_evidence: 'Court Subpoena & Legal Compliance Lock (#LEGAL-990)',
       status: 'RECEIVED',
-      created_at: '2026-08-30T10:30:00.000Z'
+      created_at: '2026-09-03T14:30:00.000Z'
+    },
+    {
+      id: 4,
+      request_id: 'DSAR-2026-000518',
+      full_name: 'Priya Sharma',
+      email: 'priya@gmail.com',
+      phone: '+91 91234 56789',
+      customer_id: 'CUST-7712',
+      request_type: 'anonymization',
+      subject_category: 'customer',
+      verification_evidence: 'Mobile OTP Verified (#OTP-518)',
+      status: 'RECEIVED',
+      created_at: '2026-09-04T09:45:00.000Z'
     }
   ]
 };
@@ -328,18 +341,57 @@ async function query(text, params = []) {
     return { rows: [{ id: newRecord.id, request_id: newRecord.request_id }], rowCount: 1 };
   }
 
-  // 17. UPDATE dsar_requests SET status = $1 WHERE request_id = $2
+  // 17. UPDATE dsar_requests
   if (lowerSql.startsWith('update dsar_requests')) {
     const list = currentStore.dsar_requests || [];
-    const newStatus = params[0];
-    const reqId = params[1];
+    const reqId = params && params.length > 0 ? params[params.length - 1] : null;
     const match = list.find(r => r && String(r.request_id || '').trim().toLowerCase() === String(reqId || '').trim().toLowerCase());
     if (match) {
-      match.status = newStatus;
+      if (lowerSql.includes("status = 'discovery_completed'")) {
+        match.status = 'DISCOVERY_COMPLETED';
+      } else if (lowerSql.includes("status = 'impact_analysis_completed'")) {
+        match.status = 'IMPACT_ANALYSIS_COMPLETED';
+      } else if (lowerSql.includes("status = 'approved'")) {
+        match.status = 'APPROVED';
+        match.compliance_status = 'DPO_APPROVED';
+        if (params.length >= 2) match.legal_policy_report = params[0];
+      } else if (lowerSql.includes("status = 'executed'")) {
+        match.status = 'EXECUTED';
+        match.compliance_status = 'EXECUTED_READY_FOR_VERIFICATION';
+        if (params.length >= 2) match.execution_report = params[0];
+      } else if (lowerSql.includes('legal_policy_report = $1')) {
+        match.legal_policy_report = params[0];
+        match.compliance_status = params[1] || 'POLICY_EVALUATED';
+        match.status = 'POLICY_EVALUATED';
+      } else if (lowerSql.includes('status = $1') && params.length >= 2) {
+        match.status = params[0];
+      }
+      match.updated_at = new Date().toISOString();
       saveStore();
       return { rowCount: 1 };
     }
     return { rowCount: 0 };
+  }
+
+  // 17b. DELETE / TRUNCATE dsar_requests
+  if (lowerSql.startsWith('delete from dsar_requests') || lowerSql.startsWith('truncate dsar_requests')) {
+    currentStore.dsar_requests = [];
+    saveStore();
+    return { rowCount: 1 };
+  }
+
+  // 17c. DELETE / TRUNCATE dsar_identity_maps
+  if (lowerSql.startsWith('delete from dsar_identity_maps') || lowerSql.startsWith('truncate dsar_identity_maps')) {
+    currentStore.dsar_identity_maps = [];
+    saveStore();
+    return { rowCount: 1 };
+  }
+
+  // 17d. DELETE / TRUNCATE dsar_impact_reports
+  if (lowerSql.startsWith('delete from dsar_impact_reports') || lowerSql.startsWith('truncate dsar_impact_reports')) {
+    currentStore.dsar_impact_reports = [];
+    saveStore();
+    return { rowCount: 1 };
   }
 
   // 18. SELECT FROM dsar_identity_maps
