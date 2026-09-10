@@ -5,56 +5,56 @@
       "first_name": "Rahul",
       "last_name": "Kumar",
       "email": "rahul@gmail.com",
-      "created_at": "2026-09-08T05:15:34.679Z"
+      "created_at": "2026-09-10T09:29:28.820Z"
     },
     {
       "id": 2,
       "first_name": "Priya",
       "last_name": "Sharma",
       "email": "priya@gmail.com",
-      "created_at": "2026-09-08T05:15:34.679Z"
+      "created_at": "2026-09-10T09:29:28.820Z"
     },
     {
       "id": 3,
       "first_name": "Arjun",
       "last_name": "Reddy",
       "email": "arjun@gmail.com",
-      "created_at": "2026-09-08T05:15:34.679Z"
+      "created_at": "2026-09-10T09:29:28.820Z"
     },
     {
       "id": 4,
       "first_name": "Sneha",
       "last_name": "Patel",
       "email": "sneha.p@gmail.com",
-      "created_at": "2026-09-08T05:15:34.679Z"
+      "created_at": "2026-09-10T09:29:28.820Z"
     },
     {
       "id": 5,
       "first_name": "Vikram",
       "last_name": "Verma",
       "email": "vikram.v@example.com",
-      "created_at": "2026-09-08T05:15:34.679Z"
+      "created_at": "2026-09-10T09:29:28.820Z"
     },
     {
       "id": 6,
       "first_name": "Ananya",
       "last_name": "Roy",
       "email": "ananya.roy@example.com",
-      "created_at": "2026-09-08T05:15:34.679Z"
+      "created_at": "2026-09-10T09:29:28.820Z"
     },
     {
       "id": 7,
       "first_name": "Karthik",
       "last_name": "Nair",
       "email": "karthik.n@gmail.com",
-      "created_at": "2026-09-08T05:15:34.679Z"
+      "created_at": "2026-09-10T09:29:28.820Z"
     },
     {
       "id": 8,
       "first_name": "Divya",
       "last_name": "Das",
       "email": "divya.das@example.com",
-      "created_at": "2026-09-08T05:15:34.679Z"
+      "created_at": "2026-09-10T09:29:28.820Z"
     }
   ],
   "customers": [
@@ -87,16 +87,6 @@
       "pan": "CDEFG3456H",
       "address": "Bengaluru",
       "created_at": "2026-08-12T10:10:00.000Z"
-    },
-    {
-      "id": 4,
-      "name": "Vikram Patel",
-      "email": "vikram.p@example.com",
-      "phone": "9876501234",
-      "aadhaar": "4567 8901 2345",
-      "pan": "DEFGH4567I",
-      "address": "Mumbai",
-      "created_at": "2026-08-12T10:15:00.000Z"
     },
     {
       "id": 5,
@@ -1912,6 +1902,326 @@
     }
   ],
   "processing_history": [
+    {
+      "id": 515,
+      "job_id": "da8caa1f-b88d-40e8-bd0d-8c70d804db27",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "hashing",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_hashing",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.920Z"
+    },
+    {
+      "id": 514,
+      "job_id": "f49a6553-4a40-4f2e-bca9-cd7a445367a0",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "encryption",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_encryption",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.885Z"
+    },
+    {
+      "id": 513,
+      "job_id": "26a8384b-8187-4256-9b64-839db2847baa",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "redaction",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_redaction",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.855Z"
+    },
+    {
+      "id": 512,
+      "job_id": "6ea0d683-eaae-4bb0-82fa-2acff0e5f3fb",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "pseudonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_pseudonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.833Z"
+    },
+    {
+      "id": 511,
+      "job_id": "561ab192-5b27-4baf-8839-7b4b1e680166",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "anonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_anonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.794Z"
+    },
+    {
+      "id": 510,
+      "job_id": "2251811e-a4cd-4260-8c79-f8a4a2b044e9",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "tokenization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_tokenization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.767Z"
+    },
+    {
+      "id": 509,
+      "job_id": "72f68ff6-daba-4663-b006-9211d4568719",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "masking",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_masking",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.744Z"
+    },
+    {
+      "id": 508,
+      "job_id": "19ef0bef-9b64-49f4-ae81-93e10ee7e737",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "hashing",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_hashing",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.651Z"
+    },
+    {
+      "id": 507,
+      "job_id": "2495ad8a-5ce6-4c7c-b166-63743b58b0aa",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "encryption",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_encryption",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.566Z"
+    },
+    {
+      "id": 506,
+      "job_id": "9169c54a-7440-4aa1-901a-f38e81da7e37",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "redaction",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_redaction",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.360Z"
+    },
+    {
+      "id": 505,
+      "job_id": "c21a51f9-57bc-434f-91be-9c6dd15e61cb",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "pseudonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_pseudonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.322Z"
+    },
+    {
+      "id": 504,
+      "job_id": "59ebf479-eadf-460e-90ac-2e3956436e7e",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "anonymization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_anonymization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.285Z"
+    },
+    {
+      "id": 503,
+      "job_id": "50ea1467-03b5-4f8a-8be2-d1149ae977a2",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "tokenization",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_tokenization",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.221Z"
+    },
+    {
+      "id": 502,
+      "job_id": "66f49d42-6468-4c61-b758-429e0af0550d",
+      "original_file_name": "customers_table",
+      "file_format": "db_table",
+      "file_size": 4,
+      "operation": "mask",
+      "masking_type": "masking",
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 24,
+      "processed_count": 24,
+      "risk_level": "Medium",
+      "processing_time_seconds": 0.05,
+      "output_file_name": "customers_masking",
+      "status": "success",
+      "error_category": null,
+      "created_at": "2026-09-10T09:29:30.182Z"
+    },
+    {
+      "id": 501,
+      "job_id": "JOB_1789032428647",
+      "original_file_name": "dataset.csv",
+      "file_format": "csv",
+      "file_size": 0,
+      "operation": "DSAR_EXECUTION_HYBRID",
+      "masking_type": null,
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 0,
+      "processed_count": 0,
+      "risk_level": "MEDIUM",
+      "processing_time_seconds": 0,
+      "output_file_name": null,
+      "status": "SUCCESS",
+      "error_category": null,
+      "created_at": "2026-09-10T09:27:08.647Z"
+    },
+    {
+      "id": 500,
+      "job_id": "JOB_1789032355508",
+      "original_file_name": "dataset.csv",
+      "file_format": "csv",
+      "file_size": 0,
+      "operation": "DSAR_EXECUTION_HYBRID",
+      "masking_type": null,
+      "hash_mode": null,
+      "hash_algorithm": null,
+      "encryption_algorithm": null,
+      "detected_count": 0,
+      "processed_count": 0,
+      "risk_level": "MEDIUM",
+      "processing_time_seconds": 0,
+      "output_file_name": null,
+      "status": "SUCCESS",
+      "error_category": null,
+      "created_at": "2026-09-10T09:25:55.508Z"
+    },
     {
       "id": 499,
       "job_id": "test-job-123",
@@ -11896,6 +12206,634 @@
   "privacy_scan_history": [],
   "dsar_identity_maps": [
     {
+      "id": 85,
+      "request_id": "DSAR-2026-571338",
+      "target_email": "priya@gmail.com",
+      "target_name": "priya sharma",
+      "target_phone": "9123456789",
+      "target_customer_id": null,
+      "discovered_systems_count": 2,
+      "total_pii_records_found": 2,
+      "data_map_json": {
+        "requestId": "DSAR-2026-571338",
+        "targetDataSubject": "priya sharma",
+        "fullName": "priya sharma",
+        "targetEmail": "priya@gmail.com",
+        "email": "priya@gmail.com",
+        "targetPhone": "9123456789",
+        "phone": "9123456789",
+        "targetCustomerId": "",
+        "customerId": "",
+        "overallStatus": "MATCH",
+        "overallConfidence": "97%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 2,
+        "totalPiiRecordsFound": 2,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [
+              "name",
+              "email",
+              "phone",
+              "aadhaar",
+              "pan"
+            ],
+            "recordCount": 1,
+            "matchedRowIds": [
+              2
+            ],
+            "matchMethod": "SQL Exact & Alias Match",
+            "aiConfidence": "97% High Confidence",
+            "status": "DISCOVERED",
+            "sampleMatches": [
+              {
+                "id": 2,
+                "name": "Ravi Kumar",
+                "email": "ravi.k@example.com"
+              }
+            ]
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [
+              "first_name",
+              "last_name",
+              "email"
+            ],
+            "recordCount": 1,
+            "matchedRowIds": [
+              2
+            ],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "100% Direct Match",
+            "status": "DISCOVERED",
+            "sampleMatches": [
+              {
+                "id": 2,
+                "name": "Priya Sharma",
+                "email": "priya@gmail.com"
+              }
+            ]
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "MATCH",
+          "confidenceScore": "97%"
+        },
+        "identityGraph": {
+          "rootPerson": "Priya Sharma",
+          "totalNodes": 3,
+          "totalEdges": 2,
+          "nodes": [
+            {
+              "id": "root",
+              "label": "Priya Sharma",
+              "type": "CANONICAL_PERSON_ROOT"
+            },
+            {
+              "id": "email",
+              "label": "priya@gmail.com",
+              "type": "EMAIL_IDENTIFIER"
+            },
+            {
+              "id": "phone",
+              "label": "+91 91234 56789",
+              "type": "PHONE_IDENTIFIER"
+            }
+          ],
+          "edges": [
+            {
+              "source": "root",
+              "target": "email",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "confidence": "100%"
+            },
+            {
+              "source": "root",
+              "target": "phone",
+              "relationship": "HAS_PRIMARY_PHONE",
+              "confidence": "100%"
+            }
+          ]
+        },
+        "scannedAt": "2026-09-10T09:29:28.937Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-10T09:29:28.937Z"
+    },
+    {
+      "id": 84,
+      "request_id": "DSAR-2026-481941",
+      "target_email": "vikram.p@company.com",
+      "target_name": "vikram k patel",
+      "target_phone": "9876543210",
+      "target_customer_id": null,
+      "discovered_systems_count": 1,
+      "total_pii_records_found": 1,
+      "data_map_json": {
+        "requestId": "DSAR-2026-481941",
+        "targetDataSubject": "vikram k patel",
+        "fullName": "vikram k patel",
+        "targetEmail": "vikram.p@company.com",
+        "email": "vikram.p@company.com",
+        "targetPhone": "9876543210",
+        "phone": "9876543210",
+        "targetCustomerId": "",
+        "customerId": "",
+        "overallStatus": "MATCH",
+        "overallConfidence": "97%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 1,
+        "totalPiiRecordsFound": 1,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [
+              "name",
+              "email",
+              "phone",
+              "aadhaar",
+              "pan"
+            ],
+            "recordCount": 1,
+            "matchedRowIds": [
+              1
+            ],
+            "matchMethod": "SQL Exact & Alias Match",
+            "aiConfidence": "97% High Confidence",
+            "status": "DISCOVERED",
+            "sampleMatches": [
+              {
+                "id": 1,
+                "name": "Harika",
+                "email": "harika@example.com"
+              }
+            ]
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "MATCH",
+          "confidenceScore": "97%"
+        },
+        "identityGraph": {
+          "rootPerson": "Vikram K Patel",
+          "totalNodes": 3,
+          "totalEdges": 2,
+          "nodes": [
+            {
+              "id": "root",
+              "label": "Vikram K Patel",
+              "type": "CANONICAL_PERSON_ROOT"
+            },
+            {
+              "id": "email",
+              "label": "vikram.p@company.com",
+              "type": "EMAIL_IDENTIFIER"
+            },
+            {
+              "id": "phone",
+              "label": "+91 98765 43210",
+              "type": "PHONE_IDENTIFIER"
+            }
+          ],
+          "edges": [
+            {
+              "source": "root",
+              "target": "email",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "confidence": "100%"
+            },
+            {
+              "source": "root",
+              "target": "phone",
+              "relationship": "HAS_PRIMARY_PHONE",
+              "confidence": "100%"
+            }
+          ]
+        },
+        "scannedAt": "2026-09-10T09:29:28.785Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-10T09:29:28.785Z"
+    },
+    {
+      "id": 83,
+      "request_id": "DSAR-2026-127929",
+      "target_email": "vikram.legal@company.com",
+      "target_name": "vikram malhotra (high risk export test)",
+      "target_phone": null,
+      "target_customer_id": null,
+      "discovered_systems_count": 0,
+      "total_pii_records_found": 0,
+      "data_map_json": {
+        "requestId": "DSAR-2026-127929",
+        "targetDataSubject": "vikram malhotra (high risk export test)",
+        "fullName": "vikram malhotra (high risk export test)",
+        "targetEmail": "vikram.legal@company.com",
+        "email": "vikram.legal@company.com",
+        "targetPhone": "",
+        "phone": "",
+        "targetCustomerId": "",
+        "customerId": "",
+        "overallStatus": "UNKNOWN_REJECTED",
+        "overallConfidence": "0%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 0,
+        "totalPiiRecordsFound": 0,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "UNKNOWN_REJECTED",
+          "confidenceScore": "0%"
+        },
+        "identityGraph": {
+          "rootPerson": "Vikram Malhotra (High Risk Export Test)",
+          "totalNodes": 3,
+          "totalEdges": 2,
+          "nodes": [
+            {
+              "id": "root",
+              "label": "Vikram Malhotra (High Risk Export Test)",
+              "type": "CANONICAL_PERSON_ROOT"
+            },
+            {
+              "id": "email",
+              "label": "vikram.legal@company.com",
+              "type": "EMAIL_IDENTIFIER"
+            },
+            {
+              "id": "phone",
+              "label": null,
+              "type": "PHONE_IDENTIFIER"
+            }
+          ],
+          "edges": [
+            {
+              "source": "root",
+              "target": "email",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "confidence": "100%"
+            },
+            {
+              "source": "root",
+              "target": "phone",
+              "relationship": "HAS_PRIMARY_PHONE",
+              "confidence": "100%"
+            }
+          ]
+        },
+        "scannedAt": "2026-09-10T09:29:28.056Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-10T09:29:28.056Z"
+    },
+    {
+      "id": 82,
+      "request_id": "DSAR-2026-563458",
+      "target_email": "vikram.p@example.com",
+      "target_name": "vikram patel",
+      "target_phone": null,
+      "target_customer_id": null,
+      "discovered_systems_count": 0,
+      "total_pii_records_found": 0,
+      "data_map_json": {
+        "requestId": "DSAR-2026-563458",
+        "targetDataSubject": "vikram patel",
+        "fullName": "vikram patel",
+        "targetEmail": "vikram.p@example.com",
+        "email": "vikram.p@example.com",
+        "targetPhone": "",
+        "phone": "",
+        "targetCustomerId": "",
+        "customerId": "",
+        "overallStatus": "UNKNOWN_REJECTED",
+        "overallConfidence": "0%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 0,
+        "totalPiiRecordsFound": 0,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "UNKNOWN_REJECTED",
+          "confidenceScore": "0%"
+        },
+        "identityGraph": {
+          "rootPerson": "Vikram Patel",
+          "totalNodes": 3,
+          "totalEdges": 2,
+          "nodes": [
+            {
+              "id": "root",
+              "label": "Vikram Patel",
+              "type": "CANONICAL_PERSON_ROOT"
+            },
+            {
+              "id": "email",
+              "label": "vikram.p@example.com",
+              "type": "EMAIL_IDENTIFIER"
+            },
+            {
+              "id": "phone",
+              "label": null,
+              "type": "PHONE_IDENTIFIER"
+            }
+          ],
+          "edges": [
+            {
+              "source": "root",
+              "target": "email",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "confidence": "100%"
+            },
+            {
+              "source": "root",
+              "target": "phone",
+              "relationship": "HAS_PRIMARY_PHONE",
+              "confidence": "100%"
+            }
+          ]
+        },
+        "scannedAt": "2026-09-10T09:29:27.972Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-10T09:29:27.973Z"
+    },
+    {
+      "id": 81,
+      "request_id": "DSAR-2026-518246",
+      "target_email": "ananya@example.com",
+      "target_name": "ananya sharma",
+      "target_phone": null,
+      "target_customer_id": null,
+      "discovered_systems_count": 1,
+      "total_pii_records_found": 1,
+      "data_map_json": {
+        "requestId": "DSAR-2026-518246",
+        "targetDataSubject": "ananya sharma",
+        "fullName": "ananya sharma",
+        "targetEmail": "ananya@example.com",
+        "email": "ananya@example.com",
+        "targetPhone": "",
+        "phone": "",
+        "targetCustomerId": "",
+        "customerId": "",
+        "overallStatus": "MATCH",
+        "overallConfidence": "97%",
+        "systemsScanned": 4,
+        "discoveredSystemsCount": 1,
+        "totalPiiRecordsFound": 1,
+        "discoveredTables": [
+          {
+            "systemName": "PostgreSQL Database: customers",
+            "tableName": "customers",
+            "matchedFields": [
+              "name",
+              "email",
+              "phone",
+              "aadhaar",
+              "pan"
+            ],
+            "recordCount": 1,
+            "matchedRowIds": [
+              3
+            ],
+            "matchMethod": "SQL Exact & Alias Match",
+            "aiConfidence": "97% High Confidence",
+            "status": "DISCOVERED",
+            "sampleMatches": [
+              {
+                "id": 3,
+                "name": "Ananya Sharma",
+                "email": "ananya@example.com"
+              }
+            ]
+          },
+          {
+            "systemName": "PostgreSQL Database: privacy_deletion_customers",
+            "tableName": "privacy_deletion_customers",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "SQL Exact Check",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "PostgreSQL Database: protected_customer_data",
+            "tableName": "protected_customer_data",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "Vault Key Scan",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          },
+          {
+            "systemName": "File Storage & Audit Logs: processing_history",
+            "tableName": "processing_history",
+            "matchedFields": [],
+            "recordCount": 0,
+            "matchedRowIds": [],
+            "matchMethod": "🤖 NLP Entity Scanner",
+            "aiConfidence": "0%",
+            "status": "NO_PII_FOUND"
+          }
+        ],
+        "aiModel": {
+          "engine": "Python FastAPI AI Engine (Port 8000)",
+          "searchEngine": "Elasticsearch & Inverted Phonetic Index (Stage 3 Active)",
+          "stagesActive": "Stages 1 to 8 (Full Pipeline)",
+          "overallDecision": "MATCH",
+          "confidenceScore": "97%"
+        },
+        "identityGraph": {
+          "rootPerson": "Ananya Sharma",
+          "totalNodes": 3,
+          "totalEdges": 2,
+          "nodes": [
+            {
+              "id": "root",
+              "label": "Ananya Sharma",
+              "type": "CANONICAL_PERSON_ROOT"
+            },
+            {
+              "id": "email",
+              "label": "ananya@example.com",
+              "type": "EMAIL_IDENTIFIER"
+            },
+            {
+              "id": "phone",
+              "label": null,
+              "type": "PHONE_IDENTIFIER"
+            }
+          ],
+          "edges": [
+            {
+              "source": "root",
+              "target": "email",
+              "relationship": "HAS_PRIMARY_EMAIL",
+              "confidence": "100%"
+            },
+            {
+              "source": "root",
+              "target": "phone",
+              "relationship": "HAS_PRIMARY_PHONE",
+              "confidence": "100%"
+            }
+          ]
+        },
+        "scannedAt": "2026-09-10T09:29:27.876Z"
+      },
+      "status": "DISCOVERY_COMPLETED",
+      "scanned_at": "2026-09-10T09:29:27.876Z"
+    },
+    {
       "id": 80,
       "request_id": "DSAR-2026-275089",
       "target_email": "vikram.legal@company.com",
@@ -19539,6 +20477,162 @@
   ],
   "dsar_requests": [
     {
+      "id": 106,
+      "request_id": "DSAR-2026-135669",
+      "full_name": "Bob Johnson",
+      "email": "bob.j@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "anonymization",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-10T09:29:31.983Z"
+    },
+    {
+      "id": 105,
+      "request_id": "DSAR-2026-423259",
+      "full_name": "Alice Smith",
+      "email": "alice.smith@example.com",
+      "phone": "+91 99887 76655",
+      "customer_id": "CUST-9901",
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": "Aadhaar Verified",
+      "status": "RECEIVED",
+      "created_at": "2026-09-10T09:29:31.923Z"
+    },
+    {
+      "id": 104,
+      "request_id": "DSAR-2026-126465",
+      "full_name": "Vikram Patel",
+      "email": "vikram.patel@example.in",
+      "phone": "+91 9876543210",
+      "customer_id": "CUST-8891",
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "{\"success\":true,\"requestId\":\"DSAR-2026-126465\",\"dataSubject\":\"Vikram Patel\",\"evaluatedAt\":\"2026-09-10T09:29:31.443Z\",\"jurisdictions\":[\"INDIA_DPDP_2023\",\"INDIA_TAX_GST_INCOME_TAX\",\"INDIA_BANKING_RBI_PMLA\"],\"applicableStatutes\":[\"DPDP Act 2023 Sec. 12(3)\",\"CGST Act 2017 Sec. 36\"],\"overallStatus\":\"DPO_APPROVED_READY_FOR_EXECUTION\",\"approvalMode\":\"DPO_SIGN_OFF_REQUIRED\",\"legalRiskScore\":30,\"totalRecords\":3,\"lockedRecordsCount\":2,\"erasureReadyRecordsCount\":1,\"statutoryLocksCount\":1,\"actionSummary\":\"Hybrid compliance plan generated: Marketing/profile records will be permanently erased; financial invoices retained under GST Act 2017 Section 36.\",\"legalDefenseStatement\":\"Legal Compliance Determination for Vikram Patel (DSAR-2026-126465): Evaluated pursuant to India DPDP Act 2023 Sec. 12(3) and EU GDPR Art. 17. 1 record(s) approved for permanent erasure. 2 record(s) subject to statutory retention locks under DPDP Act 2023 Sec. 12(3), CGST Act 2017 Sec. 36 until 2033. Direct identifiers will be cryptographically pseudonymized.\",\"policyMatrix\":[{\"tableName\":\"customers\",\"dataCategory\":\"MARKETING_AND_PROFILE_PII\",\"recordCount\":1,\"statutoryLockActive\":false,\"mandatoryRetentionYears\":0,\"retentionExpiryYear\":2026,\"statuteCitation\":\"DPDP Act 2023 Sec. 12(3) & GDPR Art. 17(1)\",\"recommendedAction\":\"FULL_HARD_DELETE\",\"actionLabel\":\"🗑️ Full Hard Deletion Permitted\",\"legalRationale\":\"Consent withdrawn for direct marketing and identity storage. Mandatory immediate erasure.\"},{\"tableName\":\"orders\",\"dataCategory\":\"FINANCIAL_TAX_LEDGER\",\"recordCount\":2,\"statutoryLockActive\":true,\"mandatoryRetentionYears\":7,\"retentionExpiryYear\":2033,\"statuteCitation\":\"CGST Act 2017 Sec. 36 & Income Tax Act Sec. 44AA\",\"recommendedAction\":\"PSEUDONYMIZE_DIRECT_PII_RETAIN_FINANCIALS\",\"actionLabel\":\"🛡️ Pseudonymize PII & Retain Financial Ledger\",\"legalRationale\":\"Mandatory 7-year statutory retention of sales invoices and tax records. Direct customer PII must be masked while preserving audit sums.\"}],\"dpoSignOff\":{\"required\":true,\"status\":\"DPO_APPROVED\",\"signedBy\":\"S. Sharma (Chief Privacy Officer)\",\"dpoNotes\":\"Legal retention lock verified under GST Act Sec. 36. Marketing records authorized for erasure.\",\"signedAt\":\"2026-09-10T09:29:31.452Z\",\"approvalSignatureHash\":\"25557c587e141dbf1b64dc3c7c489224c7d140478507b3102438857753296664\"},\"legalCertificateHash\":\"4d387fafdc669fdbc5adaac2f9b0297cc6c095551e47f005165613fa28a65bbe\"}",
+      "created_at": "2026-09-10T09:29:31.232Z"
+    },
+    {
+      "id": 103,
+      "request_id": "DSAR-2026-571338",
+      "full_name": "Priya Sharma",
+      "email": "priya@gmail.com",
+      "phone": "+91 91234 56789",
+      "customer_id": null,
+      "request_type": "anonymization",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-10T09:29:28.857Z"
+    },
+    {
+      "id": 102,
+      "request_id": "DSAR-2026-481941",
+      "full_name": "Vikram K Patel",
+      "email": "vikram.p@company.com",
+      "phone": "+91 98765 43210",
+      "customer_id": null,
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-10T09:29:28.598Z"
+    },
+    {
+      "id": 101,
+      "request_id": "DSAR-2026-127929",
+      "full_name": "Vikram Malhotra (High Risk Export Test)",
+      "email": "vikram.legal@company.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "restrict_processing",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-10T09:29:28.024Z"
+    },
+    {
+      "id": 100,
+      "request_id": "DSAR-2026-563458",
+      "full_name": "Vikram Patel",
+      "email": "vikram.p@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "anonymization",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-10T09:29:27.939Z"
+    },
+    {
+      "id": 99,
+      "request_id": "DSAR-2026-518246",
+      "full_name": "Ananya Sharma",
+      "email": "ananya@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-10T09:29:27.689Z"
+    },
+    {
+      "id": 98,
+      "request_id": "DSAR-2026-475226",
+      "full_name": "Vikram Patel",
+      "email": "vikram.p@example.in",
+      "phone": "+91 9876543210",
+      "customer_id": "CUST-8891",
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "{\"success\":true,\"executionJobId\":\"EXEC-1789032428628-475226\",\"requestId\":\"DSAR-2026-475226\",\"dataSubject\":\"Vikram Patel\",\"executedAt\":\"2026-09-10T09:27:08.628Z\",\"executionStatus\":\"COMPLETED_SUCCESSFULLY\",\"totalRecordsProcessed\":3,\"recordsPurgedCount\":1,\"recordsAnonymizedCount\":2,\"recordsRetainedCount\":2,\"executionChecksum\":\"9f5bcfbaa6e82f4ab7515adc64c84fa8067cd74151253819df5e0ec052cd6b64\",\"executionLogs\":[{\"tableName\":\"customers\",\"operationApplied\":\"HARD_DELETE\",\"operationLabel\":\"🗑️ Permanently Purged (Hard Deleted)\",\"recordsAffected\":1,\"fieldsModified\":[\"All Rows Deleted\"],\"statutoryRetentionStatus\":\"No Lock - Erasure Completed\",\"executionStatus\":\"SUCCESS\",\"executedAt\":\"2026-09-10T09:27:08.628Z\"},{\"tableName\":\"orders\",\"operationApplied\":\"PSEUDONYMIZE_MASK\",\"operationLabel\":\"🛡️ Selective Masking (Financial Ledger Preserved)\",\"recordsAffected\":2,\"fieldsModified\":[\"name -> V****m P***l\",\"email -> v******p@example.in\",\"phone -> +91 *******210\"],\"statutoryRetentionStatus\":\"Statutory 7-Year Tax Lock Active (CGST Act Sec. 36)\",\"executionStatus\":\"SUCCESS\",\"executedAt\":\"2026-09-10T09:27:08.628Z\"}],\"summaryMessage\":\"✓ DSAR Execution Finished: 1 record(s) permanently purged; 2 financial record(s) pseudonymized per CGST Act 2017 Section 36.\"}",
+      "created_at": "2026-09-10T09:27:08.475Z"
+    },
+    {
+      "id": 97,
+      "request_id": "DSAR-2026-314342",
+      "full_name": "Vikram Patel",
+      "email": "vikram.p@example.in",
+      "phone": "+91 9876543210",
+      "customer_id": "CUST-8891",
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "{\"success\":true,\"executionJobId\":\"EXEC-1789032355482-314342\",\"requestId\":\"DSAR-2026-314342\",\"dataSubject\":\"Vikram Patel\",\"executedAt\":\"2026-09-10T09:25:55.482Z\",\"executionStatus\":\"COMPLETED_SUCCESSFULLY\",\"totalRecordsProcessed\":3,\"recordsPurgedCount\":1,\"recordsAnonymizedCount\":2,\"recordsRetainedCount\":2,\"executionChecksum\":\"fed5ef4f886687aba804eb72b431cffa37ea820f6e6093de85fedab4b8bf36f9\",\"executionLogs\":[{\"tableName\":\"customers\",\"operationApplied\":\"HARD_DELETE\",\"operationLabel\":\"🗑️ Permanently Purged (Hard Deleted)\",\"recordsAffected\":1,\"fieldsModified\":[\"All Rows Deleted\"],\"statutoryRetentionStatus\":\"No Lock - Erasure Completed\",\"executionStatus\":\"SUCCESS\",\"executedAt\":\"2026-09-10T09:25:55.482Z\"},{\"tableName\":\"orders\",\"operationApplied\":\"PSEUDONYMIZE_MASK\",\"operationLabel\":\"🛡️ Selective Masking (Financial Ledger Preserved)\",\"recordsAffected\":2,\"fieldsModified\":[\"name -> V****m P***l\",\"email -> v******p@example.in\",\"phone -> +91 *********210\"],\"statutoryRetentionStatus\":\"Statutory 7-Year Tax Lock Active (CGST Act Sec. 36)\",\"executionStatus\":\"SUCCESS\",\"executedAt\":\"2026-09-10T09:25:55.482Z\"}],\"summaryMessage\":\"✓ DSAR Execution Finished: 1 record(s) permanently purged; 2 financial record(s) pseudonymized per CGST Act 2017 Section 36.\"}",
+      "created_at": "2026-09-10T09:25:55.222Z"
+    },
+    {
+      "id": 96,
+      "request_id": "DSAR-2026-113640",
+      "full_name": "Unknown",
+      "email": "unknown@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-08T12:43:43.066Z"
+    },
+    {
+      "id": 95,
+      "request_id": "DSAR-2026-626341",
+      "full_name": "Unknown",
+      "email": "unknown@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "full_erasure",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "RECEIVED",
+      "created_at": "2026-09-08T05:16:38.124Z"
+    },
+    {
       "id": 94,
       "request_id": "DSAR-2026-559488",
       "full_name": "Bob Johnson",
@@ -20762,6 +21856,178 @@
     }
   ],
   "dsar_impact_reports": [
+    {
+      "id": 35,
+      "request_id": "DSAR-2026-127929",
+      "risk_level": "HIGH",
+      "risk_score": 80,
+      "recommended_action": "LEGAL_HOLD_REQUIRED",
+      "dependencies_found_count": 3,
+      "impact_report_json": {
+        "requestId": "DSAR-2026-127929",
+        "dataSubject": "Vikram Malhotra (High Risk Export Test)",
+        "email": "vikram.legal@company.com",
+        "riskLevel": "HIGH",
+        "riskScore": 80,
+        "recommendedAction": "LEGAL_HOLD_REQUIRED",
+        "actionDescription": "High risk: Active legal hold or pending financial escrow transaction detected. Deletion BLOCKED under GDPR Art. 17(3)(e) & DPDP Sec. 8.",
+        "dependenciesFoundCount": 3,
+        "dependencies": [
+          {
+            "tableName": "billing_invoices_ledger",
+            "category": "Financial Accounting & Tax Ledger",
+            "foreignKeyStatus": "FOREIGN_KEY_CASCADE_RESTRICT",
+            "foreignKeyConstraint": "ON_DELETE_RESTRICT_STATUTORY_LOCK",
+            "referentialFailureMode": "CRITICAL_ACCOUNTING_LEDGER_CORRUPTION",
+            "dependentRecordCount": 1,
+            "orphanRisk": "CRITICAL_TAX_LAW_VIOLATION",
+            "recommendation": "Retain Numerical Ledger, Anonymize Customer PII (Wipe Name/Email)",
+            "statutoryStatute": "Income Tax Act Sec. 44AA & GST Act Sec. 36 (7-Year Accounting Retention)",
+            "statutoryPeriod": "7 Years from Transaction Date",
+            "retentionExpiryDate": "2033-09-10T09:29:28.024Z",
+            "yearsRemaining": "7.0 Years",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_STATUTORY_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_TAX_LEGAL_OBLIGATION (GDPR Art. 17(3)(b))"
+          },
+          {
+            "tableName": "legal_holds_and_disputes",
+            "category": "Legal Hold & Compliance Lock",
+            "foreignKeyStatus": "ACTIVE_LEGAL_PROCEEDING_HOLD",
+            "foreignKeyConstraint": "COURT_ORDER_SUBPOENA_MANDATORY_HOLD",
+            "referentialFailureMode": "CRITICAL_ILLEGAL_EVIDENCE_DESTRUCTION",
+            "dependentRecordCount": 1,
+            "orphanRisk": "CRITICAL_EVIDENCE_DESTRUCTION_VIOLATION",
+            "recommendation": "Block Deletion / Maintain Mandatory Compliance Lock",
+            "statutoryStatute": "Indian Evidence Act & DPDP Act Sec. 8(5) / GDPR Art. 17(3)(e)",
+            "statutoryPeriod": "Indefinite Hold until Judicial Resolution",
+            "retentionExpiryDate": "INDEFINITE_HOLD",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_JUDICIAL_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_LEGAL_DISPUTE_DEFENSE (GDPR Art. 17(3)(e))"
+          },
+          {
+            "tableName": "active_escrow_transactions",
+            "category": "Pending Financial Escrow Transaction",
+            "foreignKeyStatus": "PENDING_TRANSACTION_LOCK",
+            "foreignKeyConstraint": "ESCROW_CLEARING_WINDOW_LOCK",
+            "referentialFailureMode": "FINANCIAL_ESCROW_LOSS_RISK",
+            "dependentRecordCount": 1,
+            "orphanRisk": "HIGH_FINANCIAL_LOSS_RISK",
+            "recommendation": "Freeze Account until Transaction Settles",
+            "statutoryStatute": "Payment Settlement Systems Act 2007",
+            "statutoryPeriod": "0.1 Years from Transaction Date",
+            "retentionExpiryDate": "2027-09-10T09:29:28.024Z",
+            "yearsRemaining": "1.0 Years",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_STATUTORY_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_CONTRACTUAL_ESCROW_PERFORMANCE"
+          }
+        ],
+        "sha256Checksum": "c59076fc2d327b35e683b89b4e84f0d498122cd3352de4a62e633e0592ed8b2f",
+        "analyzedAt": "2026-09-10T09:29:28.079Z"
+      },
+      "status": "IMPACT_ANALYSIS_COMPLETED",
+      "analyzed_at": "2026-09-10T09:29:28.080Z"
+    },
+    {
+      "id": 34,
+      "request_id": "DSAR-2026-563458",
+      "risk_level": "MEDIUM",
+      "risk_score": 60,
+      "recommended_action": "IN_PLACE_ANONYMIZATION",
+      "dependencies_found_count": 2,
+      "impact_report_json": {
+        "requestId": "DSAR-2026-563458",
+        "dataSubject": "Vikram Patel",
+        "email": "vikram.p@example.com",
+        "riskLevel": "MEDIUM",
+        "riskScore": 60,
+        "recommendedAction": "IN_PLACE_ANONYMIZATION",
+        "actionDescription": "Medium risk: Financial accounting ledgers or operational vaults exist. Recommended to anonymize PII while retaining transaction totals for statutory 7-year tax audit compliance.",
+        "dependenciesFoundCount": 2,
+        "dependencies": [
+          {
+            "tableName": "legal_holds_and_disputes",
+            "category": "Legal Hold & Compliance Lock",
+            "foreignKeyStatus": "ACTIVE_LEGAL_PROCEEDING_HOLD",
+            "foreignKeyConstraint": "COURT_ORDER_SUBPOENA_MANDATORY_HOLD",
+            "referentialFailureMode": "CRITICAL_ILLEGAL_EVIDENCE_DESTRUCTION",
+            "dependentRecordCount": 2,
+            "orphanRisk": "CRITICAL_EVIDENCE_DESTRUCTION_VIOLATION",
+            "recommendation": "Block Deletion / Maintain Mandatory Compliance Lock",
+            "statutoryStatute": "Indian Evidence Act & DPDP Act Sec. 8(5) / GDPR Art. 17(3)(e)",
+            "statutoryPeriod": "Indefinite Hold until Judicial Resolution",
+            "retentionExpiryDate": "INDEFINITE_HOLD",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_JUDICIAL_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_LEGAL_DISPUTE_DEFENSE (GDPR Art. 17(3)(e))"
+          },
+          {
+            "tableName": "active_escrow_transactions",
+            "category": "Pending Financial Escrow Transaction",
+            "foreignKeyStatus": "PENDING_TRANSACTION_LOCK",
+            "foreignKeyConstraint": "ESCROW_CLEARING_WINDOW_LOCK",
+            "referentialFailureMode": "FINANCIAL_ESCROW_LOSS_RISK",
+            "dependentRecordCount": 1,
+            "orphanRisk": "HIGH_FINANCIAL_LOSS_RISK",
+            "recommendation": "Freeze Account until Transaction Settles",
+            "statutoryStatute": "Payment Settlement Systems Act 2007",
+            "statutoryPeriod": "0.1 Years from Transaction Date",
+            "retentionExpiryDate": "2027-09-10T09:29:27.939Z",
+            "yearsRemaining": "1.0 Years",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_STATUTORY_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_CONTRACTUAL_ESCROW_PERFORMANCE"
+          }
+        ],
+        "sha256Checksum": "39e66faa4ec6ff8b873a1dff5c91700ad270d00fefd546bd1f4b8c8efe81ab07",
+        "analyzedAt": "2026-09-10T09:29:27.996Z"
+      },
+      "status": "IMPACT_ANALYSIS_COMPLETED",
+      "analyzed_at": "2026-09-10T09:29:27.996Z"
+    },
+    {
+      "id": 33,
+      "request_id": "DSAR-2026-518246",
+      "risk_level": "LOW",
+      "risk_score": 20,
+      "recommended_action": "HARD_DELETE",
+      "dependencies_found_count": 1,
+      "impact_report_json": {
+        "requestId": "DSAR-2026-518246",
+        "dataSubject": "Ananya Sharma",
+        "email": "ananya@example.com",
+        "riskLevel": "LOW",
+        "riskScore": 20,
+        "recommendedAction": "HARD_DELETE",
+        "actionDescription": "Safe for permanent hard deletion. No financial accounting or critical database dependencies found.",
+        "dependenciesFoundCount": 1,
+        "dependencies": [
+          {
+            "tableName": "customers",
+            "category": "Primary Profile Database",
+            "foreignKeyStatus": "DIRECT_PRIMARY_KEY",
+            "foreignKeyConstraint": "PRIMARY_KEY_PARENT_RECORD",
+            "referentialFailureMode": "CASCADE_ORPHAN_CHILD_RISK",
+            "dependentRecordCount": 1,
+            "orphanRisk": "HIGH_IF_HARD_DELETED",
+            "recommendation": "Soft Delete / In-Place Anonymization",
+            "statutoryStatute": "General User Profile (GDPR Art. 17 / DPDP Sec. 8)",
+            "statutoryPeriod": "1 Year from Transaction Date",
+            "retentionExpiryDate": "2027-09-10T09:29:27.689Z",
+            "yearsRemaining": "1.0 Years",
+            "isRetentionActive": true,
+            "retentionStatus": "MANDATORY_STATUTORY_LOCK",
+            "statutoryExemptionCode": "EXEMPTION_NONE_RIGHT_TO_ERASURE_APPLIES"
+          }
+        ],
+        "sha256Checksum": "1a0499a9639f8334d6fd4bcb241b589d64d79b93377e3351fa49b74b1aca0226",
+        "analyzedAt": "2026-09-10T09:29:27.906Z"
+      },
+      "status": "IMPACT_ANALYSIS_COMPLETED",
+      "analyzed_at": "2026-09-10T09:29:27.906Z"
+    },
     {
       "id": 32,
       "request_id": "DSAR-2026-275089",

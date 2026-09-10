@@ -27,6 +27,7 @@ const dsarService = require('../services/dsar-service');
 const dsarDiscoveryService = require('../services/dsar-discovery-service');
 const dsarImpactService = require('../services/dsar-impact-service');
 const dsarPolicyService = require('../services/dsar-policy-service');
+const dsarExecutionService = require('../services/dsar-execution-service');
 
 const router = express.Router();
 
@@ -909,5 +910,35 @@ router.post('/dsar/policy/approve', async (req, res) => {
   }
 });
 
+// ── DSAR STEP 5 EXECUTION & ANONYMIZATION ENGINE ROUTES ─────────────────────
+
+// POST /api/dsar/execution/execute — Execute approved deletion/anonymization plan
+router.post('/dsar/execution/execute', async (req, res) => {
+  try {
+    const { requestId } = req.body || {};
+    const result = await dsarExecutionService.executeDsarPlan(requestId);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/execution/:id — Fetch saved Execution Report
+router.get('/api/dsar/execution/:id', async (req, res) => {
+  try {
+    const result = await dsarExecutionService.getDsarExecutionReport(req.params.id);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 module.exports = router;
+
 

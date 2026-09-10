@@ -261,7 +261,14 @@ export function initDsarPolicy() {
   if (proceedStep5Btn) {
     proceedStep5Btn.addEventListener('click', (e) => {
       e.preventDefault();
-      showToast('Step 4 Legal Compliance Check complete! Step 5 (Automated Execution & Cryptographic Verification) is being prepared.', 'success');
+      const reqIdTag = document.getElementById('dsar-policy-req-id');
+      const reqId = reqIdTag ? reqIdTag.textContent.replace('Target: ', '').trim() : activePolicyRequestId;
+      if (window.runDsarExecution && reqId) {
+        window.runDsarExecution(reqId);
+      } else {
+        const execBtn = document.getElementById('btn-retrigger-execution');
+        if (execBtn) execBtn.click();
+      }
     });
   }
 
