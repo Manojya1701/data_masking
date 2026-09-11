@@ -7,8 +7,13 @@
  */
 
 const { searchEmailInDatabase, DB_TABLE_REGISTRY } = require('../backend/services/email-search-service');
+const { resetPrivacyDeletionCustomers } = require('../backend/services/privacy-deletion-service');
 
 describe('Global Database Email Search Service', () => {
+
+  beforeAll(async () => {
+    await resetPrivacyDeletionCustomers();
+  });
 
   test('searchEmailInDatabase returns matches for existing email across database tables', async () => {
     const res = await searchEmailInDatabase('harika@example.com');

@@ -214,6 +214,11 @@ async function query(text, params = []) {
   // 7. SELECT FROM privacy_deletion_customers
   if (lowerSql.startsWith('select') && lowerSql.includes('from privacy_deletion_customers')) {
     const list = currentStore.privacy_deletion_customers || [];
+    if (lowerSql.includes('where') && params && params.length > 0) {
+      const emailTarget = String(params[0]).trim().toLowerCase();
+      const found = list.filter(c => c && String(c.email || '').trim().toLowerCase() === emailTarget);
+      return { rows: JSON.parse(JSON.stringify(found)) };
+    }
     return { rows: JSON.parse(JSON.stringify(list)) };
   }
 
@@ -228,6 +233,11 @@ async function query(text, params = []) {
   // 9. SELECT FROM customers
   if (lowerSql.startsWith('select') && lowerSql.includes('from customers')) {
     const list = currentStore.customers || [];
+    if (lowerSql.includes('where') && params && params.length > 0) {
+      const emailTarget = String(params[0]).trim().toLowerCase();
+      const found = list.filter(c => c && String(c.email || '').trim().toLowerCase() === emailTarget);
+      return { rows: JSON.parse(JSON.stringify(found)) };
+    }
     return { rows: JSON.parse(JSON.stringify(list)) };
   }
 
@@ -359,10 +369,18 @@ async function query(text, params = []) {
         match.status = 'EXECUTED';
         match.compliance_status = 'EXECUTED_READY_FOR_VERIFICATION';
         if (params.length >= 2) match.execution_report = params[0];
+      } else if (lowerSql.includes("status = 'verified'")) {
+        match.status = 'VERIFIED';
+        match.compliance_status = 'VERIFIED_READY_FOR_CERTIFICATE';
+        if (params.length >= 2) match.verification_report = params[0];
       } else if (lowerSql.includes('legal_policy_report = $1')) {
         match.legal_policy_report = params[0];
         match.compliance_status = params[1] || 'POLICY_EVALUATED';
         match.status = 'POLICY_EVALUATED';
+      } else if (lowerSql.includes('verification_report = $1')) {
+        match.verification_report = params[0];
+        match.compliance_status = 'VERIFIED_READY_FOR_CERTIFICATE';
+        match.status = 'VERIFIED';
       } else if (lowerSql.includes('status = $1') && params.length >= 2) {
         match.status = params[0];
       }

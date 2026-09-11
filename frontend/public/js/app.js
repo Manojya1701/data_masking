@@ -15,6 +15,7 @@ import { initDsarDiscovery } from './dsar-discovery.js';
 import { initDsarImpact } from './dsar-impact.js';
 import { initDsarPolicy } from './dsar-policy.js';
 import { initDsarExecution } from './dsar-execution.js';
+import { initDsarVerification } from './dsar-verification.js';
 import { initTheme } from './theme.js';
 import { initDashboardStats } from './dashboard-stats.js';
 import { initSearch } from './search.js';
@@ -543,9 +544,10 @@ if (mobileMenuBtn && headerNav) {
   });
 }
 
-// Initialize DSAR Intake, Identity Discovery, Impact Analysis, Legal Policy & Execution Controllers
+// Initialize DSAR Intake, Identity Discovery, Impact Analysis, Legal Policy, Execution & Verification Controllers
 initDsarIntake();
 initDsarDiscovery();
 initDsarImpact();
 initDsarPolicy();
 initDsarExecution();
+initDsarVerification();

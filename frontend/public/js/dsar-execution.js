@@ -178,7 +178,15 @@ export function initDsarExecution() {
   if (proceedStep6Btn) {
     proceedStep6Btn.addEventListener('click', (e) => {
       e.preventDefault();
-      showToast('Step 5 Execution complete! Step 6 (Verification & Validation) will run post-deletion re-scans.', 'info');
+      if (activeExecutionRequestId) {
+        if (typeof window.runDsarVerification === 'function') {
+          window.runDsarVerification(activeExecutionRequestId);
+        } else {
+          showToast(`Step 6 Verification ready for ${activeExecutionRequestId}`, 'info');
+        }
+      } else {
+        showToast('Please execute Step 5 deletion first.', 'info');
+      }
     });
   }
 

@@ -1570,6 +1570,95 @@
         </div>
       </div>
 
+      <!-- Step 6 Post-Deletion Verification & Residual PII Re-Scan Card (Hidden by Default) -->
+      <div id="dsar-step6-verification-card" class="db-card hidden" style="margin-bottom:24px; border:1px solid rgba(6,182,212,0.35); background:var(--bg-card); display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            <span>Step 6: Automated Post-Deletion Verification & Residual PII Re-Scan</span>
+          </h3>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span id="dsar-verif-target-id" class="meta-pill primary" style="background:rgba(6,182,212,0.12); color:var(--cyan); border:1px solid rgba(6,182,212,0.3); font-weight:700;">
+              Target: DSAR-2026-XXXXXX
+            </span>
+            <button type="button" id="btn-retrigger-verification" class="btn-ghost btn-sm" style="font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <span>Re-Run Verification Scan</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Verification KPI Metric Cards -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:20px;">
+          <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--emerald);">
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">RESIDUAL DIRECT PII FOUND</div>
+            <div id="dsar-verif-kpi-residual-pii" style="font-weight:700; color:var(--emerald); font-size:1.1rem;">0 Records</div>
+          </div>
+          <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--cyan);">
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">SYSTEMS AUDITED & SCANNED</div>
+            <div id="dsar-verif-kpi-systems-audited" style="font-weight:700; color:var(--cyan); font-size:1.1rem;">5 / 5 Systems</div>
+          </div>
+          <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--emerald);">
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">VERIFICATION AUDIT RESULT</div>
+            <div id="dsar-verif-kpi-status" style="font-weight:700; color:var(--emerald); font-size:1.1rem;">PASSED (100% CLEAN)</div>
+          </div>
+          <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--amber);">
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">COMPLIANT PSEUDONYMIZED LEDGERS</div>
+            <div id="dsar-verif-kpi-retained" style="font-weight:700; color:var(--amber); font-size:1.1rem;">2 Retained (GST Act)</div>
+          </div>
+        </div>
+
+        <!-- Verification Banner & Digest Box -->
+        <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+          <div id="dsar-verif-banner-desc" style="padding:12px 16px; background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.25); border-radius:var(--radius-md); font-size:0.85rem; color:var(--text-bright); font-weight:500;">
+            Auditing all relational tables, candidate search indices, graph databases, and temporary caches for residual PII…
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; font-size:0.75rem; color:var(--text-muted); padding:6px 12px; background:rgba(255,255,255,0.02); border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <span>🛡️ Post-Execution Verification Digest (SHA-256): <code id="dsar-verif-sha256-digest" style="color:var(--cyan); font-family:monospace;">-</code></span>
+            <span>Proof Standard: <strong>DPDP Act Sec. 12 & EU GDPR Art. 17 Verification Attestation</strong></span>
+          </div>
+        </div>
+
+        <!-- Multi-System Verification Audit Table -->
+        <div style="margin-bottom:16px;">
+          <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">
+            🔍 Multi-Store Residual PII Audit Breakdown
+          </div>
+          <div class="table-wrap">
+            <table class="db-table" id="dsar-verification-table">
+              <thead>
+                <tr>
+                  <th>SYSTEM / STORE</th>
+                  <th>IDENTIFIERS SCANNED</th>
+                  <th>SCAN TECHNIQUE</th>
+                  <th style="text-align:center;">RESIDUAL PII FOUND</th>
+                  <th>VERIFICATION RESULT</th>
+                  <th>STATUTORY COMPLIANCE ATTESTATION</th>
+                </tr>
+              </thead>
+              <tbody id="dsar-verification-table-body">
+                <tr>
+                  <td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">
+                    Click "Proceed to Verification (Step 6)" to run automated post-deletion re-scans.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Step 6 Action Footer -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-top:12px; border-top:1px solid var(--border);">
+          <div style="font-size:0.8rem; color:var(--emerald); font-weight:600; display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Step 6 Complete: Zero residual direct PII verified across all systems. Ready for official certificate.</span>
+          </div>
+          <button type="button" id="btn-proceed-step7" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px;">
+            <span>Generate Deletion Certificate (Step 7) ➔</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Active DSAR Requests Queue Table -->
       <div class="db-card">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">

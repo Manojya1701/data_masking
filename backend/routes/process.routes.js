@@ -28,6 +28,7 @@ const dsarDiscoveryService = require('../services/dsar-discovery-service');
 const dsarImpactService = require('../services/dsar-impact-service');
 const dsarPolicyService = require('../services/dsar-policy-service');
 const dsarExecutionService = require('../services/dsar-execution-service');
+const dsarVerificationService = require('../services/dsar-verification-service');
 
 const router = express.Router();
 
@@ -949,6 +950,62 @@ router.get('/api/dsar/execution/:id', async (req, res) => {
   }
 });
 
+// GET /dsar/execution/:id — Alternate route
+router.get('/dsar/execution/:id', async (req, res) => {
+  try {
+    const result = await dsarExecutionService.getDsarExecutionReport(req.params.id);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── DSAR STEP 6 POST-DELETION VERIFICATION & RESIDUAL PII RE-SCAN ROUTES ───
+
+// POST /api/dsar/verification/verify — Run automated post-deletion verification re-scan
+router.post('/dsar/verification/verify', async (req, res) => {
+  try {
+    const { requestId } = req.body || {};
+    const result = await dsarVerificationService.verifyDsarExecution(requestId);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/verification/:id — Fetch saved Verification Report
+router.get('/api/dsar/verification/:id', async (req, res) => {
+  try {
+    const result = await dsarVerificationService.getDsarVerificationReport(req.params.id);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /dsar/verification/:id — Alternate route
+router.get('/dsar/verification/:id', async (req, res) => {
+  try {
+    const result = await dsarVerificationService.getDsarVerificationReport(req.params.id);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 module.exports = router;
+
 
 

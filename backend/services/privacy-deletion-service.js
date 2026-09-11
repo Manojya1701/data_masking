@@ -87,9 +87,18 @@ async function resetPrivacyDeletionCustomers() {
     const store = localDb.loadStore();
     if (store) {
       store.privacy_deletion_customers = JSON.parse(JSON.stringify(DELETION_SAMPLE_CUSTOMERS));
+      store.customers = [
+        { id: 1, name: 'Harika', email: 'harika@example.com', phone: '9876543210', aadhaar: '1234 5678 9012', pan: 'ABCDE1234F', address: 'Visakhapatnam', created_at: '2026-08-12T10:00:00.000Z' },
+        { id: 2, name: 'Ravi Kumar', email: 'ravi.k@example.com', phone: '9123456789', aadhaar: '2345 6789 0123', pan: 'BCDEF2345G', address: 'Hyderabad', created_at: '2026-08-12T10:05:00.000Z' },
+        { id: 3, name: 'Ananya Sharma', email: 'ananya@example.com', phone: '9988776655', aadhaar: '3456 7890 1234', pan: 'CDEFG3456H', address: 'Bengaluru', created_at: '2026-08-12T10:10:00.000Z' },
+        { id: 4, name: 'Vikram Patel', email: 'vikram.p@company.com', phone: '9876543210', aadhaar: '4567 8901 2345', pan: 'DEFGH4567I', address: 'Mumbai', created_at: '2026-08-12T10:15:00.000Z' },
+        { id: 5, name: 'Priya Das', email: 'priya.das@example.com', phone: '9765432109', aadhaar: '5678 9012 3456', pan: 'EFGHI5678J', address: 'Chennai', created_at: '2026-08-12T10:20:00.000Z' }
+      ];
       localDb.saveStore();
     }
-  } catch { /* ignore */ }
+  } catch (err) {
+    // Non-blocking in memory mode
+  }
 
   return { success: true, count: DELETION_SAMPLE_CUSTOMERS.length, records: JSON.parse(JSON.stringify(DELETION_SAMPLE_CUSTOMERS)) };
 }
