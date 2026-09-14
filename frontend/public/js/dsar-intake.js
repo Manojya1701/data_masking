@@ -1,24 +1,19 @@
 'use strict';
 
 /**
- * DSAR Intake Controller (Step 1 of Segmento Protect Flow)
- * Manages intake form submission, auto tracking ID generation, and queue rendering.
+ * DSAR Intake Controller (Step 1 of Segmento Protect Pipeline)
+ * Manages Step 1 Data Subject Request Intake:
+ * - Requester info & jurisdiction capture
+ * - Interactive privacy right type selection
+ * - Target domain scopes & custom instructions
+ * - Identity verification methods
+ * - Submission & immediate transition to Step 2 AI Discovery
  */
 
-let activeDsarRequests = [];
-
-function generateRandomDsarId() {
-  const year = new Date().getFullYear();
-  const randomDigits = Math.floor(100000 + Math.random() * 900000);
-  return `DSAR-${year}-${randomDigits}`;
-}
-
-function updateAutoTrackingId() {
-  const pill = document.getElementById('dsar-auto-tracking-id');
-  if (pill) {
-    pill.textContent = `Tracking ID: ${generateRandomDsarId()}`;
-  }
-}
+let selectedRequestType = 'Deletion';
+let selectedCountry = 'India';
+let selectedRelationship = 'Customer';
+let selectedVerificationType = 'Government ID';
 
 function escapeHtml(str) {
   if (!str) return '';
@@ -30,44 +25,6 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-function formatDsarRequestType(type) {
-  switch (type) {
-    case 'full_erasure':
-      return '<span class="meta-pill" style="background:rgba(244,63,94,0.12); color:var(--red); border:1px solid rgba(244,63,94,0.3);">🗑️ Full Erasure</span>';
-    case 'anonymization':
-      return '<span class="meta-pill primary" style="background:rgba(6,182,212,0.12); color:var(--cyan); border:1px solid rgba(6,182,212,0.3);">👤 Anonymization</span>';
-    case 'access_export':
-      return '<span class="meta-pill" style="background:rgba(59,130,246,0.12); color:var(--blue); border:1px solid rgba(59,130,246,0.3);">📦 Access / Export</span>';
-    case 'restrict_processing':
-      return '<span class="meta-pill" style="background:rgba(245,158,11,0.12); color:var(--amber); border:1px solid rgba(245,158,11,0.3);">🔒 Legal Hold</span>';
-    default:
-      return `<span class="meta-pill">${escapeHtml(type)}</span>`;
-  }
-}
-
-function formatDsarStatus(status) {
-  let raw = typeof status === 'string' ? status.trim() : 'RECEIVED';
-  // Guard against any JSON string or oversized payload
-  if (raw.startsWith('{') || raw.startsWith('[') || raw.length > 35) {
-    raw = 'RECEIVED';
-  }
-  const st = raw.toUpperCase();
-  if (st === 'RECEIVED') {
-    return '<span class="meta-pill badge-received">RECEIVED</span>';
-  } else if (st === 'VERIFIED') {
-    return '<span class="meta-pill badge-verified">VERIFIED</span>';
-  } else if (st === 'APPROVED' || st === 'DPO_APPROVED') {
-    return '<span class="meta-pill" style="background:rgba(34,197,94,0.12); color:var(--emerald); border:1px solid rgba(34,197,94,0.3);">APPROVED</span>';
-  } else if (st === 'EXECUTED' || st === 'DELETED') {
-    return '<span class="meta-pill" style="background:rgba(168,85,247,0.12); color:#c084fc; border:1px solid rgba(168,85,247,0.3);">EXECUTED</span>';
-  } else if (st === 'DISCOVERY_COMPLETED') {
-    return '<span class="meta-pill" style="background:rgba(6,182,212,0.12); color:var(--cyan); border:1px solid rgba(6,182,212,0.3);">DISCOVERED</span>';
-  } else if (st === 'IMPACT_ANALYSIS_COMPLETED') {
-    return '<span class="meta-pill" style="background:rgba(245,158,11,0.12); color:var(--amber); border:1px solid rgba(245,158,11,0.3);">ASSESSED</span>';
-  }
-  return `<span class="meta-pill">${escapeHtml(st)}</span>`;
-}
-
 function showToast(msg, type = 'info') {
   if (window.showToastMessage) {
     window.showToastMessage(msg, type);
@@ -76,94 +33,71 @@ function showToast(msg, type = 'info') {
   }
 }
 
-async function loadDsarRequests() {
-  const tbody = document.getElementById('dsar-requests-table-body');
-  const countEl = document.getElementById('dsar-queue-count');
-  if (!tbody) return;
+/**
+ * Handles submission of DSAR Intake Request from Step 1
+ */
+export async function handleIntakeSubmit(e) {
+  if (e) e.preventDefault();
 
-  try {
-    const res = await fetch(`${window.location.origin}/api/dsar/requests`);
-    const data = await res.json();
-
-    if (data && data.success && Array.isArray(data.records)) {
-      activeDsarRequests = data.records;
-    } else {
-      activeDsarRequests = [];
-    }
-  } catch (err) {
-    console.warn('[DSAR UI Warning] Failed to fetch requests from API:', err.message);
-  }
-
-  if (countEl) {
-    countEl.textContent = `${activeDsarRequests.length} Request${activeDsarRequests.length === 1 ? '' : 's'}`;
-  }
-
-  if (activeDsarRequests.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="8" style="text-align:center; padding:24px; color:var(--text-muted);">
-          No DSAR intake requests submitted yet. Submit a request using the form above.
-        </td>
-      </tr>
-    `;
-    return;
-  }
-
-  tbody.innerHTML = activeDsarRequests.map(r => {
-    const dateStr = r.created_at ? new Date(r.created_at).toLocaleString() : 'Just Now';
-    return `
-      <tr data-request-id="${escapeHtml(r.request_id)}">
-        <td style="font-weight:700; color:var(--cyan); font-family:monospace;">${escapeHtml(r.request_id)}</td>
-        <td style="font-weight:600; color:var(--text-bright);">${escapeHtml(r.full_name)}</td>
-        <td style="color:var(--text-muted); font-size:0.85rem;">${escapeHtml(r.email)}</td>
-        <td>${formatDsarRequestType(r.request_type)}</td>
-        <td style="text-transform:capitalize; color:var(--text-muted); font-size:0.85rem;">${escapeHtml(r.subject_category || 'customer')}</td>
-        <td>${formatDsarStatus(r.status)}</td>
-        <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(dateStr)}</td>
-        <td style="text-align:right;">
-          <button type="button" class="btn-ghost btn-sm btn-proceed-identity-discovery" data-id="${escapeHtml(r.request_id)}" style="display:inline-flex; align-items:center; gap:4px; font-size:0.75rem; color:var(--cyan); border-color:rgba(6,182,212,0.3);">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <span>Proceed (Step 2)</span>
-          </button>
-        </td>
-      </tr>
-    `;
-  }).join('');
-}
-
-async function handleDsarSubmit(e) {
-  e.preventDefault();
-
-  const fullNameInput = document.getElementById('dsar-full-name');
-  const emailInput = document.getElementById('dsar-email');
-  const phoneInput = document.getElementById('dsar-phone');
-  const customerIdInput = document.getElementById('dsar-customer-id');
-  const requestTypeInput = document.getElementById('dsar-request-type');
-  const subjectCategoryInput = document.getElementById('dsar-subject-category');
-  const evidenceInput = document.getElementById('dsar-evidence');
-  const submitBtn = document.getElementById('btn-submit-dsar-request');
+  const fullNameInput = document.getElementById('intake-full-name');
+  const emailInput = document.getElementById('intake-email');
+  const phoneInput = document.getElementById('intake-phone');
+  const countryInput = document.getElementById('intake-country');
+  const relInput = document.getElementById('intake-relationship');
+  const detailsInput = document.getElementById('intake-details-text');
+  const idRefInput = document.getElementById('intake-id-ref');
+  const consentCheckbox = document.getElementById('intake-consent-checkbox');
+  const submitBtn = document.getElementById('btn-submit-final-intake');
 
   const fullName = fullNameInput ? fullNameInput.value.trim() : '';
   const email = emailInput ? emailInput.value.trim() : '';
+  const phone = phoneInput ? phoneInput.value.trim() : '';
+  const country = countryInput ? countryInput.value : selectedCountry;
+  const relationship = relInput ? relInput.value : selectedRelationship;
+  const requestDetails = detailsInput ? detailsInput.value.trim() : '';
+  const idRef = idRefInput ? idRefInput.value.trim() : '';
 
-  if (!fullName || !email) {
-    showToast('Please fill out all required fields (*)', 'error');
+  if (!fullName) {
+    showToast('Please enter data subject full name.', 'error');
+    if (fullNameInput) fullNameInput.focus();
     return;
   }
 
-  if (submitBtn) submitBtn.disabled = true;
+  if (!email || !email.includes('@')) {
+    showToast('Please enter a valid requester email address.', 'error');
+    if (emailInput) emailInput.focus();
+    return;
+  }
+
+  if (consentCheckbox && !consentCheckbox.checked) {
+    showToast('Please check the statutory declaration checkbox to proceed.', 'warning');
+    return;
+  }
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>Registering Request & Starting AI Pipeline…</span>';
+  }
+
+  // Read checked domain scopes
+  const scopes = [];
+  document.querySelectorAll('.intake-scope-checkbox:checked').forEach(cb => scopes.push(cb.value));
+
+  const payload = {
+    fullName,
+    email,
+    phone,
+    country,
+    relationship,
+    requestType: selectedRequestType,
+    scope: scopes.length > 0 ? scopes.join(', ') : 'All Associated Personal Data',
+    requestDetails: requestDetails || `${selectedRequestType} request for ${fullName}`,
+    verificationType: selectedVerificationType,
+    verificationEvidence: idRef ? `${selectedVerificationType} (#${idRef})` : `${selectedVerificationType} Verified`,
+    status: 'In Progress'
+  };
 
   try {
-    const payload = {
-      fullName,
-      email,
-      phone: phoneInput ? phoneInput.value.trim() : '',
-      customerId: customerIdInput ? customerIdInput.value.trim() : '',
-      requestType: requestTypeInput ? requestTypeInput.value : 'full_erasure',
-      subjectCategory: subjectCategoryInput ? subjectCategoryInput.value : 'customer',
-      verificationEvidence: evidenceInput ? evidenceInput.value.trim() : ''
-    };
-
     const res = await fetch(`${window.location.origin}/api/dsar/requests`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -173,24 +107,39 @@ async function handleDsarSubmit(e) {
     const data = await res.json();
 
     if (data && data.success && data.record) {
-      showToast(`✓ DSAR Request Submitted! Tracking ID: ${data.record.request_id}`, 'success');
-      if (fullNameInput) fullNameInput.value = '';
-      if (emailInput) emailInput.value = '';
-      if (phoneInput) phoneInput.value = '';
-      if (customerIdInput) customerIdInput.value = '';
-      if (evidenceInput) evidenceInput.value = '';
-      updateAutoTrackingId();
-      await loadDsarRequests();
+      const newReq = data.record;
+      showToast(`✓ DSAR Request ${newReq.request_id} registered successfully!`, 'success');
+
+      // Refresh Dashboard KPI metrics and queue table
+      if (window.refreshDsarDashboard) {
+        window.refreshDsarDashboard();
+      }
+
+      // Immediately launch Step 2 AI Discovery Pipeline for this new request
+      if (window.runIdentityDiscoveryScan) {
+        window.runIdentityDiscoveryScan(newReq.request_id);
+      } else if (window.triggerDsarDiscovery) {
+        window.triggerDsarDiscovery(newReq.request_id);
+      }
     } else {
-      showToast(data.message || 'Failed to submit DSAR request', 'error');
+      showToast(data.message || 'Failed to submit DSAR request.', 'error');
     }
   } catch (err) {
-    showToast(`Error submitting request: ${err.message}`, 'error');
+    showToast(`Network error: ${err.message}`, 'error');
   } finally {
-    if (submitBtn) submitBtn.disabled = false;
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Submit & Start AI Discovery Pipeline ➔</span>
+      `;
+    }
   }
 }
 
+/**
+ * Switches workspace to DSAR Portal View
+ */
 export function showDsarPortalView() {
   const coreWorkspace = document.getElementById('udps-core-workspace');
   const dsarWorkspace = document.getElementById('dsar-portal-workspace');
@@ -198,9 +147,15 @@ export function showDsarPortalView() {
     coreWorkspace.classList.add('hidden');
     dsarWorkspace.classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.refreshDsarDashboard) {
+      window.refreshDsarDashboard();
+    }
   }
 }
 
+/**
+ * Switches workspace to UDPS Core File/DB view
+ */
 export function showUdpsCoreView(targetHash) {
   const coreWorkspace = document.getElementById('udps-core-workspace');
   const dsarWorkspace = document.getElementById('dsar-portal-workspace');
@@ -218,13 +173,15 @@ export function showUdpsCoreView(targetHash) {
   }
 }
 
+/**
+ * Initialize DSAR Intake Controller
+ */
 export function initDsarIntake() {
-  const form = document.getElementById('dsar-intake-form');
-  const refreshBtn = document.getElementById('btn-refresh-dsar-requests');
   const navDsarBtn = document.getElementById('nav-dsar-portal');
   const backToCoreBtn = document.getElementById('btn-back-to-udps-core');
   const coreNavLinks = document.querySelectorAll('.nav-core-link, .app-header__brand');
 
+  // Header Nav Link click
   if (navDsarBtn) {
     navDsarBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -232,6 +189,7 @@ export function initDsarIntake() {
     });
   }
 
+  // Back to UDPS Core button
   if (backToCoreBtn) {
     backToCoreBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -239,6 +197,7 @@ export function initDsarIntake() {
     });
   }
 
+  // Core navigation links
   coreNavLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       const href = link.getAttribute('href');
@@ -246,53 +205,59 @@ export function initDsarIntake() {
     });
   });
 
-  const resetBtn = document.getElementById('btn-reset-dsar-queue');
-
-  if (form) {
-    form.addEventListener('submit', handleDsarSubmit);
-  }
-
-  if (refreshBtn) {
-    refreshBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      showToast('Refreshing DSAR intake queue…', 'info');
-      loadDsarRequests();
+  // Request Type Selection Cards
+  const typeCards = document.querySelectorAll('.intake-type-option-card');
+  typeCards.forEach(card => {
+    card.addEventListener('click', () => {
+      typeCards.forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      selectedRequestType = card.dataset.type || 'Deletion';
     });
-  }
-
-  if (resetBtn) {
-    resetBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      showToast('Resetting DSAR queue to clean demo records…', 'info');
-      try {
-        const res = await fetch(`${window.location.origin}/api/dsar/requests/reset`, { method: 'POST' });
-        const data = await res.json();
-        if (data && data.success) {
-          showToast('✓ DSAR queue reset to clean demo records', 'success');
-          await loadDsarRequests();
-        } else {
-          showToast(data.message || 'Failed to reset queue', 'error');
-        }
-      } catch (err) {
-        showToast(`Reset error: ${err.message}`, 'error');
-      }
-    });
-  }
-
-  document.addEventListener('click', (e) => {
-    const proceedBtn = e.target.closest('.btn-proceed-identity-discovery');
-    if (proceedBtn) {
-      e.preventDefault();
-      const requestId = proceedBtn.getAttribute('data-id');
-      showToast(`Step 1 Intake Complete for ${requestId}. Ready for Step 2: Identity Resolution & Discovery!`, 'info');
-    }
   });
 
-  // Handle URL hash on initial load
-  if (window.location.hash === '#dsar-portal-workspace' || window.location.hash === '#dsar-workflow-section') {
+  // Verification Type Tabs
+  const verifTabs = document.querySelectorAll('.intake-verif-tab');
+  verifTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      verifTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      selectedVerificationType = tab.dataset.method || 'Government ID';
+    });
+  });
+
+  // Country & Relationship change
+  const countrySelect = document.getElementById('intake-country');
+  if (countrySelect) {
+    countrySelect.addEventListener('change', (e) => {
+      selectedCountry = e.target.value;
+    });
+  }
+
+  const relSelect = document.getElementById('intake-relationship');
+  if (relSelect) {
+    relSelect.addEventListener('change', (e) => {
+      selectedRelationship = e.target.value;
+    });
+  }
+
+  // Final Submit
+  const submitBtn = document.getElementById('btn-submit-final-intake');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', handleIntakeSubmit);
+  }
+
+  // Expose global view switchers
+  window.showDsarPortalView = showDsarPortalView;
+  window.showUdpsCoreView = showUdpsCoreView;
+
+  // Handle URL hash on initial load & hashchange
+  if (window.location.hash === '#dsar-portal-workspace' || window.location.hash === '#dsar-workflow-section' || window.location.hash.startsWith('#dsar')) {
     showDsarPortalView();
   }
 
-  updateAutoTrackingId();
-  loadDsarRequests();
+  window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#dsar-portal-workspace' || window.location.hash === '#dsar-workflow-section' || window.location.hash.startsWith('#dsar')) {
+      showDsarPortalView();
+    }
+  });
 }

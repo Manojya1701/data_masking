@@ -185,7 +185,12 @@ export function initDsarVerification() {
   if (proceedStep7Btn) {
     proceedStep7Btn.addEventListener('click', (e) => {
       e.preventDefault();
-      showToast('Step 6 Verification Complete! Ready for Step 7: Certified Deletion Certificate & Immutable Audit Package.', 'success');
+      const targetId = activeVerificationRequestId || 'DSAR-2026-000101';
+      if (window.generateDsarCertificate) {
+        window.generateDsarCertificate(targetId);
+      } else {
+        showToast(`Proceeding to Step 7 for ${targetId}…`, 'info');
+      }
     });
   }
 

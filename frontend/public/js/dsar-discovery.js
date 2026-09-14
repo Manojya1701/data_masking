@@ -218,5 +218,9 @@ export function initDsarDiscovery() {
       }
     }
   });
+
+  // Expose global triggers
+  window.runIdentityDiscoveryScan = runIdentityDiscoveryScan;
+  window.triggerDsarDiscovery = runIdentityDiscoveryScan;
 }
 

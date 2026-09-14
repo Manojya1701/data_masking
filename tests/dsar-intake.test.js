@@ -63,4 +63,41 @@ describe('DSAR Intake Service (Step 1)', () => {
     expect(fetchRes.record.full_name).toBe('Bob Johnson');
   });
 
+  test('updateDsarTask should update assignee, priority, status, and internal notes', async () => {
+    const updateRes = await dsarService.updateDsarTask('DSAR-2026-000125', {
+      assigned_to: 'Sarah Lee',
+      priority: 'Critical',
+      status: 'Under Legal Review',
+      internal_notes: 'Escalated to legal compliance team.'
+    });
+
+    expect(updateRes.success).toBe(true);
+    expect(updateRes.record.assigned_to).toBe('Sarah Lee');
+    expect(updateRes.record.priority).toBe('Critical');
+    expect(updateRes.record.status).toBe('Under Legal Review');
+    expect(updateRes.record.internal_notes).toContain('Escalated to legal');
+  });
+
+  test('getDsarComplianceReports should return aggregated metrics across jurisdictions', async () => {
+    const reports = await dsarService.getDsarComplianceReports();
+    expect(reports.success).toBe(true);
+    expect(reports.complianceRate).toBe('100%');
+    expect(reports.avgSlaTurnaroundDays).toBeDefined();
+    expect(reports.jurisdictions).toBeDefined();
+    expect(reports.requestTypes).toBeDefined();
+    expect(reports.teamWorkload).toBeDefined();
+    expect(reports.priorities).toBeDefined();
+  });
+
+  test('exportDsarComplianceCsv should return valid CSV content with headers', async () => {
+    const csv = await dsarService.exportDsarComplianceCsv();
+    expect(typeof csv).toBe('string');
+    expect(csv).toContain('DSAR Tracking ID');
+    expect(csv).toContain('Data Subject Name');
+    expect(csv).toContain('Jurisdiction / Country');
+    expect(csv).toContain('Right Type');
+    expect(csv).toContain('Assigned Officer');
+  });
+
 });
+

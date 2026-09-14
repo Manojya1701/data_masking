@@ -29,8 +29,7 @@
           <li><a href="#db-protection-section" class="nav-link nav-core-link">Database</a></li>
           <li><a href="#privacy-deletion-section" class="nav-link nav-core-link">Privacy Deletion</a></li>
           <li><a href="#restore-section" class="nav-link nav-core-link">Restore</a></li>
-          <li><a href="#formats-explorer-wrap" class="nav-link nav-core-link">Formats</a></li>
-          <li><a href="#dsar-portal-workspace" id="nav-dsar-portal" class="nav-link" style="color:var(--cyan); font-weight:700; background:rgba(6,182,212,0.1); padding:4px 10px; border-radius:6px; border:1px solid rgba(6,182,212,0.3);">📜 DSAR Portal</a></li>
+          <li><a href="#dsar-portal-workspace" id="nav-dsar-portal" class="nav-link" onclick="event.preventDefault(); if (window.showDsarPortalView) window.showDsarPortalView();" style="color:var(--cyan); font-weight:700; background:rgba(6,182,212,0.1); padding:4px 10px; border-radius:6px; border:1px solid rgba(6,182,212,0.3); cursor:pointer;">📜 DSAR Portal</a></li>
         </ul>
       </nav>
 
@@ -1054,40 +1053,446 @@
     <!-- ── DSAR ERASURE WORKFLOW PORTAL (Segmento Protect Dedicated Portal) ───────────── -->
     <div id="dsar-portal-workspace" class="hidden">
       
-      <!-- DSAR Standalone Portal Top Navigation Bar -->
+      <!-- Top Utility Header Bar -->
       <div style="margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
         <button type="button" id="btn-back-to-udps-core" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:8px; color:var(--cyan); border-color:rgba(6,182,212,0.4); font-weight:700;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
           <span>← Back to UDPS Core Engine</span>
         </button>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="meta-pill primary" style="background:rgba(6,182,212,0.12); color:var(--cyan); border:1px solid rgba(6,182,212,0.3); font-weight:700; padding:6px 14px; border-radius:20px; font-size:0.8rem;">
-            📜 Segmento Protect — Standalone DSAR Compliance Portal
-          </span>
+        
+        <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.25); padding:6px 16px; border-radius:20px; color:var(--cyan); font-weight:700; font-size:0.8rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Segmento Protect • DSAR Operations & 7-Stage Privacy Pipeline</span>
         </div>
       </div>
 
-    <section id="dsar-workflow-section" class="section" style="padding-top:0;">
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <!-- ── SCREEN 2: DSAR OPERATIONS DASHBOARD (INTERNAL VIEW) ────────────────── -->
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <div id="dsar-dashboard-internal-view">
       
-      <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+      <!-- Dashboard Top Header with Search & Operator Profile -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:24px;">
         <div>
-          <h2 class="section-title" style="display:flex; align-items:center; gap:10px;">
+          <h2 class="section-title" style="margin-bottom:4px; display:flex; align-items:center; gap:10px;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-            <span>Segmento Protect — DSAR Data Erasure Flow</span>
+            <span>DSAR Dashboard</span>
           </h2>
-          <p class="section-desc">End-to-End Data Erasure & Subject Access Request (DSAR) Compliance Workflow (GDPR / DPDP / CCPA).</p>
+          <p class="section-desc" style="margin:0;">Enterprise Privacy Request Operations, Cross-Team SLA Tracking & Resolution.</p>
         </div>
-        <button type="button" id="btn-refresh-dsar-requests" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-          <span>Refresh Queue</span>
-        </button>
+
+        <!-- Search Bar & Profile Lockup -->
+        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <div style="position:relative; width:280px;">
+            <input type="text" id="dsar-dash-search-input" class="input-field" placeholder="Search DSAR ID, requester..." style="padding-left:36px; padding-top:8px; padding-bottom:8px; font-size:0.85rem; border-radius:20px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none;">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+
+          <!-- Operator Badge -->
+          <div style="display:flex; align-items:center; gap:10px; background:var(--bg-surface); border:1px solid var(--border); padding:6px 14px; border-radius:24px;">
+            <div style="width:28px; height:28px; border-radius:50%; background:rgba(6,182,212,0.15); color:var(--cyan); font-weight:800; font-size:0.78rem; display:flex; align-items:center; justify-content:center; border:1px solid rgba(6,182,212,0.3);">JD</div>
+            <div style="line-height:1.2;">
+              <div style="font-size:0.82rem; font-weight:700; color:var(--text-bright);">John Doe</div>
+              <div style="font-size:0.7rem; color:var(--text-muted);">Privacy Team</div>
+            </div>
+          </div>
+        </div>
       </div>
 
+      <!-- Dashboard Main Grid: Sidebar Navigation + Content -->
+      <div class="dsar-dashboard-container">
+        
+        <!-- Left Sidebar Navigation Menu -->
+        <aside class="dsar-sidebar-menu">
+          <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); font-weight:800; padding:4px 10px 8px;">Workspace</div>
+          <a class="dsar-sidebar-nav-item active" data-tab="dashboard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Dashboard</span>
+          </a>
+          <a class="dsar-sidebar-nav-item" data-tab="requests">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>DSAR Requests</span>
+          </a>
+          <a class="dsar-sidebar-nav-item" data-tab="my_tasks">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>My Tasks</span>
+          </a>
+          <a class="dsar-sidebar-nav-item" data-tab="team_tasks">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Team Tasks</span>
+          </a>
+          <a class="dsar-sidebar-nav-item" data-tab="sla_breaches">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>SLA Breaches</span>
+          </a>
+          <a class="dsar-sidebar-nav-item" data-tab="reports">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>Reports</span>
+          </a>
+          <a class="dsar-sidebar-nav-item" data-tab="settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Settings</span>
+          </a>
+        </aside>
+
+        <!-- Right Main Dashboard Content Area -->
+        <div style="flex:1; min-width:0;">
+          
+          <!-- ── SUB-VIEW 1: MAIN DASHBOARD & ACTIVE REQUESTS ────────────────── -->
+          <div id="dsar-subview-dashboard" class="dsar-subview">
+            
+            <!-- 4 KPI Metrics Summary Grid (Matching Mockup) -->
+            <div class="dsar-kpi-grid">
+              
+              <!-- KPI 1: Total Requests -->
+              <div class="dsar-kpi-card" style="border-top:3px solid var(--blue);">
+                <div class="dsar-kpi-header">
+                  <span class="dsar-kpi-title">Total Requests</span>
+                  <div class="dsar-kpi-icon" style="color:var(--blue);">📋</div>
+                </div>
+                <div id="dash-kpi-total-requests" class="dsar-kpi-value">0</div>
+                <div class="dsar-kpi-trend" style="color:var(--emerald);">
+                  <span>Active Queue</span>
+                  <span style="color:var(--text-muted); font-size:0.72rem;">across systems</span>
+                </div>
+              </div>
+
+              <!-- KPI 2: In Progress -->
+              <div class="dsar-kpi-card" style="border-top:3px solid var(--cyan);">
+                <div class="dsar-kpi-header">
+                  <span class="dsar-kpi-title">In Progress</span>
+                  <div class="dsar-kpi-icon" style="color:var(--cyan);">⏳</div>
+                </div>
+                <div id="dash-kpi-in-progress" class="dsar-kpi-value">0</div>
+                <div class="dsar-kpi-trend" style="color:var(--cyan);">
+                  <span>Processing</span>
+                  <span style="color:var(--text-muted); font-size:0.72rem;">active pipeline</span>
+                </div>
+              </div>
+
+              <!-- KPI 3: Completed -->
+              <div class="dsar-kpi-card" style="border-top:3px solid var(--emerald);">
+                <div class="dsar-kpi-header">
+                  <span class="dsar-kpi-title">Completed</span>
+                  <div class="dsar-kpi-icon" style="color:var(--emerald);">✅</div>
+                </div>
+                <div id="dash-kpi-completed" class="dsar-kpi-value">0</div>
+                <div class="dsar-kpi-trend" style="color:var(--emerald);">
+                  <span>Certified</span>
+                  <span style="color:var(--text-muted); font-size:0.72rem;">with audit proof</span>
+                </div>
+              </div>
+
+              <!-- KPI 4: SLA Breaches -->
+              <div class="dsar-kpi-card" style="border-top:3px solid var(--red);">
+                <div class="dsar-kpi-header">
+                  <span class="dsar-kpi-title">SLA Breaches</span>
+                  <div class="dsar-kpi-icon" style="color:var(--red);">⚠️</div>
+                </div>
+                <div id="dash-kpi-sla-breaches" class="dsar-kpi-value">0</div>
+                <div class="dsar-kpi-trend" style="color:var(--emerald);">
+                  <span>0 Breaches</span>
+                  <span style="color:var(--text-muted); font-size:0.72rem;">SLA compliant</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Recent DSAR Requests Table Card -->
+            <div class="db-card" style="padding:20px 24px;">
+              
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px;">
+                <div>
+                  <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-bright); display:flex; align-items:center; gap:8px;">
+                    <span>Recent DSAR Requests</span>
+                    <span id="dsar-dash-queue-count" class="meta-pill primary" style="font-size:0.72rem;">0 Total</span>
+                  </h3>
+                  <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">Active Data Subject Access & Erasure requests across all systems.</p>
+                </div>
+
+                <!-- Action Buttons & Filter Pills -->
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                  <button type="button" id="btn-reset-dsar-queue" class="btn-ghost btn-sm" style="font-size:0.75rem; color:var(--text-muted); border-color:rgba(255,255,255,0.15); display:inline-flex; align-items:center; gap:4px; padding:5px 10px;" title="Reset queue to clean demo records">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    <span>Reset Demo</span>
+                  </button>
+                  <button type="button" id="btn-refresh-dsar-requests" class="btn-ghost btn-sm" style="font-size:0.75rem; color:var(--cyan); border-color:rgba(6,182,212,0.3); display:inline-flex; align-items:center; gap:4px; padding:5px 10px;" title="Refresh queue">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                    <span>Refresh</span>
+                  </button>
+
+                  <!-- Filter Pills -->
+                  <div style="display:flex; gap:6px; flex-wrap:wrap; margin-left:4px;">
+                    <button type="button" class="dsar-dash-filter-pill active" data-filter="all">All</button>
+                    <button type="button" class="dsar-dash-filter-pill" data-filter="in_progress">In Progress</button>
+                    <button type="button" class="dsar-dash-filter-pill" data-filter="assigned">Assigned</button>
+                    <button type="button" class="dsar-dash-filter-pill" data-filter="not_started">Not Started</button>
+                    <button type="button" class="dsar-dash-filter-pill" data-filter="completed">Completed</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Table Container -->
+              <div style="overflow-x:auto;">
+                <table id="dsar-requests-table" style="width:100%; border-collapse:collapse;">
+                  <thead>
+                    <tr style="background:var(--bg-input);">
+                      <th style="padding:12px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">DSAR ID</th>
+                      <th style="padding:12px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Request Type</th>
+                      <th style="padding:12px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Requester</th>
+                      <th style="padding:12px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Status</th>
+                      <th style="padding:12px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Due Date</th>
+                      <th style="padding:12px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dsar-dashboard-table-body">
+                    <!-- Populated dynamically by dsar-dashboard.js -->
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+
+          </div> <!-- /#dsar-subview-dashboard -->
+
+          <!-- ── SUB-VIEW 2: MY TASKS (OPERATOR FOCUS VIEW) ──────────────────── -->
+          <div id="dsar-subview-my-tasks" class="dsar-subview hidden">
+            
+            <!-- Operator Greeting & KPI Card -->
+            <div class="db-card" style="padding:18px 24px; margin-bottom:20px; border-left:4px solid var(--cyan);">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+                <div>
+                  <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-bright); margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+                    <span>👤 John Doe — My Assigned Privacy Tasks</span>
+                    <span id="mytasks-badge-count" class="meta-pill primary" style="font-size:0.75rem;">0 Assigned</span>
+                  </h3>
+                  <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Personal action queue for DSAR verifications, policy approvals, and erasure executions.</p>
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:center;">
+                  <div style="padding:6px 14px; background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.25); border-radius:12px; text-align:center;">
+                    <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">IN PROGRESS</div>
+                    <div id="mytasks-in-progress-count" style="font-size:1.05rem; font-weight:800; color:var(--cyan);">0</div>
+                  </div>
+                  <div style="padding:6px 14px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:12px; text-align:center;">
+                    <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">CRITICAL / HIGH</div>
+                    <div id="mytasks-high-priority-count" style="font-size:1.05rem; font-weight:800; color:var(--red);">0</div>
+                  </div>
+                  <div style="padding:6px 14px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); border-radius:12px; text-align:center;">
+                    <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">COMPLETED</div>
+                    <div id="mytasks-completed-count" style="font-size:1.05rem; font-weight:800; color:var(--emerald);">0</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- My Tasks Interactive Table Card -->
+            <div class="db-card" style="padding:20px 24px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+                <h4 style="font-size:0.95rem; font-weight:700; color:var(--text-bright); margin:0;">Assigned Action Items</h4>
+                <div style="font-size:0.75rem; color:var(--text-muted);">Click "Open Pipeline" to process any item through Steps 2 – 7</div>
+              </div>
+
+              <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse;">
+                  <thead>
+                    <tr style="background:var(--bg-input);">
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Task ID</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Type</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Subject / Case Notes</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Priority</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Status</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Due Date</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dsar-mytasks-table-body">
+                    <!-- Populated dynamically by dsar-dashboard.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div> <!-- /#dsar-subview-my-tasks -->
+
+          <!-- ── SUB-VIEW 3: TEAM TASKS & WORKLOAD DELEGATION ────────────────── -->
+          <div id="dsar-subview-team-tasks" class="dsar-subview hidden">
+            
+            <!-- Team Workload Distribution Cards -->
+            <div style="margin-bottom:20px;">
+              <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); font-weight:700; margin-bottom:10px;">
+                👥 Privacy Engineering & DPO Workload Distribution
+              </div>
+              <div id="team-workload-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+                <!-- Populated dynamically by dsar-dashboard.js -->
+              </div>
+            </div>
+
+            <!-- Team Tasks Queue Table Card -->
+            <div class="db-card" style="padding:20px 24px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px;">
+                <div>
+                  <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-bright); margin:0;">Team DSAR Queue & Delegation</h3>
+                  <p style="font-size:0.8rem; color:var(--text-muted); margin:4px 0 0 0;">Reassign tickets between privacy engineers and legal officers in real time.</p>
+                </div>
+                <div style="font-size:0.78rem; color:var(--cyan); font-weight:600;">
+                  ⚡ Live Reassignment Active
+                </div>
+              </div>
+
+              <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse;">
+                  <thead>
+                    <tr style="background:var(--bg-input);">
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">DSAR ID</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Requester</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Jurisdiction</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Assigned Officer</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Priority</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Status</th>
+                      <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dsar-teamtasks-table-body">
+                    <!-- Populated dynamically by dsar-dashboard.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div> <!-- /#dsar-subview-team-tasks -->
+
+          <!-- ── SUB-VIEW 4: COMPLIANCE & ANALYTICS REPORTS HUB ──────────────── -->
+          <div id="dsar-subview-reports" class="dsar-subview hidden">
+            
+            <!-- Reports Top Hero Metric Card -->
+            <div class="db-card" style="padding:22px 26px; margin-bottom:24px; background:linear-gradient(135deg, rgba(6,182,212,0.08) 0%, rgba(16,185,129,0.05) 100%); border:1px solid rgba(6,182,212,0.25);">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+                <div>
+                  <div style="font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--cyan); margin-bottom:4px;">
+                    🛡️ Segmento Protect — Regulatory Compliance & Audit Hub
+                  </div>
+                  <h3 style="font-size:1.25rem; font-weight:800; color:var(--text-bright); margin:0;">Global Privacy Operations & Statutory SLA Report</h3>
+                  <p style="font-size:0.82rem; color:var(--text-muted); margin:4px 0 0 0;">Continuous tracking across DPDP Act 2023, EU GDPR, US CCPA/CPRA, and Singapore PDPA.</p>
+                </div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                  <button type="button" id="btn-export-compliance-csv" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:8px 16px; font-size:0.82rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Download Compliance CSV</span>
+                  </button>
+                  <button type="button" id="btn-export-compliance-json" class="btn-ghost" style="display:inline-flex; align-items:center; gap:8px; padding:8px 16px; font-size:0.82rem; color:var(--cyan); border-color:rgba(6,182,212,0.4);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    <span>Download Audit JSON</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- High-level compliance stats bar -->
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:14px; margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.08);">
+                <div>
+                  <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">STATUTORY COMPLIANCE</div>
+                  <div style="font-size:1.2rem; font-weight:800; color:var(--emerald);">100% On-Track</div>
+                </div>
+                <div>
+                  <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">AVG SLA RESOLUTION</div>
+                  <div id="report-stat-avg-days" style="font-size:1.2rem; font-weight:800; color:var(--cyan);">4.2 Days</div>
+                </div>
+                <div>
+                  <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">SLA BREACH INCIDENTS</div>
+                  <div style="font-size:1.2rem; font-weight:800; color:var(--emerald);">0 Breaches</div>
+                </div>
+                <div>
+                  <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">ACTIVE JURISDICTIONS</div>
+                  <div id="report-stat-jurisdictions" style="font-size:1.2rem; font-weight:800; color:var(--text-bright);">5 Frameworks</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reports Breakdown 2-Column Analytics Grid -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+              
+              <!-- Card 1: Jurisdiction Distribution -->
+              <div class="db-card" style="padding:20px 24px;">
+                <h4 style="font-size:0.95rem; font-weight:800; color:var(--text-bright); margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+                  <span>🌐 Jurisdictional Framework Distribution</span>
+                </h4>
+                <div id="reports-jurisdiction-bars" style="display:flex; flex-direction:column; gap:12px;">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <!-- Card 2: Privacy Right Types Distribution -->
+              <div class="db-card" style="padding:20px 24px;">
+                <h4 style="font-size:0.95rem; font-weight:800; color:var(--text-bright); margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+                  <span>⚖️ Privacy Right Types Breakdown</span>
+                </h4>
+                <div id="reports-types-bars" style="display:flex; flex-direction:column; gap:12px;">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <!-- Card 3: Priority & Risk Breakdown -->
+              <div class="db-card" style="padding:20px 24px;">
+                <h4 style="font-size:0.95rem; font-weight:800; color:var(--text-bright); margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+                  <span>🔥 Request Urgency & Priority Status</span>
+                </h4>
+                <div id="reports-priority-bars" style="display:flex; flex-direction:column; gap:12px;">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <!-- Card 4: Operational Audit Summary -->
+              <div class="db-card" style="padding:20px 24px;">
+                <h4 style="font-size:0.95rem; font-weight:800; color:var(--text-bright); margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+                  <span>📜 Statutory Defense Readiness</span>
+                </h4>
+                <div style="display:flex; flex-direction:column; gap:10px; font-size:0.83rem;">
+                  <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-input); border-radius:6px;">
+                    <span>ISO/IEC 27701 Audit Integrity</span>
+                    <span style="color:var(--emerald); font-weight:700;">✓ Certified</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-input); border-radius:6px;">
+                    <span>Cryptographic SHA-256 Ledger Seals</span>
+                    <span style="color:var(--cyan); font-weight:700;">✓ Active</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-input); border-radius:6px;">
+                    <span>Statutory Retention Lock Check (GST/RBI)</span>
+                    <span style="color:var(--amber); font-weight:700;">✓ Enforced</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-input); border-radius:6px;">
+                    <span>DPO Attestation Capability</span>
+                    <span style="color:var(--emerald); font-weight:700;">✓ Ready</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div> <!-- /#dsar-subview-reports -->
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <!-- ── 7-STAGE DSAR PRIVACY EXECUTION ENGINE (STEPS 1 - 7) ───────────────── -->
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <div id="dsar-deep-pipeline-section" style="margin-top:28px;">
+      
       <!-- 7-Step Pipeline Progress Stepper Bar -->
       <div class="db-card" style="margin-bottom:24px; padding:18px 24px;">
-        <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); font-weight:700; margin-bottom:14px; display:flex; align-items:center; gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span>End-to-End DSAR Erasure Pipeline (7-Step Standard)</span>
+        <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); font-weight:700; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>End-to-End DSAR Execution & Certification Engine (Steps 1 – 7)</span>
+          </div>
+          <span class="meta-pill primary" style="font-size:0.72rem;">Automated Privacy Engine</span>
         </div>
 
         <div class="dsar-pipeline-stepper">
@@ -1128,68 +1533,140 @@
         </div>
       </div>
 
-      <!-- Step 1 DSAR Intake Request Form -->
-      <div class="db-card" style="margin-bottom:24px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+      <!-- ── Step 1: DSAR Intake & Requester Submission Card ─────────────────── -->
+      <div id="dsar-step1-intake-card" class="db-card" style="margin-bottom:24px; border:1px solid rgba(6,182,212,0.3); background:var(--bg-card);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:12px;">
           <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:8px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            <span>Step 1: Deletion Request (DSAR Intake Form)</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span>Step 1: Data Subject Request Intake & Identity Details</span>
           </h3>
-          <span id="dsar-auto-tracking-id" class="meta-pill primary" style="background:rgba(6,182,212,0.12); color:var(--cyan); border:1px solid rgba(6,182,212,0.3); font-weight:700;">
-            Tracking ID: Auto-Generating…
-          </span>
+          <span class="meta-pill primary" style="font-size:0.75rem;">Intake Registration</span>
         </div>
 
-        <form id="dsar-intake-form">
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:16px;">
+        <form id="dsar-intake-form" onsubmit="return false;">
+          <!-- Requester Personal Info Grid -->
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px; margin-bottom:16px;">
             <div>
-              <label for="dsar-full-name" style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Data Subject Full Name *</label>
-              <input type="text" id="dsar-full-name" class="input-field" placeholder="e.g. John Doe" required style="width:100%;">
+              <label for="intake-full-name" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Full Name *</label>
+              <input type="text" id="intake-full-name" class="input-field" placeholder="e.g. Vikram Malhotra" required style="width:100%;">
             </div>
             <div>
-              <label for="dsar-email" style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Primary Email Address *</label>
-              <input type="email" id="dsar-email" class="input-field" placeholder="e.g. john.doe@example.com" required style="width:100%;">
+              <label for="intake-email" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Email Address *</label>
+              <input type="email" id="intake-email" class="input-field" placeholder="e.g. vikram.legal@company.com" required style="width:100%;">
             </div>
             <div>
-              <label for="dsar-phone" style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Phone Number (Optional)</label>
-              <input type="text" id="dsar-phone" class="input-field" placeholder="e.g. +91 98765 43210" style="width:100%;">
+              <label for="intake-phone" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Phone Number</label>
+              <input type="text" id="intake-phone" class="input-field" placeholder="+91 99887 76655" style="width:100%;">
             </div>
             <div>
-              <label for="dsar-customer-id" style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px;">System / Customer ID (Optional)</label>
-              <input type="text" id="dsar-customer-id" class="input-field" placeholder="e.g. CUST-8842" style="width:100%;">
-            </div>
-          </div>
-
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:16px;">
-            <div>
-              <label for="dsar-request-type" style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Request Type *</label>
-              <select id="dsar-request-type" class="input-field" style="width:100%;">
-                <option value="full_erasure">🗑️ Full Data Erasure (Right to be Forgotten)</option>
-                <option value="anonymization">👤 In-Place Data Anonymization</option>
-                <option value="access_export">📦 Data Subject Access Request (DSAR Export)</option>
-                <option value="restrict_processing">🔒 Restrict Processing / Legal Hold Check</option>
+              <label for="intake-country" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Country / Jurisdiction *</label>
+              <select id="intake-country" class="input-field" style="width:100%;">
+                <option value="India" selected>India (DPDP Act 2023)</option>
+                <option value="Singapore">Singapore (PDPA)</option>
+                <option value="European Union">European Union (GDPR)</option>
+                <option value="United States">United States (CCPA/CPRA)</option>
+                <option value="United Kingdom">United Kingdom (UK GDPR)</option>
+                <option value="South Korea">South Korea (PIPA)</option>
+                <option value="Australia">Australia (Privacy Act)</option>
               </select>
             </div>
             <div>
-              <label for="dsar-subject-category" style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Data Subject Relationship *</label>
-              <select id="dsar-subject-category" class="input-field" style="width:100%;">
-                <option value="customer">Customer / User</option>
-                <option value="former_customer">Former Customer</option>
-                <option value="employee">Employee / Candidate</option>
-                <option value="vendor">Vendor / Third Party</option>
+              <label for="intake-relationship" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Subject Relationship *</label>
+              <select id="intake-relationship" class="input-field" style="width:100%;">
+                <option value="Customer" selected>Customer</option>
+                <option value="Former Customer">Former Customer</option>
+                <option value="Employee">Employee / Candidate</option>
+                <option value="Vendor">Vendor / Partner</option>
+                <option value="Other">Other</option>
               </select>
             </div>
           </div>
 
-          <div style="margin-bottom:20px;">
-            <label for="dsar-evidence" style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Verification Evidence / Legal Basis Notes</label>
-            <input type="text" id="dsar-evidence" class="input-field" placeholder="e.g. Government ID Verified (Pass: #ID-892) / GDPR Art. 17 Request" style="width:100%;">
+          <!-- Request Type Interactive Selection Cards -->
+          <div style="margin-bottom:18px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Request Privacy Right Type:</label>
+            <div class="intake-type-grid">
+              <div class="intake-type-option-card active" data-type="Deletion">
+                <div class="intake-type-icon">🗑️</div>
+                <div class="intake-type-title">Deletion (Erasure)</div>
+                <div class="intake-type-desc">Right to be Forgotten. Permanently remove or pseudonymize all personal records.</div>
+              </div>
+              <div class="intake-type-option-card" data-type="Access">
+                <div class="intake-type-icon">📦</div>
+                <div class="intake-type-title">Access / Export</div>
+                <div class="intake-type-desc">Request complete export of personal records & processing history.</div>
+              </div>
+              <div class="intake-type-option-card" data-type="Rectification">
+                <div class="intake-type-icon">✏️</div>
+                <div class="intake-type-title">Rectification</div>
+                <div class="intake-type-desc">Correct inaccurate, incomplete, or outdated personal data.</div>
+              </div>
+              <div class="intake-type-option-card" data-type="Restrict">
+                <div class="intake-type-icon">🔒</div>
+                <div class="intake-type-title">Restrict Processing</div>
+                <div class="intake-type-desc">Freeze or restrict automated processing across active systems.</div>
+              </div>
+              <div class="intake-type-option-card" data-type="Portability">
+                <div class="intake-type-icon">🔄</div>
+                <div class="intake-type-title">Data Portability</div>
+                <div class="intake-type-desc">Structured, machine-readable JSON/CSV export for transfer.</div>
+              </div>
+            </div>
           </div>
 
-          <div style="display:flex; justify-content:flex-end;">
-            <button type="submit" id="btn-submit-dsar-request" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px;">
+          <!-- Target Scope Checkboxes & Instructions -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:18px;">
+            <div>
+              <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Target Data Domains:</label>
+              <div class="intake-scope-grid" style="grid-template-columns: 1fr 1fr;">
+                <label class="intake-scope-label">
+                  <input type="checkbox" class="intake-scope-checkbox" value="Profile & Auth" checked>
+                  <span>👤 Profile & Auth</span>
+                </label>
+                <label class="intake-scope-label">
+                  <input type="checkbox" class="intake-scope-checkbox" value="Billing & Financial" checked>
+                  <span>💳 Billing & Tax</span>
+                </label>
+                <label class="intake-scope-label">
+                  <input type="checkbox" class="intake-scope-checkbox" value="Marketing & Telemetry" checked>
+                  <span>📢 Marketing Data</span>
+                </label>
+                <label class="intake-scope-label">
+                  <input type="checkbox" class="intake-scope-checkbox" value="Support & Logs" checked>
+                  <span>💬 Support Tickets</span>
+                </label>
+              </div>
+            </div>
+            <div>
+              <label for="intake-details-text" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Specific Instructions (Optional):</label>
+              <textarea id="intake-details-text" class="input-field" rows="3" placeholder="e.g. Purge all marketing profiles, billing accounts, and newsletter subscriptions..." style="width:100%; height:calc(100% - 28px);"></textarea>
+            </div>
+          </div>
+
+          <!-- Identity Verification Method -->
+          <div style="margin-bottom:18px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Identity Verification Method & Reference:</label>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="dsar-dash-filter-pill active intake-verif-tab" data-method="Government ID">🪪 Government ID</button>
+                <button type="button" class="dsar-dash-filter-pill intake-verif-tab" data-method="Email OTP">✉️ Registered Email OTP</button>
+                <button type="button" class="dsar-dash-filter-pill intake-verif-tab" data-method="Account Auth">🔑 Account SSO / Auth</button>
+              </div>
+              <div style="flex:1; min-width:220px;">
+                <input type="text" id="intake-id-ref" class="input-field" placeholder="ID / Verification Reference (e.g. PASS-8891 / OTP-334)" style="width:100%;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Consent & Submit Button -->
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding-top:14px; border-top:1px solid var(--border);">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.82rem; color:var(--text-secondary);">
+              <input type="checkbox" id="intake-consent-checkbox" checked>
+              <span>I confirm identity verification accuracy under DPDP Act 2023 & GDPR Art. 17 statutory regulations.</span>
+            </label>
+            <button type="button" id="btn-submit-final-intake" class="btn-primary" style="padding:10px 26px; font-weight:800; display:inline-flex; align-items:center; gap:8px;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              <span>Submit DSAR Request (Step 1)</span>
+              <span>Submit & Start AI Discovery Pipeline ➔</span>
             </button>
           </div>
         </form>
@@ -1659,53 +2136,195 @@
         </div>
       </div>
 
-      <!-- Active DSAR Requests Queue Table -->
-      <div class="db-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="meta-pill primary" style="background:rgba(6,182,212,0.12); color:var(--cyan); border:1px solid rgba(6,182,212,0.3); font-weight:700;">
-              Active DSAR Intake Queue
+      <!-- Step 7 Official Certified Deletion Certificate & Immutable Audit Package Card (Hidden by Default) -->
+      <div id="dsar-step7-certificate-card" class="db-card hidden" style="margin-bottom:24px; border:1px solid rgba(245,158,11,0.4); background:var(--bg-card); display:none;">
+        
+        <!-- Card Header -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>Step 7: Certified Deletion Certificate & Immutable Audit Package</span>
+          </h3>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span id="dsar-cert-target-id" class="meta-pill primary" style="background:rgba(245,158,11,0.12); color:var(--amber); border:1px solid rgba(245,158,11,0.35); font-weight:700;">
+              CERT-2026-XXXXXX
             </span>
-            <span id="dsar-queue-count" style="font-size:0.8rem; color:var(--text-muted);">0 Requests</span>
-          </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <button type="button" id="btn-reset-dsar-queue" class="btn-ghost btn-sm" style="font-size:0.75rem; color:var(--text-muted); border-color:rgba(255,255,255,0.15);" title="Reset queue to clean minimal demo records">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px; margin-right:4px;"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-              <span>Reset Clean Demo Records</span>
-            </button>
-            <button type="button" id="btn-refresh-dsar-requests" class="btn-ghost btn-sm" style="font-size:0.75rem; color:var(--cyan); border-color:rgba(6,182,212,0.3);" title="Refresh queue">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px; margin-right:4px;"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-              <span>Refresh Queue</span>
+            <button type="button" id="btn-regenerate-certificate" class="btn-ghost btn-sm" style="font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <span>Refresh Certificate</span>
             </button>
           </div>
         </div>
 
-        <div class="table-wrap">
-          <table class="db-table" id="dsar-requests-table">
-            <thead>
-              <tr>
-                <th>REQUEST ID</th>
-                <th>DATA SUBJECT</th>
-                <th>EMAIL</th>
-                <th>REQUEST TYPE</th>
-                <th>RELATIONSHIP</th>
-                <th>STATUS</th>
-                <th>INTAKE DATE</th>
-                <th style="text-align:right;">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody id="dsar-requests-table-body">
-              <tr>
-                <td colspan="8" style="text-align:center; padding:24px; color:var(--text-muted);">
-                  Loading DSAR intake requests…
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- Certificate KPI Metric Cards -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:20px;">
+          <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--emerald);">
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">CERTIFICATE STATUS</div>
+            <div id="dsar-cert-kpi-status" style="font-weight:700; color:var(--emerald); font-size:1.05rem;">ISSUED & SEALED</div>
+          </div>
+          <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--emerald);">
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">AUDITED RESIDUAL PII</div>
+            <div id="dsar-cert-kpi-residual" style="font-weight:700; color:var(--emerald); font-size:1.05rem;">0 Residual (100% Clean)</div>
+          </div>
+          <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--cyan);">
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">REGULATORY SCOPE</div>
+            <div id="dsar-cert-kpi-regimes" style="font-weight:700; color:var(--cyan); font-size:1.05rem;">DPDP • GDPR • CCPA • GST</div>
+          </div>
+          <div style="padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); border-top:3px solid var(--amber);">
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">DPO ATTESTATION</div>
+            <div id="dsar-cert-kpi-dpo" style="font-weight:700; color:var(--amber); font-size:1.05rem;">DIGITALLY SIGNED</div>
+          </div>
         </div>
+
+        <!-- Official Certificate Presentation Document View -->
+        <div id="dsar-official-certificate-document" style="background:linear-gradient(180deg, rgba(245,158,11,0.03) 0%, rgba(6,182,212,0.03) 100%), var(--bg-surface); border:2px solid rgba(245,158,11,0.3); border-radius:var(--radius-lg); padding:24px; margin-bottom:20px; box-shadow:0 8px 24px rgba(0,0,0,0.25); position:relative;">
+          
+          <!-- Official Certificate Top Header -->
+          <div style="text-align:center; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+            <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:4px 16px; font-size:0.75rem; font-weight:800; color:var(--amber); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">
+              🛡️ Official Regulatory Compliance Manifest
+            </div>
+            <h2 style="font-size:1.35rem; font-weight:800; color:var(--text-bright); margin:0 0 6px 0; letter-spacing:-0.02em;">
+              CERTIFICATE OF DATA ERASURE & STATUTORY COMPLIANCE
+            </h2>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0; line-height:1.4;">
+              Issued pursuant to India DPDP Act 2023 (Sec. 12), EU GDPR (Art. 17), CCPA (Cal. Civ. Code § 1798.105), and ISO/IEC 27701
+            </p>
+            <div style="display:flex; justify-content:center; gap:16px; margin-top:10px; font-size:0.78rem; color:var(--text-secondary); flex-wrap:wrap;">
+              <span>Certificate No: <strong id="dsar-cert-display-number" style="color:var(--cyan); font-family:monospace;">CERT-2026-000101</strong></span>
+              <span>•</span>
+              <span>Tracking Request: <strong id="dsar-cert-display-req-id" style="color:var(--text-bright); font-family:monospace;">DSAR-2026-000101</strong></span>
+              <span>•</span>
+              <span>Issue Date: <strong id="dsar-cert-display-date" style="color:var(--text-bright);">2026-09-12</strong></span>
+            </div>
+          </div>
+
+          <!-- Data Subject & Verification Grid -->
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin-bottom:20px; padding:14px 16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border);">
+            <div>
+              <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700; display:block; margin-bottom:2px;">Data Subject</span>
+              <strong id="dsar-cert-subject-name" style="color:var(--text-bright); font-size:0.92rem;">Vikram Patel</strong>
+            </div>
+            <div>
+              <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700; display:block; margin-bottom:2px;">Primary Email</span>
+              <code id="dsar-cert-subject-email" style="color:var(--cyan); font-size:0.85rem;">vikram.patel@example.in</code>
+            </div>
+            <div>
+              <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700; display:block; margin-bottom:2px;">Customer / Subject ID</span>
+              <span id="dsar-cert-customer-id" style="color:var(--text-secondary); font-size:0.85rem; font-family:monospace;">CUST-8891</span>
+            </div>
+            <div>
+              <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700; display:block; margin-bottom:2px;">Identity Verification Evidence</span>
+              <span id="dsar-cert-evidence" style="color:var(--emerald); font-size:0.82rem; font-weight:600;">Government ID & Aadhaar Verified</span>
+            </div>
+          </div>
+
+          <!-- Multi-Store Erasure Attestation Summary Table -->
+          <div style="margin-bottom:20px;">
+            <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">
+              📋 Multi-Store Data Destruction & Pseudonymization Attestation
+            </div>
+            <div class="table-wrap">
+              <table class="db-table" id="dsar-cert-summary-table">
+                <thead>
+                  <tr>
+                    <th>ENTERPRISE SYSTEM / STORE</th>
+                    <th>COMPLIANCE ACTION APPLIED</th>
+                    <th>LEGAL RETENTION / PURGE STATUS</th>
+                  </tr>
+                </thead>
+                <tbody id="dsar-cert-summary-tbody">
+                  <tr>
+                    <td><strong>Primary SQL Customer DB</strong></td>
+                    <td>PERMANENTLY PURGED (0 Residual PII)</td>
+                    <td><span class="meta-pill success" style="font-size:0.75rem; font-weight:700;">✅ PURGED</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Candidate Search Index (Elasticsearch)</strong></td>
+                    <td>INVERTED TOKENS PURGED (0 Candidate Hits)</td>
+                    <td><span class="meta-pill success" style="font-size:0.75rem; font-weight:700;">✅ PURGED</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Multi-Store Graph DB (Neo4j)</strong></td>
+                    <td>GRAPH VERTICES SEVERED & DE-LINKED</td>
+                    <td><span class="meta-pill success" style="font-size:0.75rem; font-weight:700;">✅ PURGED</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Temporary Scratch & File Cache</strong></td>
+                    <td>INVALIDATED & FLUSHED</td>
+                    <td><span class="meta-pill success" style="font-size:0.75rem; font-weight:700;">✅ PURGED</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Financial Invoices & Tax Ledger</strong></td>
+                    <td>PSEUDONYMIZED (V****m P***l) & LOCKED FOR 7 YRS</td>
+                    <td><span class="meta-pill" style="background:rgba(245,158,11,0.12); color:var(--amber); border:1px solid rgba(245,158,11,0.3); font-size:0.75rem; font-weight:700;">🛡️ CGST ACT SEC. 36 RETAINED</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Legal Defense & Court Admissibility Statement -->
+          <div style="padding:14px 16px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.25); border-radius:var(--radius-md); margin-bottom:20px; font-size:0.84rem; color:var(--text-bright); line-height:1.5;">
+            <strong>⚖️ Judicial & Regulatory Defense Attestation:</strong>
+            <span id="dsar-cert-defense-statement">
+              This official Certificate of Erasure and attached cryptographic audit manifest constitute conclusive proof of compliant data destruction and lawful statutory retention under DPDP Act 2023 Sec. 12(3) and EU GDPR Art. 17(3)(b). This record is tamper-sealed and admissible in judicial and regulatory defense.
+            </span>
+          </div>
+
+          <!-- DPO Signature & Digital Seal Block -->
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px; align-items:center; padding:16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border); margin-bottom:16px;">
+            <div>
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:4px;">Regulatory Attestation & Sign-Off</div>
+              <div style="font-size:0.95rem; font-weight:800; color:var(--text-bright);" id="dsar-cert-dpo-name">[Authorized Privacy Signatory / Title]</div>
+              <div style="font-size:0.78rem; color:var(--text-secondary);" id="dsar-cert-dpo-role">[Data Protection & Compliance Authority]</div>
+              <div style="font-size:0.75rem; color:var(--emerald); font-weight:600; margin-top:4px;">✓ Digitally Signed & Attested</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-start; sm:align-items:flex-end;">
+              <span class="meta-pill" style="background:rgba(245,158,11,0.12); color:var(--amber); border:1px solid rgba(245,158,11,0.35); font-weight:800; font-size:0.8rem; padding:6px 14px; margin-bottom:4px;">
+                🏅 [SEAL: COMPLIANCE-OFFICER-2026]
+              </span>
+              <span style="font-size:0.72rem; color:var(--text-muted);" id="dsar-cert-signed-at">Timestamp: 2026-09-12T10:45:00Z</span>
+            </div>
+          </div>
+
+          <!-- Cryptographic SHA-256 Digital Certificate Seal -->
+          <div style="display:flex; flex-direction:column; gap:6px; padding:10px 14px; background:rgba(0,0,0,0.25); border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+              <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">🔒 Immutable Cryptographic Certificate Seal (SHA-256):</span>
+              <button type="button" id="btn-copy-cert-seal" class="btn-ghost btn-sm" style="font-size:0.72rem; padding:2px 8px;">Copy Seal</button>
+            </div>
+            <code id="dsar-cert-sha256-seal" style="color:var(--cyan); font-family:monospace; font-size:0.8rem; word-break:break-all;">
+              -
+            </code>
+          </div>
+
+        </div>
+
+        <!-- Step 7 Action Footer -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-top:14px; border-top:1px solid var(--border);">
+          <div style="font-size:0.82rem; color:var(--emerald); font-weight:700; display:flex; align-items:center; gap:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>7-Step DSAR Lifecycle Completed: Certificate sealed and stored in audit ledger.</span>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" id="btn-download-audit-package" class="btn-ghost" style="display:inline-flex; align-items:center; gap:8px; padding:9px 18px; color:var(--cyan); border-color:rgba(6,182,212,0.4);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download Audit Package (.json)</span>
+            </button>
+            <button type="button" id="btn-print-certificate" class="btn-ghost" style="display:inline-flex; align-items:center; gap:8px; padding:9px 18px; color:var(--amber); border-color:rgba(245,158,11,0.4);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              <span>Print Certificate PDF</span>
+            </button>
+            <button type="button" id="btn-complete-dsar-lifecycle" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:9px 20px;">
+              <span>Complete Lifecycle ✓</span>
+            </button>
+          </div>
+        </div>
+
       </div>
+    </div> <!-- /#dsar-deep-pipeline-section -->
 
-    </section>
     </div> <!-- /#dsar-portal-workspace -->
 
   </main>

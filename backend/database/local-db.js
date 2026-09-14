@@ -47,6 +47,96 @@ const DEFAULT_STORE = {
   dsar_requests: [
     {
       id: 1,
+      request_id: 'DSAR-2026-000125',
+      full_name: 'John Smith',
+      email: 'john.smith@example.com',
+      phone: '+65 9123 4567',
+      country: 'Singapore',
+      relationship: 'Customer',
+      customer_id: 'CUST-8842',
+      request_type: 'Deletion',
+      subject_category: 'customer',
+      request_details: 'Delete all personal browsing logs, marketing telemetry, and customer profile.',
+      verification_type: 'Government ID',
+      verification_evidence: 'Passport Verified (#SG-PASS-8842)',
+      due_date: 'Sep 22, 2026',
+      status: 'In Progress',
+      created_at: '2026-08-23T08:30:00.000Z'
+    },
+    {
+      id: 2,
+      request_id: 'DSAR-2026-000124',
+      full_name: 'Sarah Lee',
+      email: 'sarah.lee@example.com',
+      phone: '+1 555 019 2834',
+      country: 'United States',
+      relationship: 'Customer',
+      customer_id: 'CUST-3319',
+      request_type: 'Access',
+      subject_category: 'customer',
+      request_details: 'Export full transaction ledger and profile history.',
+      verification_type: 'Email OTP',
+      verification_evidence: 'Registered Email OTP Verified (#OTP-9921)',
+      due_date: 'Sep 24, 2026',
+      status: 'Assigned',
+      created_at: '2026-08-25T11:20:00.000Z'
+    },
+    {
+      id: 3,
+      request_id: 'DSAR-2026-000123',
+      full_name: 'Michael Tan',
+      email: 'michael.tan@example.com',
+      phone: '+65 8234 5678',
+      country: 'Singapore',
+      relationship: 'Employee',
+      customer_id: 'EMP-9021',
+      request_type: 'Rectification',
+      subject_category: 'employee',
+      request_details: 'Correct payroll residential address and update contact number.',
+      verification_type: 'Account Auth',
+      verification_evidence: 'Internal SSO & HR Badge Auth (#SSO-441)',
+      due_date: 'Sep 21, 2026',
+      status: 'In Progress',
+      created_at: '2026-08-22T14:15:00.000Z'
+    },
+    {
+      id: 4,
+      request_id: 'DSAR-2026-000122',
+      full_name: 'Priya Nair',
+      email: 'priya.nair@example.in',
+      phone: '+91 98765 12340',
+      country: 'India',
+      relationship: 'Former Customer',
+      customer_id: 'CUST-5510',
+      request_type: 'Restrict',
+      subject_category: 'former_customer',
+      request_details: 'Restrict automated processing pending active account dispute.',
+      verification_type: 'Government ID',
+      verification_evidence: 'National ID Verified (#IN-UID-1234)',
+      due_date: 'Sep 26, 2026',
+      status: 'Not Started',
+      created_at: '2026-08-27T16:00:00.000Z'
+    },
+    {
+      id: 5,
+      request_id: 'DSAR-2026-000121',
+      full_name: 'David Kim',
+      email: 'david.kim@example.com',
+      phone: '+82 10 2345 6789',
+      country: 'South Korea',
+      relationship: 'Customer',
+      customer_id: 'CUST-1192',
+      request_type: 'Portability',
+      subject_category: 'customer',
+      request_details: 'Export all telemetry, order history, and preferences in JSON format.',
+      verification_type: 'Account Auth',
+      verification_evidence: '2FA Mobile Auth (#MFA-881)',
+      due_date: 'Sep 18, 2026',
+      status: 'Completed',
+      created_at: '2026-08-19T09:00:00.000Z'
+    },
+    {
+      id: 6,
       request_id: 'DSAR-2026-000101',
       full_name: 'Vikram Patel',
       email: 'vikram.patel@example.in',
@@ -55,11 +145,12 @@ const DEFAULT_STORE = {
       request_type: 'full_erasure',
       subject_category: 'customer',
       verification_evidence: 'Government ID & Aadhaar Verified (#ID-8891)',
+      due_date: 'Sep 30, 2026',
       status: 'RECEIVED',
       created_at: '2026-09-01T10:00:00.000Z'
     },
     {
-      id: 2,
+      id: 7,
       request_id: 'DSAR-2026-000456',
       full_name: 'Alice Smith',
       email: 'alice.smith@example.com',
@@ -68,11 +159,12 @@ const DEFAULT_STORE = {
       request_type: 'full_erasure',
       subject_category: 'customer',
       verification_evidence: 'Email OTP Verified (#OTP-334)',
+      due_date: 'Oct 02, 2026',
       status: 'RECEIVED',
       created_at: '2026-09-02T11:15:00.000Z'
     },
     {
-      id: 3,
+      id: 8,
       request_id: 'DSAR-2026-000789',
       full_name: 'Vikram Malhotra',
       email: 'vikram.legal@company.com',
@@ -81,11 +173,12 @@ const DEFAULT_STORE = {
       request_type: 'restrict_processing',
       subject_category: 'customer',
       verification_evidence: 'Court Subpoena & Legal Compliance Lock (#LEGAL-990)',
+      due_date: 'Oct 03, 2026',
       status: 'RECEIVED',
       created_at: '2026-09-03T14:30:00.000Z'
     },
     {
-      id: 4,
+      id: 9,
       request_id: 'DSAR-2026-000518',
       full_name: 'Priya Sharma',
       email: 'priya@gmail.com',
@@ -94,6 +187,7 @@ const DEFAULT_STORE = {
       request_type: 'anonymization',
       subject_category: 'customer',
       verification_evidence: 'Mobile OTP Verified (#OTP-518)',
+      due_date: 'Oct 04, 2026',
       status: 'RECEIVED',
       created_at: '2026-09-04T09:45:00.000Z'
     }
@@ -340,10 +434,11 @@ async function query(text, params = []) {
       email: params[2] || 'unknown@example.com',
       phone: params[3] || null,
       customer_id: params[4] || null,
-      request_type: params[5] || 'full_erasure',
+      request_type: params[5] || 'Deletion',
       subject_category: params[6] || 'customer',
       verification_evidence: params[7] || null,
-      status: params[8] || 'RECEIVED',
+      status: params[8] || 'In Progress',
+      due_date: params[9] || 'Sep 22, 2026',
       created_at: new Date().toISOString()
     };
     list.unshift(newRecord);
@@ -373,6 +468,24 @@ async function query(text, params = []) {
         match.status = 'VERIFIED';
         match.compliance_status = 'VERIFIED_READY_FOR_CERTIFICATE';
         if (params.length >= 2) match.verification_report = params[0];
+      } else if (lowerSql.includes("status = 'completed'") || lowerSql.includes("status = 'certificate_issued'")) {
+        match.status = 'COMPLETED';
+        match.compliance_status = 'CERTIFICATE_ISSUED_CLOSED';
+        if (params.length >= 3) {
+          match.certificate_id = params[0];
+          match.certificate_data = params[1];
+        } else if (params.length >= 2) {
+          match.certificate_data = params[0];
+        }
+      } else if (lowerSql.includes('certificate_data = $1') || lowerSql.includes('certificate_data = $2')) {
+        if (params.length >= 3) {
+          match.certificate_id = params[0];
+          match.certificate_data = params[1];
+        } else if (params.length >= 2) {
+          match.certificate_data = params[0];
+        }
+        match.compliance_status = 'CERTIFICATE_ISSUED_CLOSED';
+        match.status = 'COMPLETED';
       } else if (lowerSql.includes('legal_policy_report = $1')) {
         match.legal_policy_report = params[0];
         match.compliance_status = params[1] || 'POLICY_EVALUATED';

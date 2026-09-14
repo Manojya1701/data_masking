@@ -29,6 +29,7 @@ const dsarImpactService = require('../services/dsar-impact-service');
 const dsarPolicyService = require('../services/dsar-policy-service');
 const dsarExecutionService = require('../services/dsar-execution-service');
 const dsarVerificationService = require('../services/dsar-verification-service');
+const dsarCertificateService = require('../services/dsar-certificate-service');
 
 const router = express.Router();
 
@@ -805,6 +806,50 @@ router.get('/dsar/requests/:id', async (req, res) => {
   }
 });
 
+// PATCH /api/dsar/requests/:id/task — Update task assignment, priority, status, or notes
+router.patch('/dsar/requests/:id/task', async (req, res) => {
+  try {
+    const result = await dsarService.updateDsarTask(req.params.id, req.body || {});
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/analytics/reports — Get aggregated compliance reports metrics
+router.get('/dsar/analytics/reports', async (req, res) => {
+  try {
+    const result = await dsarService.getDsarComplianceReports();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/analytics/export — Download compliance audit report in CSV or JSON
+router.get('/dsar/analytics/export', async (req, res) => {
+  try {
+    const format = (req.query.format || 'csv').toLowerCase();
+    if (format === 'json') {
+      const reports = await dsarService.getDsarComplianceReports();
+      const { records } = await dsarService.getDsarRequests();
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', 'attachment; filename="dsar_compliance_audit_package.json"');
+      return res.json({ reports, records, exportedAt: new Date().toISOString() });
+    }
+
+    const csvContent = await dsarService.exportDsarComplianceCsv();
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="dsar_compliance_audit_report.csv"');
+    return res.send(csvContent);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 // ── DSAR STEP 2 IDENTITY DISCOVERY ROUTES ──────────────────────────────────
 
 // POST /api/dsar/discovery/scan — Perform identity resolution & PII discovery scan
@@ -1000,6 +1045,78 @@ router.get('/dsar/verification/:id', async (req, res) => {
       return jsonError(res, 400, result.message);
     }
     return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── DSAR STEP 7 DELETION CERTIFICATE & IMMUTABLE AUDIT PACKAGE ROUTES ───────
+
+// POST /api/dsar/certificate/generate — Generate Official Deletion Certificate & Audit Trail
+router.post('/dsar/certificate/generate', async (req, res) => {
+  try {
+    const { requestId } = req.body || {};
+    const result = await dsarCertificateService.generateDsarCertificate(requestId);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/certificate/:id — Fetch Official Deletion Certificate
+router.get('/api/dsar/certificate/:id', async (req, res) => {
+  try {
+    const result = await dsarCertificateService.getDsarCertificate(req.params.id);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /dsar/certificate/:id — Alternate route
+router.get('/dsar/certificate/:id', async (req, res) => {
+  try {
+    const result = await dsarCertificateService.getDsarCertificate(req.params.id);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/certificate/:id/export — Download Immutable Audit Package (.json)
+router.get('/api/dsar/certificate/:id/export', async (req, res) => {
+  try {
+    const result = await dsarCertificateService.exportDsarAuditPackage(req.params.id);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="${result.filename || 'SegmentoProtect-AuditPackage.json'}"`);
+    return res.json(result.exportPayload);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /dsar/certificate/:id/export — Alternate export route
+router.get('/dsar/certificate/:id/export', async (req, res) => {
+  try {
+    const result = await dsarCertificateService.exportDsarAuditPackage(req.params.id);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="${result.filename || 'SegmentoProtect-AuditPackage.json'}"`);
+    return res.json(result.exportPayload);
   } catch (err) {
     return jsonError(res, 500, err.message);
   }

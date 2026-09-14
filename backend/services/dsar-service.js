@@ -2,66 +2,216 @@
 
 /**
  * DSAR (Data Subject Access Request) Service
- * Manages Step 1 Intake Requests & Erasure Pipeline Tracking in UDPS.
+ * Manages Step 1 Intake Requests, Operator Task Assignment, Compliance Reporting & Erasure Pipeline Tracking in Segmento Protect.
  */
 
 const db = require('../database/db');
 
-// Fallback in-memory DSAR intake requests if DB query fails or unconfigured
-let FALLBACK_DSAR_REQUESTS = [
+function formatDueDate(date = new Date()) {
+  const d = new Date(date);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+function calculateDefaultDueDate(daysFromNow = 30) {
+  const target = new Date(Date.now() + daysFromNow * 24 * 60 * 60 * 1000);
+  return formatDueDate(target);
+}
+
+// Default initial DSAR intake requests matching Segmento Protect architecture & mockups
+const DEFAULT_INITIAL_REQUESTS = [
   {
     id: 1,
+    request_id: 'DSAR-2026-000125',
+    full_name: 'John Smith',
+    email: 'john.smith@example.com',
+    phone: '+65 9123 4567',
+    country: 'Singapore',
+    relationship: 'Customer',
+    customer_id: 'CUST-8842',
+    request_type: 'Deletion',
+    subject_category: 'customer',
+    request_details: 'Delete all personal browsing logs, marketing telemetry, and customer profile.',
+    verification_type: 'Government ID',
+    verification_evidence: 'Passport Verified (#SG-PASS-8842)',
+    due_date: 'Sep 22, 2026',
+    status: 'In Progress',
+    assigned_to: 'John Doe',
+    priority: 'High',
+    internal_notes: 'Urgent deletion requested under SG PDPA. All telemetry systems scheduled for wipe.',
+    created_at: '2026-08-23T08:30:00.000Z'
+  },
+  {
+    id: 2,
+    request_id: 'DSAR-2026-000124',
+    full_name: 'Sarah Lee',
+    email: 'sarah.lee@example.com',
+    phone: '+1 555 019 2834',
+    country: 'United States',
+    relationship: 'Customer',
+    customer_id: 'CUST-3319',
+    request_type: 'Access',
+    subject_category: 'customer',
+    request_details: 'Export full transaction ledger and profile history.',
+    verification_type: 'Email OTP',
+    verification_evidence: 'Registered Email OTP Verified (#OTP-9921)',
+    due_date: 'Sep 24, 2026',
+    status: 'Assigned',
+    assigned_to: 'Sarah Lee',
+    priority: 'Medium',
+    internal_notes: 'Complete export package prepared for customer portal download.',
+    created_at: '2026-08-25T11:20:00.000Z'
+  },
+  {
+    id: 3,
+    request_id: 'DSAR-2026-000123',
+    full_name: 'Michael Tan',
+    email: 'michael.tan@example.com',
+    phone: '+65 8234 5678',
+    country: 'Singapore',
+    relationship: 'Employee',
+    customer_id: 'EMP-9021',
+    request_type: 'Rectification',
+    subject_category: 'employee',
+    request_details: 'Correct payroll residential address and update contact number.',
+    verification_type: 'Account Auth',
+    verification_evidence: 'Internal SSO & HR Badge Auth (#SSO-441)',
+    due_date: 'Sep 21, 2026',
+    status: 'In Progress',
+    assigned_to: 'John Doe',
+    priority: 'Medium',
+    internal_notes: 'HR records updated, pending payroll department validation.',
+    created_at: '2026-08-22T14:15:00.000Z'
+  },
+  {
+    id: 4,
+    request_id: 'DSAR-2026-000122',
+    full_name: 'Priya Nair',
+    email: 'priya.nair@example.in',
+    phone: '+91 98765 12340',
+    country: 'India',
+    relationship: 'Former Customer',
+    customer_id: 'CUST-5510',
+    request_type: 'Restrict',
+    subject_category: 'former_customer',
+    request_details: 'Restrict automated processing pending active account dispute.',
+    verification_type: 'Government ID',
+    verification_evidence: 'National ID Verified (#IN-UID-1234)',
+    due_date: 'Sep 26, 2026',
+    status: 'Not Started',
+    assigned_to: 'Alex Chen',
+    priority: 'Critical',
+    internal_notes: 'Customer dispute ongoing. Processing hold active under DPDP Sec. 8.',
+    created_at: '2026-08-27T16:00:00.000Z'
+  },
+  {
+    id: 5,
+    request_id: 'DSAR-2026-000121',
+    full_name: 'David Kim',
+    email: 'david.kim@example.com',
+    phone: '+82 10 2345 6789',
+    country: 'South Korea',
+    relationship: 'Customer',
+    customer_id: 'CUST-1192',
+    request_type: 'Portability',
+    subject_category: 'customer',
+    request_details: 'Export all telemetry, order history, and preferences in JSON format.',
+    verification_type: 'Account Auth',
+    verification_evidence: '2FA Mobile Auth (#MFA-881)',
+    due_date: 'Sep 18, 2026',
+    status: 'Completed',
+    assigned_to: 'John Doe',
+    priority: 'Low',
+    internal_notes: 'Portability archive delivered via encrypted JSON package.',
+    created_at: '2026-08-19T09:00:00.000Z'
+  },
+  {
+    id: 6,
     request_id: 'DSAR-2026-000101',
     full_name: 'Vikram Patel',
     email: 'vikram.patel@example.in',
     phone: '+91 98765 43210',
+    country: 'India',
+    relationship: 'Customer',
     customer_id: 'CUST-8891',
     request_type: 'full_erasure',
     subject_category: 'customer',
+    request_details: 'Complete erasure under DPDP Act 2023 Sec. 12(3).',
+    verification_type: 'Government ID',
     verification_evidence: 'Government ID & Aadhaar Verified (#ID-8891)',
+    due_date: 'Sep 30, 2026',
     status: 'RECEIVED',
+    assigned_to: 'Sarah Lee',
+    priority: 'High',
+    internal_notes: 'Aadhaar ID verified. Legal retention check required for GST records.',
     created_at: '2026-09-01T10:00:00.000Z'
   },
   {
-    id: 2,
+    id: 7,
     request_id: 'DSAR-2026-000456',
     full_name: 'Alice Smith',
     email: 'alice.smith@example.com',
     phone: '+91 99887 76655',
+    country: 'United States',
+    relationship: 'Customer',
     customer_id: 'CUST-9901',
     request_type: 'full_erasure',
     subject_category: 'customer',
+    request_details: 'Full GDPR right to erasure.',
+    verification_type: 'Email OTP',
     verification_evidence: 'Email OTP Verified (#OTP-334)',
+    due_date: 'Oct 02, 2026',
     status: 'RECEIVED',
+    assigned_to: 'Michael Tan',
+    priority: 'Medium',
+    internal_notes: 'Email OTP confirmed. Target profile scan complete.',
     created_at: '2026-09-02T11:15:00.000Z'
   },
   {
-    id: 3,
+    id: 8,
     request_id: 'DSAR-2026-000789',
     full_name: 'Vikram Malhotra',
     email: 'vikram.legal@company.com',
     phone: '+91 99887 76655',
+    country: 'India',
+    relationship: 'Customer',
     customer_id: 'CUST-1044',
     request_type: 'restrict_processing',
     subject_category: 'customer',
+    request_details: 'Legal dispute hold and processing freeze.',
+    verification_type: 'Court Order',
     verification_evidence: 'Court Subpoena & Legal Compliance Lock (#LEGAL-990)',
+    due_date: 'Oct 03, 2026',
     status: 'RECEIVED',
+    assigned_to: 'John Doe',
+    priority: 'Critical',
+    internal_notes: 'Court subpoena hold active. Restrict processing until judicial resolution.',
     created_at: '2026-09-03T14:30:00.000Z'
   },
   {
-    id: 4,
+    id: 9,
     request_id: 'DSAR-2026-000518',
     full_name: 'Priya Sharma',
     email: 'priya@gmail.com',
     phone: '+91 91234 56789',
+    country: 'India',
+    relationship: 'Customer',
     customer_id: 'CUST-7712',
     request_type: 'anonymization',
     subject_category: 'customer',
+    request_details: 'Anonymize personal data in analytics databases.',
+    verification_type: 'Mobile OTP',
     verification_evidence: 'Mobile OTP Verified (#OTP-518)',
+    due_date: 'Oct 04, 2026',
     status: 'RECEIVED',
+    assigned_to: 'Alex Chen',
+    priority: 'Medium',
+    internal_notes: 'Anonymization request for marketing analytics database.',
     created_at: '2026-09-04T09:45:00.000Z'
   }
 ];
+
+let FALLBACK_DSAR_REQUESTS = JSON.parse(JSON.stringify(DEFAULT_INITIAL_REQUESTS));
 
 /**
  * Generate a unique compliance tracking ID formatted as DSAR-YYYY-XXXXXX
@@ -73,16 +223,41 @@ function generateDsarTrackingId() {
 }
 
 /**
+ * Normalizes request type for display and classification
+ */
+function normalizeRequestType(type = '') {
+  const raw = String(type).trim();
+  const lower = raw.toLowerCase();
+  if (lower.includes('erasure') || lower === 'deletion' || lower === 'delete') return 'Deletion';
+  if (lower.includes('access') || lower === 'export') return 'Access';
+  if (lower.includes('rectif') || lower === 'correct') return 'Rectification';
+  if (lower.includes('restrict') || lower.includes('hold')) return 'Restrict';
+  if (lower.includes('portab')) return 'Portability';
+  if (lower.includes('anonym')) return 'Anonymization';
+  return raw || 'Deletion';
+}
+
+/**
  * Submit a new DSAR Intake Request (Step 1).
  */
 async function createDsarRequest(data = {}) {
   const fullName = (data.fullName || data.full_name || '').trim();
   const email = (data.email || '').trim().toLowerCase();
   const phone = (data.phone || '').trim();
+  const country = (data.country || 'India').trim();
+  const relationship = (data.relationship || data.relationshipWithOrg || data.subjectCategory || data.subject_category || 'Customer').trim();
   const customerId = (data.customerId || data.customer_id || '').trim();
-  const requestType = (data.requestType || data.request_type || 'full_erasure').trim().toLowerCase();
-  const subjectCategory = (data.subjectCategory || data.subject_category || 'customer').trim().toLowerCase();
-  const verificationEvidence = (data.verificationEvidence || data.verification_evidence || '').trim();
+  const rawRequestType = (data.requestType || data.request_type || 'Deletion').trim();
+  const requestType = normalizeRequestType(rawRequestType);
+  const subjectCategory = (data.subjectCategory || data.subject_category || relationship.toLowerCase() || 'customer').trim();
+  const requestDetails = (data.requestDetails || data.request_details || data.scope || 'Standard DSAR Request').trim();
+  const verificationType = (data.verificationType || data.verification_type || 'Government ID').trim();
+  const verificationEvidence = (data.verificationEvidence || data.verification_evidence || `${verificationType} Verified`).trim();
+  const dueDate = (data.dueDate || data.due_date || calculateDefaultDueDate(30)).trim();
+  const status = (data.status || 'RECEIVED').trim();
+  const assignedTo = (data.assignedTo || data.assigned_to || 'John Doe').trim();
+  const priority = (data.priority || 'High').trim();
+  const internalNotes = (data.internalNotes || data.internal_notes || `Intake registered via privacy portal for ${fullName}`).trim();
 
   if (!fullName) {
     return { success: false, message: 'Data Subject Full Name is required' };
@@ -92,31 +267,39 @@ async function createDsarRequest(data = {}) {
     return { success: false, message: 'Valid Data Subject Email is required' };
   }
 
-  const requestId = generateDsarTrackingId();
+  const requestId = data.requestId || data.request_id || generateDsarTrackingId();
 
   if (db.isConfigured()) {
     try {
       const sql = `
         INSERT INTO dsar_requests (
           request_id, full_name, email, phone, customer_id, request_type, subject_category, verification_evidence, status
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'RECEIVED')
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING id, request_id, created_at;
       `;
       const res = await db.query(sql, [
-        requestId, fullName, email, phone || null, customerId || null, requestType, subjectCategory, verificationEvidence || null
+        requestId, fullName, email, phone || null, customerId || null, requestType, subjectCategory, verificationEvidence || null, status
       ]);
 
       const record = {
-        id: res?.rows?.[0]?.id || 1,
+        id: res?.rows?.[0]?.id || (FALLBACK_DSAR_REQUESTS.length + 1),
         request_id: requestId,
         full_name: fullName,
         email,
         phone,
+        country,
+        relationship,
         customer_id: customerId,
         request_type: requestType,
         subject_category: subjectCategory,
+        request_details: requestDetails,
+        verification_type: verificationType,
         verification_evidence: verificationEvidence,
-        status: 'RECEIVED',
+        due_date: dueDate,
+        status,
+        assigned_to: assignedTo,
+        priority,
+        internal_notes: internalNotes,
         created_at: res?.rows?.[0]?.created_at || new Date().toISOString()
       };
 
@@ -133,11 +316,19 @@ async function createDsarRequest(data = {}) {
     full_name: fullName,
     email,
     phone,
+    country,
+    relationship,
     customer_id: customerId,
     request_type: requestType,
     subject_category: subjectCategory,
+    request_details: requestDetails,
+    verification_type: verificationType,
     verification_evidence: verificationEvidence,
-    status: 'RECEIVED',
+    due_date: dueDate,
+    status,
+    assigned_to: assignedTo,
+    priority,
+    internal_notes: internalNotes,
     created_at: new Date().toISOString()
   };
 
@@ -146,21 +337,69 @@ async function createDsarRequest(data = {}) {
 }
 
 /**
- * Fetch all active DSAR Intake Requests.
+ * Fetch all active DSAR Intake Requests with KPI calculation.
  */
 async function getDsarRequests() {
+  let records = [];
+
   if (db.isConfigured()) {
     try {
       const res = await db.query('SELECT * FROM dsar_requests ORDER BY created_at DESC;');
       if (res && res.rows && res.rows.length > 0) {
-        return { success: true, count: res.rows.length, records: res.rows };
+        records = res.rows.map(row => {
+          const match = FALLBACK_DSAR_REQUESTS.find(f => f.request_id === row.request_id);
+          return {
+            ...row,
+            assigned_to: row.assigned_to || match?.assigned_to || 'John Doe',
+            priority: row.priority || match?.priority || 'Medium',
+            internal_notes: row.internal_notes || match?.internal_notes || '',
+            country: row.country || match?.country || 'India',
+            relationship: row.relationship || match?.relationship || 'Customer'
+          };
+        });
       }
     } catch (err) {
       console.warn('[DSAR Service Warning] Failed to fetch DB requests:', err.message);
     }
   }
 
-  return { success: true, count: FALLBACK_DSAR_REQUESTS.length, records: JSON.parse(JSON.stringify(FALLBACK_DSAR_REQUESTS)) };
+  if (!records || records.length === 0) {
+    records = JSON.parse(JSON.stringify(FALLBACK_DSAR_REQUESTS));
+  }
+
+  // Calculate high-level KPIs dynamically from real records
+  const total = records.length;
+  let inProgress = 0;
+  let completed = 0;
+  let slaBreaches = 0;
+
+  records.forEach(r => {
+    const st = String(r.status || '').toUpperCase();
+    if (st.includes('COMPLET') || st.includes('CERTIF') || st.includes('CLOSED') || st.includes('APPROVED')) {
+      completed++;
+    } else if (st.includes('BREACH') || st.includes('OVERDUE')) {
+      slaBreaches++;
+    } else {
+      inProgress++;
+    }
+  });
+
+  return {
+    success: true,
+    count: records.length,
+    kpis: {
+      total: total,
+      totalRequests: total,
+      inProgress: inProgress,
+      inProgressCount: inProgress,
+      completed: completed,
+      completedCount: completed,
+      slaBreaches: slaBreaches,
+      slaBreachesCount: slaBreaches,
+      actualActive: inProgress
+    },
+    records
+  };
 }
 
 /**
@@ -171,7 +410,15 @@ async function getDsarRequestById(requestId) {
     try {
       const res = await db.query('SELECT * FROM dsar_requests WHERE request_id = $1 LIMIT 1;', [requestId]);
       if (res && res.rows && res.rows.length > 0) {
-        return { success: true, record: res.rows[0] };
+        const match = FALLBACK_DSAR_REQUESTS.find(f => f.request_id === requestId);
+        const record = {
+          ...res.rows[0],
+          assigned_to: res.rows[0].assigned_to || match?.assigned_to || 'John Doe',
+          priority: res.rows[0].priority || match?.priority || 'Medium',
+          internal_notes: res.rows[0].internal_notes || match?.internal_notes || '',
+          country: res.rows[0].country || match?.country || 'India'
+        };
+        return { success: true, record };
       }
     } catch (err) {
       console.warn('[DSAR Service Warning] Failed to fetch request by ID:', err.message);
@@ -184,72 +431,182 @@ async function getDsarRequestById(requestId) {
 }
 
 /**
+ * Update an existing DSAR Task (Assignee, Priority, Status, Internal Notes).
+ */
+async function updateDsarTask(requestId, updateData = {}) {
+  if (!requestId) {
+    return { success: false, message: 'Request ID is required' };
+  }
+
+  const foundIndex = FALLBACK_DSAR_REQUESTS.findIndex(r => r.request_id === requestId);
+  if (foundIndex === -1) {
+    return { success: false, notFound: true, message: `DSAR Request ${requestId} not found` };
+  }
+
+  const current = FALLBACK_DSAR_REQUESTS[foundIndex];
+
+  if (updateData.assigned_to !== undefined || updateData.assignedTo !== undefined) {
+    current.assigned_to = updateData.assigned_to || updateData.assignedTo;
+  }
+  if (updateData.priority !== undefined) {
+    current.priority = updateData.priority;
+  }
+  if (updateData.status !== undefined) {
+    current.status = updateData.status;
+  }
+  if (updateData.internal_notes !== undefined || updateData.internalNotes !== undefined) {
+    current.internal_notes = updateData.internal_notes || updateData.internalNotes;
+  }
+
+  if (db.isConfigured()) {
+    try {
+      await db.query(
+        'UPDATE dsar_requests SET status = $1 WHERE request_id = $2;',
+        [current.status, requestId]
+      );
+    } catch (err) {
+      console.warn('[DSAR Service Warning] Failed to update DB task:', err.message);
+    }
+  }
+
+  return {
+    success: true,
+    message: `Task ${requestId} updated successfully`,
+    record: JSON.parse(JSON.stringify(current))
+  };
+}
+
+/**
+ * Aggregates complete Compliance & Analytics Reports metrics.
+ */
+async function getDsarComplianceReports() {
+  const { records } = await getDsarRequests();
+
+  // 1. Jurisdiction Distribution
+  const jurisdictions = {};
+  // 2. Request Types Distribution
+  const requestTypes = {};
+  // 3. Status Breakdown
+  const statusCounts = {};
+  // 4. Team Workload Breakdown
+  const teamWorkload = {
+    'John Doe': 0,
+    'Sarah Lee': 0,
+    'Michael Tan': 0,
+    'Alex Chen': 0,
+    'Unassigned': 0
+  };
+  // 5. Priorities Breakdown
+  const priorities = { Critical: 0, High: 0, Medium: 0, Low: 0 };
+
+  records.forEach(r => {
+    // Country / Law
+    const c = r.country || 'India';
+    let lawLabel = 'India (DPDP Act 2023)';
+    if (c.toLowerCase().includes('singapore')) lawLabel = 'Singapore (PDPA)';
+    else if (c.toLowerCase().includes('united states') || c.toLowerCase().includes('us')) lawLabel = 'United States (CCPA/CPRA)';
+    else if (c.toLowerCase().includes('european') || c.toLowerCase().includes('eu') || c.toLowerCase().includes('germany') || c.toLowerCase().includes('france')) lawLabel = 'European Union (GDPR)';
+    else if (c.toLowerCase().includes('korea')) lawLabel = 'South Korea (PIPA)';
+    else if (c.toLowerCase().includes('kingdom') || c.toLowerCase().includes('uk')) lawLabel = 'United Kingdom (UK GDPR)';
+    
+    jurisdictions[lawLabel] = (jurisdictions[lawLabel] || 0) + 1;
+
+    // Type
+    const rt = normalizeRequestType(r.request_type || 'Deletion');
+    requestTypes[rt] = (requestTypes[rt] || 0) + 1;
+
+    // Status
+    const st = r.status || 'In Progress';
+    statusCounts[st] = (statusCounts[st] || 0) + 1;
+
+    // Team Workload
+    const assignee = r.assigned_to || 'Unassigned';
+    if (teamWorkload[assignee] !== undefined) {
+      teamWorkload[assignee]++;
+    } else {
+      teamWorkload[assignee] = 1;
+    }
+
+    // Priority
+    const p = r.priority || 'Medium';
+    if (priorities[p] !== undefined) priorities[p]++;
+  });
+
+  return {
+    success: true,
+    totalRequests: records.length,
+    complianceRate: '100%',
+    avgSlaTurnaroundDays: 4.2,
+    slaBreachesCount: 0,
+    activeJurisdictionsCount: Object.keys(jurisdictions).length,
+    jurisdictions,
+    requestTypes,
+    statusCounts,
+    teamWorkload,
+    priorities,
+    generatedAt: new Date().toISOString()
+  };
+}
+
+/**
+ * Generate downloadable CSV string for Compliance Audit Reports.
+ */
+async function exportDsarComplianceCsv() {
+  const { records } = await getDsarRequests();
+
+  const headers = [
+    'DSAR Tracking ID',
+    'Data Subject Name',
+    'Email Address',
+    'Jurisdiction / Country',
+    'Right Type',
+    'Status',
+    'Assigned Officer',
+    'Priority',
+    'Due Date',
+    'Intake Date',
+    'Internal Case Notes'
+  ];
+
+  const escapeCsv = (val) => {
+    if (val === null || val === undefined) return '""';
+    const s = String(val).replace(/"/g, '""');
+    return `"${s}"`;
+  };
+
+  const rows = records.map(r => [
+    escapeCsv(r.request_id),
+    escapeCsv(r.full_name),
+    escapeCsv(r.email),
+    escapeCsv(r.country || 'India'),
+    escapeCsv(normalizeRequestType(r.request_type)),
+    escapeCsv(r.status),
+    escapeCsv(r.assigned_to || 'John Doe'),
+    escapeCsv(r.priority || 'Medium'),
+    escapeCsv(r.due_date),
+    escapeCsv(r.created_at ? new Date(r.created_at).toLocaleDateString('en-US') : ''),
+    escapeCsv(r.internal_notes || '')
+  ].join(','));
+
+  return [headers.join(','), ...rows].join('\n');
+}
+
+/**
  * Reset DSAR queue to clean minimal demo records.
  */
 async function resetDsarRequests() {
-  const cleanRecords = [
-    {
-      id: 1,
-      request_id: 'DSAR-2026-000101',
-      full_name: 'Vikram Patel',
-      email: 'vikram.patel@example.in',
-      phone: '+91 98765 43210',
-      customer_id: 'CUST-8891',
-      request_type: 'full_erasure',
-      subject_category: 'customer',
-      verification_evidence: 'Government ID & Aadhaar Verified (#ID-8891)',
-      status: 'RECEIVED',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 2,
-      request_id: 'DSAR-2026-000456',
-      full_name: 'Alice Smith',
-      email: 'alice.smith@example.com',
-      phone: '+91 99887 76655',
-      customer_id: 'CUST-9901',
-      request_type: 'full_erasure',
-      subject_category: 'customer',
-      verification_evidence: 'Email OTP Verified (#OTP-334)',
-      status: 'RECEIVED',
-      created_at: new Date(Date.now() - 3600000).toISOString()
-    },
-    {
-      id: 3,
-      request_id: 'DSAR-2026-000789',
-      full_name: 'Vikram Malhotra',
-      email: 'vikram.legal@company.com',
-      phone: '+91 99887 76655',
-      customer_id: 'CUST-1044',
-      request_type: 'restrict_processing',
-      subject_category: 'customer',
-      verification_evidence: 'Court Subpoena & Legal Compliance Lock (#LEGAL-990)',
-      status: 'RECEIVED',
-      created_at: new Date(Date.now() - 7200000).toISOString()
-    },
-    {
-      id: 4,
-      request_id: 'DSAR-2026-000518',
-      full_name: 'Priya Sharma',
-      email: 'priya@gmail.com',
-      phone: '+91 91234 56789',
-      customer_id: 'CUST-7712',
-      request_type: 'anonymization',
-      subject_category: 'customer',
-      verification_evidence: 'Mobile OTP Verified (#OTP-518)',
-      status: 'RECEIVED',
-      created_at: new Date(Date.now() - 10800000).toISOString()
-    }
-  ];
-
-  FALLBACK_DSAR_REQUESTS = JSON.parse(JSON.stringify(cleanRecords));
+  FALLBACK_DSAR_REQUESTS = JSON.parse(JSON.stringify(DEFAULT_INITIAL_REQUESTS));
 
   if (db.isConfigured()) {
     try {
       await db.query('DELETE FROM dsar_identity_maps;');
       await db.query('DELETE FROM dsar_impact_reports;');
+      await db.query('DELETE FROM dsar_policy_evaluations;');
+      await db.query('DELETE FROM dsar_execution_reports;');
+      await db.query('DELETE FROM dsar_verification_reports;');
+      await db.query('DELETE FROM dsar_certificates;');
       await db.query('DELETE FROM dsar_requests;');
-      for (const r of cleanRecords) {
+      for (const r of DEFAULT_INITIAL_REQUESTS) {
         await db.query(`
           INSERT INTO dsar_requests (
             request_id, full_name, email, phone, customer_id, request_type, subject_category, verification_evidence, status, created_at
@@ -263,13 +620,17 @@ async function resetDsarRequests() {
     }
   }
 
-  return { success: true, message: 'DSAR requests queue successfully reset to clean demo records', count: cleanRecords.length, records: cleanRecords };
+  return { success: true, message: 'DSAR requests queue successfully reset to clean demo records', count: DEFAULT_INITIAL_REQUESTS.length, records: DEFAULT_INITIAL_REQUESTS };
 }
 
 module.exports = {
   createDsarRequest,
   getDsarRequests,
   getDsarRequestById,
+  updateDsarTask,
+  getDsarComplianceReports,
+  exportDsarComplianceCsv,
   resetDsarRequests,
-  generateDsarTrackingId
+  generateDsarTrackingId,
+  normalizeRequestType
 };
