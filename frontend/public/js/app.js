@@ -13,6 +13,7 @@ import { initEmailSearch } from './email-search.js';
 import { initDsarIntake } from './dsar-intake.js';
 import { initDsarDashboard } from './dsar-dashboard.js';
 import { initDsarDiscovery } from './dsar-discovery.js';
+import { initDsarDetail } from './dsar-detail.js';
 import { initDsarImpact } from './dsar-impact.js';
 import { initDsarPolicy } from './dsar-policy.js';
 import { initDsarExecution } from './dsar-execution.js';
@@ -549,6 +550,7 @@ if (mobileMenuBtn && headerNav) {
 // Initialize DSAR Intake, Dashboard, Identity Discovery, Impact Analysis, Legal Policy, Execution, Verification & Certificate Controllers
 initDsarIntake();
 initDsarDashboard();
+initDsarDetail();
 initDsarDiscovery();
 initDsarImpact();
 initDsarPolicy();

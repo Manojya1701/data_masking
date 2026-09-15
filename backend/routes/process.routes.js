@@ -850,6 +850,57 @@ router.get('/dsar/analytics/export', async (req, res) => {
   }
 });
 
+// GET /api/dsar/requests/:id/details — Fetch full 7-tab ticket details & cross-team tasks
+router.get('/dsar/requests/:id/details', async (req, res) => {
+  try {
+    const result = await dsarService.getDsarTicketDetails(req.params.id);
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// PATCH /api/dsar/requests/:id/subtasks/:taskId — Update individual departmental subtask
+router.patch('/dsar/requests/:id/subtasks/:taskId', async (req, res) => {
+  try {
+    const result = await dsarService.updateDsarSubtask(req.params.id, req.params.taskId, req.body || {});
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/requests/:id/approvals — Submit DPO or Legal sign-off
+router.post('/dsar/requests/:id/approvals', async (req, res) => {
+  try {
+    const result = await dsarService.submitDsarApproval(req.params.id, req.body || {});
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/requests/:id/tasks/export — Export 6 departmental tasks in CSV
+router.get('/dsar/requests/:id/tasks/export', async (req, res) => {
+  try {
+    const csvContent = await dsarService.exportDsarTasksCsv(req.params.id);
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="${req.params.id}_departmental_tasks.csv"`);
+    return res.send(csvContent);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 // ── DSAR STEP 2 IDENTITY DISCOVERY ROUTES ──────────────────────────────────
 
 // POST /api/dsar/discovery/scan — Perform identity resolution & PII discovery scan

@@ -267,11 +267,11 @@ export function renderDsarTable() {
 
     return '<tr data-request-id="' + reqId + '" style="transition:background 0.15s ease;">' +
       '<td>' +
-        '<span style="font-weight:700; color:var(--cyan); font-family:var(--font-mono, monospace); font-size:0.88rem; display:inline-flex; align-items:center; gap:6px;">' +
-        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
-        reqId +
-      '</span>' +
-    '</td>' +
+        '<button type="button" class="btn-open-dsar-detail dsar-ticket-id-link" data-id="' + reqId + '" style="background:transparent; border:none; padding:0; font-weight:700; color:var(--cyan); font-family:var(--font-mono, monospace); font-size:0.88rem; display:inline-flex; align-items:center; gap:6px; cursor:pointer; text-decoration:underline; text-underline-offset:3px;" title="Click to view full 7-tab Ticket Detail Hub">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+          reqId +
+        '</button>' +
+      '</td>' +
       '<td>' + formatRequestTypeBadge(r.request_type) + '</td>' +
       '<td>' +
         '<div style="font-weight:700; color:var(--text-bright); font-size:0.9rem;">' + name + '</div>' +
@@ -284,10 +284,16 @@ export function renderDsarTable() {
         '<div style="font-size:0.72rem; color:var(--emerald); font-weight:600;">✓ SLA on track</div>' +
       '</td>' +
       '<td style="text-align:right;">' +
-        '<button type="button" class="btn-ghost btn-sm btn-open-dsar-flow" data-id="' + reqId + '" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); padding:6px 12px; font-size:0.78rem; font-weight:700; border-radius:6px; cursor:pointer;">' +
-          '<span>Open Pipeline</span>' +
-          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>' +
-        '</button>' +
+        '<div style="display:inline-flex; align-items:center; gap:6px;">' +
+          '<button type="button" class="btn-ghost btn-sm btn-open-dsar-detail" data-id="' + reqId + '" style="display:inline-flex; align-items:center; gap:5px; color:var(--text-bright); border-color:var(--border-subtle); padding:6px 10px; font-size:0.75rem; font-weight:600; border-radius:6px; cursor:pointer;" title="View 7-Tab Ticket Detail Hub with Cross-Team Tasks">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+            '<span>Detail Hub</span>' +
+          '</button>' +
+          '<button type="button" class="btn-ghost btn-sm btn-open-dsar-flow" data-id="' + reqId + '" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); padding:6px 12px; font-size:0.78rem; font-weight:700; border-radius:6px; cursor:pointer;">' +
+            '<span>Pipeline</span>' +
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>' +
+          '</button>' +
+        '</div>' +
       '</td>' +
     '</tr>';
   }).join('');
@@ -366,12 +372,17 @@ export function renderMyTasks() {
             <option value="Completed" ${currentStatus === 'Completed' ? 'selected' : ''}>✓ Completed</option>
           </select>
         </td>
-        <td style="padding:12px 14px; font-size:0.82rem; color:var(--text-bright);">${dueDate}</td>
         <td style="padding:12px 14px; text-align:right;">
-          <button type="button" class="btn-ghost btn-sm btn-open-dsar-flow" data-id="${reqId}" style="display:inline-flex; align-items:center; gap:4px; color:var(--cyan); border-color:rgba(6,182,212,0.35); padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer;">
-            <span>Open Pipeline</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
+          <div style="display:inline-flex; align-items:center; gap:6px;">
+            <button type="button" class="btn-ghost btn-sm btn-open-dsar-detail" data-id="${reqId}" style="display:inline-flex; align-items:center; gap:5px; color:var(--text-bright); border-color:var(--border-subtle); padding:5px 9px; font-size:0.75rem; font-weight:600; border-radius:6px; cursor:pointer;" title="View Detail Hub">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span>Detail Hub</span>
+            </button>
+            <button type="button" class="btn-ghost btn-sm btn-open-dsar-flow" data-id="${reqId}" style="display:inline-flex; align-items:center; gap:4px; color:var(--cyan); border-color:rgba(6,182,212,0.35); padding:5px 9px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+              <span>Pipeline</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
         </td>
       </tr>
     `;
@@ -427,7 +438,11 @@ export function renderTeamTasks() {
 
     return `
       <tr data-request-id="${reqId}" style="vertical-align:middle;">
-        <td style="padding:12px 14px; font-weight:700; color:var(--cyan); font-family:monospace; font-size:0.85rem;">${reqId}</td>
+        <td style="padding:12px 14px; font-weight:700; color:var(--cyan); font-family:monospace; font-size:0.85rem;">
+          <button type="button" class="btn-open-dsar-detail dsar-ticket-id-link" data-id="${reqId}" style="background:transparent; border:none; padding:0; font-weight:700; color:var(--cyan); font-family:var(--font-mono, monospace); font-size:0.85rem; display:inline-flex; align-items:center; gap:4px; cursor:pointer; text-decoration:underline; text-underline-offset:3px;" title="View Detail Hub">
+            ${reqId}
+          </button>
+        </td>
         <td style="padding:12px 14px;">
           <div style="font-weight:700; color:var(--text-bright); font-size:0.88rem;">${name}</div>
           <div style="font-size:0.75rem; color:var(--text-muted);">${escapeHtml(r.email || '')}</div>
@@ -448,10 +463,16 @@ export function renderTeamTasks() {
         </td>
         <td style="padding:12px 14px;">${formatStatusBadge(r.status)}</td>
         <td style="padding:12px 14px; text-align:right;">
-          <button type="button" class="btn-ghost btn-sm btn-open-dsar-flow" data-id="${reqId}" style="display:inline-flex; align-items:center; gap:4px; color:var(--cyan); border-color:rgba(6,182,212,0.35); padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer;">
-            <span>Open Pipeline</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
+          <div style="display:inline-flex; align-items:center; gap:6px;">
+            <button type="button" class="btn-ghost btn-sm btn-open-dsar-detail" data-id="${reqId}" style="display:inline-flex; align-items:center; gap:5px; color:var(--text-bright); border-color:var(--border-subtle); padding:5px 9px; font-size:0.75rem; font-weight:600; border-radius:6px; cursor:pointer;" title="View Detail Hub">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span>Detail Hub</span>
+            </button>
+            <button type="button" class="btn-ghost btn-sm btn-open-dsar-flow" data-id="${reqId}" style="display:inline-flex; align-items:center; gap:4px; color:var(--cyan); border-color:rgba(6,182,212,0.35); padding:5px 9px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+              <span>Pipeline</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
         </td>
       </tr>
     `;
@@ -598,6 +619,17 @@ export function initDsarDashboard() {
         switchDsarSubView(tabKey);
       }
     });
+  });
+
+  // Click on 'Detail Hub' / Ticket ID -> Open 7-Tab Detail Hub (Screen 3)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-open-dsar-detail');
+    if (btn) {
+      const requestId = btn.dataset.id;
+      if (requestId && window.openDsarDetailView) {
+        window.openDsarDetailView(requestId);
+      }
+    }
   });
 
   // Click on 'Open Pipeline' -> Scroll smoothly to Step 2 Identity Discovery

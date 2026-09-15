@@ -623,6 +623,308 @@ async function resetDsarRequests() {
   return { success: true, message: 'DSAR requests queue successfully reset to clean demo records', count: DEFAULT_INITIAL_REQUESTS.length, records: DEFAULT_INITIAL_REQUESTS };
 }
 
+
+// In-memory cache for dynamic ticket details (Subtasks, Approvals, Communications, Audit Log)
+const DSAR_SUBTASKS_MAP = new Map();
+const DSAR_APPROVALS_MAP = new Map();
+const DSAR_COMMUNICATIONS_MAP = new Map();
+
+/**
+ * Generate default 6 cross-functional departmental tasks for a given DSAR request
+ */
+function generateCrossTeamTasks(requestId, requestType = 'Deletion', dataSubject = 'Customer') {
+  if (DSAR_SUBTASKS_MAP.has(requestId)) {
+    return DSAR_SUBTASKS_MAP.get(requestId);
+  }
+
+  const tasks = [
+    {
+      id: 'task_1',
+      task: 'Find customer records',
+      description: 'Search customer profile, telemetry logs, and contact data across CRM systems and relational stores.',
+      team: 'CRM Team',
+      assignee: 'John Tan',
+      priority: 'High',
+      due_date: 'Sep 18, 2026',
+      systems: 'Salesforce, CRM DB',
+      status: 'In Progress',
+      completed_at: null
+    },
+    {
+      id: 'task_2',
+      task: 'Search employee records',
+      description: 'Search internal HRIS and employee identity databases for candidate or staff records.',
+      team: 'HR Team',
+      assignee: 'Priya Sharma',
+      priority: 'High',
+      due_date: 'Sep 18, 2026',
+      systems: 'HRIS, Employee DB',
+      status: 'Not Started',
+      completed_at: null
+    },
+    {
+      id: 'task_3',
+      task: 'Marketing data search',
+      description: 'Query marketing automation, newsletter email subscribers, and web telemetry tracking events.',
+      team: 'Marketing Team',
+      assignee: 'David Lee',
+      priority: 'Medium',
+      due_date: 'Sep 20, 2026',
+      systems: 'Email Campaigns, Analytics',
+      status: 'Not Started',
+      completed_at: null
+    },
+    {
+      id: 'task_4',
+      task: 'Data deletion',
+      description: 'Execute physical purge and cryptographic pseudonymization across central data lake and SQL tables.',
+      team: 'Data Engineering',
+      assignee: 'Arun Kumar',
+      priority: 'High',
+      due_date: 'Sep 22, 2026',
+      systems: 'Data Lake, PostgreSQL',
+      status: 'Not Started',
+      completed_at: null
+    },
+    {
+      id: 'task_5',
+      task: 'Third-party data check',
+      description: 'Notify and request data wipe confirmation from integrated third-party SaaS vendors and sub-processors.',
+      team: 'Vendor Mgmt',
+      assignee: 'Sarah Lim',
+      priority: 'Medium',
+      due_date: 'Sep 21, 2026',
+      systems: 'Vendors, Partner APIs',
+      status: 'Not Started',
+      completed_at: null
+    },
+    {
+      id: 'task_6',
+      task: 'Privacy review',
+      description: 'Conduct statutory exemption check (DPDP Sec. 8 / GST / RBI) and sign off final compliance attestation.',
+      team: 'Privacy Team',
+      assignee: 'Anil Reddy',
+      priority: 'High',
+      due_date: 'Sep 24, 2026',
+      systems: 'Compliance Ledger',
+      status: 'Not Started',
+      completed_at: null
+    }
+  ];
+
+  DSAR_SUBTASKS_MAP.set(requestId, tasks);
+  return tasks;
+}
+
+/**
+ * Fetch full ticket details for Screen 3 (all 7 tabs: Overview, Requester, Data Discovery, Tasks, Approvals, Communications, Audit Log)
+ */
+async function getDsarTicketDetails(requestId) {
+  const reqRes = await getDsarRequestById(requestId);
+  if (!reqRes.success) {
+    return { success: false, notFound: true, message: `DSAR Request ${requestId} not found` };
+  }
+
+  const record = reqRes.record;
+  const tasks = generateCrossTeamTasks(requestId, record.request_type, record.full_name);
+
+  // Overview Stats
+  const completedTasksCount = tasks.filter(t => t.status === 'Completed').length;
+  const overview = {
+    currentStage: 3,
+    totalStages: 6,
+    stageName: 'Team Execution & Verification',
+    daysRemaining: 18,
+    slaStatus: 'On Track (100% compliant)',
+    completedTasksCount,
+    totalTasksCount: tasks.length
+  };
+
+  // Requester Dossier
+  const requester = {
+    fullName: record.full_name,
+    email: record.email,
+    phone: record.phone || '+65 9123 4567',
+    country: record.country || 'Singapore',
+    relationship: record.relationship || 'Customer',
+    customerId: record.customer_id || 'CUST-8842',
+    requestType: normalizeRequestType(record.request_type),
+    requestDetails: record.request_details || 'Standard privacy right erasure request',
+    verificationType: record.verification_type || 'Government ID',
+    verificationEvidence: record.verification_evidence || 'Passport Verified (#SG-PASS-8842)',
+    submittedDate: record.created_at ? new Date(record.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Aug 23, 2026'
+  };
+
+  // Approvals State
+  let approvals = DSAR_APPROVALS_MAP.get(requestId);
+  if (!approvals) {
+    approvals = {
+      dpoApproval: {
+        officer: 'Anil Reddy (DPO)',
+        status: 'PENDING',
+        statutoryLock: 'GST Act 7-Yr Lock Verified',
+        signedAt: null
+      },
+      legalApproval: {
+        officer: 'Vikram Malhotra (Lead Counsel)',
+        status: 'APPROVED',
+        signedAt: '2026-08-26T10:00:00.000Z'
+      }
+    };
+    DSAR_APPROVALS_MAP.set(requestId, approvals);
+  }
+
+  // Communications Timeline
+  let communications = DSAR_COMMUNICATIONS_MAP.get(requestId);
+  if (!communications) {
+    communications = [
+      {
+        id: 'msg_1',
+        title: 'DSAR Request Intake Acknowledged',
+        recipient: record.email,
+        timestamp: 'Aug 23, 2026, 08:31 AM',
+        status: 'Delivered',
+        preview: `Your privacy request ${requestId} has been received and assigned tracking token #TKN-8821.`
+      },
+      {
+        id: 'msg_2',
+        title: 'Identity Verification Confirmed',
+        recipient: record.email,
+        timestamp: 'Aug 23, 2026, 09:15 AM',
+        status: 'Delivered',
+        preview: 'Identity verification evidence confirmed under DPDP Act 2023 / GDPR Art. 17 requirements.'
+      },
+      {
+        id: 'msg_3',
+        title: 'Cross-System Privacy Processing Update',
+        recipient: record.email,
+        timestamp: 'Aug 24, 2026, 02:00 PM',
+        status: 'Delivered',
+        preview: 'Departmental tasks generated. Deletion and pseudonymization pipeline in progress.'
+      }
+    ];
+    DSAR_COMMUNICATIONS_MAP.set(requestId, communications);
+  }
+
+  // Cryptographic Audit Log
+  const auditLog = [
+    {
+      timestamp: '2026-08-23T08:30:00.000Z',
+      action: 'DSAR_INTAKE_SUBMITTED',
+      actor: 'Public Portal Webform',
+      sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    },
+    {
+      timestamp: '2026-08-23T08:35:00.000Z',
+      action: 'AI_IDENTITY_RESOLUTION_EXECUTED',
+      actor: 'Segmento AI Resolution Engine',
+      sha256: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'
+    },
+    {
+      timestamp: '2026-08-23T08:40:00.000Z',
+      action: 'CROSS_TEAM_TASKS_GENERATED',
+      actor: 'Workflow Orchestrator',
+      sha256: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
+    },
+    {
+      timestamp: '2026-08-24T11:00:00.000Z',
+      action: 'LEGAL_STATUTORY_POLICY_CHECK',
+      actor: 'Policy Engine v2.4',
+      sha256: '4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a'
+    }
+  ];
+
+  return {
+    success: true,
+    requestId,
+    record,
+    overview,
+    requester,
+    tasks,
+    approvals,
+    communications,
+    auditLog
+  };
+}
+
+/**
+ * Update an individual departmental subtask
+ */
+async function updateDsarSubtask(requestId, taskId, updateData = {}) {
+  const tasks = generateCrossTeamTasks(requestId);
+  const task = tasks.find(t => t.id === taskId);
+  if (!task) {
+    return { success: false, notFound: true, message: `Subtask ${taskId} not found for request ${requestId}` };
+  }
+
+  if (updateData.status) {
+    task.status = updateData.status;
+    if (updateData.status === 'Completed') {
+      task.completed_at = new Date().toISOString();
+    }
+  }
+  if (updateData.assignee) task.assignee = updateData.assignee;
+  if (updateData.priority) task.priority = updateData.priority;
+
+  DSAR_SUBTASKS_MAP.set(requestId, tasks);
+
+  return {
+    success: true,
+    message: `Subtask ${task.task} updated to ${task.status}`,
+    task,
+    tasks
+  };
+}
+
+/**
+ * Record DPO / Legal sign-off
+ */
+async function submitDsarApproval(requestId, approvalData = {}) {
+  let approvals = DSAR_APPROVALS_MAP.get(requestId);
+  if (!approvals) {
+    await getDsarTicketDetails(requestId);
+    approvals = DSAR_APPROVALS_MAP.get(requestId);
+  }
+
+  const role = approvalData.role || 'dpoApproval';
+  if (approvals && approvals[role]) {
+    approvals[role].status = approvalData.status || 'APPROVED';
+    approvals[role].signedAt = new Date().toISOString();
+    approvals[role].signedBy = approvalData.signedBy || 'Anil Reddy (DPO)';
+    DSAR_APPROVALS_MAP.set(requestId, approvals);
+    return { success: true, message: `Approval recorded for ${role}`, approvals };
+  }
+
+  return { success: false, message: 'Invalid approval role' };
+}
+
+/**
+ * Export the 6 departmental tasks for a DSAR request in CSV format
+ */
+async function exportDsarTasksCsv(requestId) {
+  const reqRes = await getDsarRequestById(requestId);
+  const record = reqRes.record || { request_id: requestId, full_name: 'Requester' };
+  const tasks = generateCrossTeamTasks(requestId, record.request_type, record.full_name);
+
+  const headers = ['Task ID', 'Task Name', 'Department / Team', 'Lead Assignee', 'Priority', 'Due Date', 'Connected Systems', 'Status', 'Completed Timestamp'];
+  const escapeCsv = (val) => `"${String(val || '').replace(/"/g, '""')}"`;
+
+  const rows = tasks.map(t => [
+    escapeCsv(t.id),
+    escapeCsv(t.task),
+    escapeCsv(t.team),
+    escapeCsv(t.assignee),
+    escapeCsv(t.priority),
+    escapeCsv(t.due_date),
+    escapeCsv(t.systems),
+    escapeCsv(t.status),
+    escapeCsv(t.completed_at || '-')
+  ].join(','));
+
+  return [headers.join(','), ...rows].join('\n');
+}
+
+
 module.exports = {
   createDsarRequest,
   getDsarRequests,
@@ -632,5 +934,10 @@ module.exports = {
   exportDsarComplianceCsv,
   resetDsarRequests,
   generateDsarTrackingId,
-  normalizeRequestType
+  normalizeRequestType,
+  generateCrossTeamTasks,
+  getDsarTicketDetails,
+  updateDsarSubtask,
+  submitDsarApproval,
+  exportDsarTasksCsv
 };

@@ -1481,6 +1481,292 @@
 
     <!-- ═════════════════════════════════════════════════════════════════════════ -->
     <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <!-- ── SCREEN 3: DSAR TICKET DETAIL VIEW (WITH CROSS-TEAM TASKS & 7 TABS) ───── -->
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <div id="dsar-ticket-detail-view" class="hidden" style="margin-bottom:28px;">
+      
+      <!-- Top Navigation & Ticket Header Lockup -->
+      <div class="db-card" style="padding:22px 26px; margin-bottom:20px; border-top:4px solid var(--cyan);">
+        <div style="margin-bottom:14px;">
+          <button type="button" id="btn-detail-back-to-dash" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); font-weight:700;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>← Back to DSARs</span>
+          </button>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+              <h2 id="detail-ticket-id" style="font-size:1.45rem; font-weight:800; color:var(--cyan); font-family:var(--font-mono, monospace); margin:0;">
+                DSAR-2026-000125
+              </h2>
+              <span id="detail-status-pill" class="meta-pill" style="background:rgba(6,182,212,0.15); color:var(--cyan); border:1px solid rgba(6,182,212,0.35); font-weight:700; font-size:0.8rem;">
+                ⏳ In Progress
+              </span>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:12px; margin-top:8px; font-size:0.85rem; color:var(--text-muted); flex-wrap:wrap;">
+              <span id="detail-requester-name" style="font-weight:700; color:var(--text-bright);">John Smith</span>
+              <span>•</span>
+              <span id="detail-request-type-label" style="font-weight:600; color:var(--text-secondary);">Deletion (Right to be Forgotten)</span>
+              <span>•</span>
+              <span>Due Date: <strong id="detail-due-date" style="color:var(--text-bright);">Sep 22, 2026</strong></span>
+              <span>•</span>
+              <span style="color:var(--emerald); font-weight:600;">✓ SLA on track</span>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" id="btn-detail-proceed-pipeline" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; font-weight:700;">
+              <span>Execute 7-Stage Privacy Pipeline ➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 7-Tab Navigation Bar (Matching Mockup 3) -->
+        <div class="dsar-detail-tabs" style="display:flex; gap:4px; margin-top:22px; border-bottom:1px solid var(--border); overflow-x:auto; padding-bottom:2px;">
+          <button type="button" class="dsar-detail-tab-btn" data-tab="overview">Overview</button>
+          <button type="button" class="dsar-detail-tab-btn" data-tab="requester">Requester</button>
+          <button type="button" class="dsar-detail-tab-btn" data-tab="discovery">Data Discovery</button>
+          <button type="button" class="dsar-detail-tab-btn active" data-tab="tasks">Tasks (6)</button>
+          <button type="button" class="dsar-detail-tab-btn" data-tab="approvals">Approvals</button>
+          <button type="button" class="dsar-detail-tab-btn" data-tab="communications">Communications</button>
+          <button type="button" class="dsar-detail-tab-btn" data-tab="auditlog">Audit Log</button>
+        </div>
+      </div>
+
+      <!-- ── TAB CONTENT PANELS ─────────────────────────────────────────────── -->
+
+      <!-- TAB 1: OVERVIEW PANEL -->
+      <div id="detail-panel-overview" class="dsar-detail-panel hidden">
+        <div class="db-card" style="padding:22px 26px;">
+          <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-bright); margin-bottom:16px;">
+            DSAR Resolution Progression & Statutory Lifecycle
+          </h3>
+
+          <!-- 6-Stage Process Tracker Stepper -->
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-bottom:24px;">
+            <div style="padding:12px; background:var(--bg-input); border-radius:8px; border-left:3px solid var(--emerald);">
+              <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">1. INTAKE</div>
+              <div style="font-weight:700; color:var(--emerald); font-size:0.85rem; margin-top:2px;">✓ Verified</div>
+            </div>
+            <div style="padding:12px; background:var(--bg-input); border-radius:8px; border-left:3px solid var(--emerald);">
+              <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">2. AI DISCOVERY</div>
+              <div style="font-weight:700; color:var(--emerald); font-size:0.85rem; margin-top:2px;">✓ 97% Match</div>
+            </div>
+            <div style="padding:12px; background:var(--bg-input); border-radius:8px; border-left:3px solid var(--cyan);">
+              <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">3. TASK GENERATION</div>
+              <div style="font-weight:700; color:var(--cyan); font-size:0.85rem; margin-top:2px;">6 Teams Active</div>
+            </div>
+            <div style="padding:12px; background:var(--bg-input); border-radius:8px; border-left:3px solid var(--amber);">
+              <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">4. TEAM EXECUTION</div>
+              <div style="font-weight:700; color:var(--amber); font-size:0.85rem; margin-top:2px;">In Progress</div>
+            </div>
+            <div style="padding:12px; background:var(--bg-input); border-radius:8px; border-left:3px solid var(--border);">
+              <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">5. REVIEW & RESPONSE</div>
+              <div style="font-weight:600; color:var(--text-muted); font-size:0.85rem; margin-top:2px;">Pending</div>
+            </div>
+            <div style="padding:12px; background:var(--bg-input); border-radius:8px; border-left:3px solid var(--border);">
+              <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">6. AUDIT & CLOSE</div>
+              <div style="font-weight:600; color:var(--text-muted); font-size:0.85rem; margin-top:2px;">Pending</div>
+            </div>
+          </div>
+
+          <!-- Overview Key Metrics Grid -->
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
+            <div style="padding:16px; background:var(--bg-input); border-radius:8px;">
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">TARGET DATA DOMAINS</div>
+              <div style="font-weight:700; color:var(--text-bright); font-size:0.95rem; margin-top:4px;">Profile, Billing, Marketing, Logs</div>
+            </div>
+            <div style="padding:16px; background:var(--bg-input); border-radius:8px;">
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">STATUTORY FRAMEWORK</div>
+              <div style="font-weight:700; color:var(--cyan); font-size:0.95rem; margin-top:4px;">Singapore PDPA / DPDP Act 2023</div>
+            </div>
+            <div style="padding:16px; background:var(--bg-input); border-radius:8px;">
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">DAYS REMAINING IN SLA</div>
+              <div style="font-weight:800; color:var(--emerald); font-size:1.15rem; margin-top:4px;">18 Days</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: REQUESTER DOSSIER PANEL -->
+      <div id="detail-panel-requester" class="dsar-detail-panel hidden">
+        <div class="db-card" style="padding:22px 26px;">
+          <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-bright); margin-bottom:16px;">
+            Data Subject Profile & Identity Verification Dossier
+          </h3>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:20px;">
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">FULL NAME</div>
+              <div id="dossier-full-name" style="font-weight:700; color:var(--text-bright); font-size:1rem; margin-top:2px;">John Smith</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">PRIMARY EMAIL ADDRESS</div>
+              <div id="dossier-email" style="font-weight:700; color:var(--cyan); font-size:0.95rem; margin-top:2px;">john.smith@example.com</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">PHONE NUMBER</div>
+              <div id="dossier-phone" style="font-weight:600; color:var(--text-bright); font-size:0.95rem; margin-top:2px;">+65 9123 4567</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">COUNTRY / REGION</div>
+              <div id="dossier-country" style="font-weight:600; color:var(--text-bright); font-size:0.95rem; margin-top:2px;">Singapore</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">SUBJECT RELATIONSHIP</div>
+              <div id="dossier-relationship" style="font-weight:600; color:var(--text-bright); font-size:0.95rem; margin-top:2px;">Customer</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">IDENTITY EVIDENCE</div>
+              <div id="dossier-evidence" style="font-weight:700; color:var(--emerald); font-size:0.9rem; margin-top:2px;">Passport Verified (#SG-PASS-8842)</div>
+            </div>
+          </div>
+
+          <div style="padding:14px 18px; background:var(--bg-input); border-radius:8px; border-left:3px solid var(--cyan);">
+            <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700; margin-bottom:4px;">SUBMITTED SCOPE & INSTRUCTIONS</div>
+            <div id="dossier-details" style="font-size:0.85rem; color:var(--text-bright); font-weight:500;">
+              Delete all personal browsing logs, marketing telemetry, and customer profile.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: DATA DISCOVERY PANEL -->
+      <div id="detail-panel-discovery" class="dsar-detail-panel hidden">
+        <div class="db-card" style="padding:22px 26px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+            <div>
+              <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-bright); margin:0;">8-Stage AI Discovery Map Summary</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin:4px 0 0 0;">Cross-system relational graph and PII detection across active databases.</p>
+            </div>
+            <button type="button" id="btn-detail-run-discovery" class="btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span>View Full AI Discovery Map ➔</span>
+            </button>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px; margin-bottom:20px;">
+            <div style="padding:14px 16px; background:var(--bg-input); border-radius:8px; border-top:3px solid var(--cyan);">
+              <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">SYSTEMS SCANNED</div>
+              <div style="font-size:1.15rem; font-weight:800; color:var(--text-bright); margin-top:2px;">6 Connected Systems</div>
+            </div>
+            <div style="padding:14px 16px; background:var(--bg-input); border-radius:8px; border-top:3px solid var(--emerald);">
+              <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">PII RECORDS FOUND</div>
+              <div style="font-size:1.15rem; font-weight:800; color:var(--emerald); margin-top:2px;">8 Records Matched</div>
+            </div>
+            <div style="padding:14px 16px; background:var(--bg-input); border-radius:8px; border-top:3px solid var(--amber);">
+              <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">AI MATCH CONFIDENCE</div>
+              <div style="font-size:1.15rem; font-weight:800; color:var(--amber); margin-top:2px;">97% High Confidence</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: TASKS PANEL (CORE OF MOCKUP 3) -->
+      <div id="detail-panel-tasks" class="dsar-detail-panel">
+        <div class="db-card" style="padding:22px 26px;">
+          
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px;">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-bright); margin:0; display:flex; align-items:center; gap:8px;">
+                <span>Tasks</span>
+                <span id="subtasks-count-pill" class="meta-pill primary" style="font-size:0.75rem;">6</span>
+              </h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin:4px 0 0 0;">Automatic task generation across CRM, HR, Marketing, Data Engineering, Vendor Mgmt, and Privacy teams.</p>
+            </div>
+
+            <button type="button" id="btn-export-subtasks-csv" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); font-weight:700;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export</span>
+            </button>
+          </div>
+
+          <!-- 6 Department Tasks Table (Matching Screen 3 Mockup) -->
+          <div style="overflow-x:auto;">
+            <table class="db-table" id="dsar-subtasks-table" style="width:100%; border-collapse:collapse;">
+              <thead>
+                <tr style="background:var(--bg-input);">
+                  <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Task</th>
+                  <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Team</th>
+                  <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Assignee</th>
+                  <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Priority</th>
+                  <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Due Date</th>
+                  <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border);">Status</th>
+                  <th style="padding:12px 14px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dsar-subtasks-table-body">
+                <!-- Populated dynamically by dsar-detail.js -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB 5: APPROVALS PANEL -->
+      <div id="detail-panel-approvals" class="dsar-detail-panel hidden">
+        <div class="db-card" style="padding:22px 26px;">
+          <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-bright); margin-bottom:16px;">
+            DPO & Legal Statutory Approval Gate
+          </h3>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:20px;">
+            <!-- DPO Sign-off Card -->
+            <div style="padding:18px; background:var(--bg-input); border-radius:8px; border-left:3px solid var(--cyan);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div style="font-weight:700; color:var(--text-bright); font-size:0.92rem;">Data Protection Officer (DPO)</div>
+                <span id="approval-dpo-badge" class="meta-pill" style="background:rgba(245,158,11,0.15); color:var(--amber); border:1px solid rgba(245,158,11,0.3); font-size:0.75rem;">⏳ PENDING SIGN-OFF</span>
+              </div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Officer: Anil Reddy (Chief DPO)</div>
+              <button type="button" id="btn-sign-dpo-approval" class="btn-primary btn-sm" style="width:100%; font-size:0.8rem;">
+                <span>Attest & Sign DPO Approval ✓</span>
+              </button>
+            </div>
+
+            <!-- Legal Counsel Sign-off Card -->
+            <div style="padding:18px; background:var(--bg-input); border-radius:8px; border-left:3px solid var(--emerald);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div style="font-weight:700; color:var(--text-bright); font-size:0.92rem;">Lead Legal Counsel</div>
+                <span class="meta-pill badge-verified" style="font-size:0.75rem;">✓ APPROVED</span>
+              </div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">Officer: Vikram Malhotra (Legal Lead)</div>
+              <div style="font-size:0.75rem; color:var(--emerald); font-weight:600;">Signed: Aug 26, 2026 (SHA256-AUTHENTICATED)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: COMMUNICATIONS PANEL -->
+      <div id="detail-panel-communications" class="dsar-detail-panel hidden">
+        <div class="db-card" style="padding:22px 26px;">
+          <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-bright); margin-bottom:16px;">
+            Requester Notifications & Statutory Communications Log
+          </h3>
+          <div id="detail-communications-list" style="display:flex; flex-direction:column; gap:12px;">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 7: AUDIT LOG PANEL -->
+      <div id="detail-panel-auditlog" class="dsar-detail-panel hidden">
+        <div class="db-card" style="padding:22px 26px;">
+          <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-bright); margin-bottom:16px;">
+            Cryptographic Audit Ledger (ISO/IEC 27701 Sealed)
+          </h3>
+          <div id="detail-auditlog-list" style="display:flex; flex-direction:column; gap:10px;">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- /#dsar-ticket-detail-view -->
+
+
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
     <!-- ── 7-STAGE DSAR PRIVACY EXECUTION ENGINE (STEPS 1 - 7) ───────────────── -->
     <!-- ═════════════════════════════════════════════════════════════════════════ -->
     <div id="dsar-deep-pipeline-section" style="margin-top:28px;">
