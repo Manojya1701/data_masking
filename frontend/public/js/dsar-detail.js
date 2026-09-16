@@ -133,7 +133,9 @@ function renderSubtasksTable(tasks) {
     return `
       <tr data-subtask-id="${taskId}" style="vertical-align:middle; transition:background 0.15s ease;">
         <td style="padding:14px 16px;">
-          <div style="font-weight:700; color:var(--text-bright); font-size:0.9rem;">${taskTitle}</div>
+          <button type="button" class="btn-open-subtask-workspace" data-task-id="${taskId}" style="background:transparent; border:none; padding:0; text-align:left; cursor:pointer;" title="Click to open individual task workspace (Screen 5)">
+            <div style="font-weight:700; color:var(--cyan); font-size:0.9rem; text-decoration:underline; text-underline-offset:3px;">${taskTitle}</div>
+          </button>
           <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px; max-width:320px;">${desc}</div>
         </td>
         <td style="padding:14px 16px;">${formatTeamBadge(t.team)}</td>
@@ -155,9 +157,16 @@ function renderSubtasksTable(tasks) {
           </select>
         </td>
         <td style="padding:14px 16px; text-align:right;">
-          <button type="button" class="btn-ghost btn-sm btn-subtask-action" data-task-id="${taskId}" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); font-size:0.75rem; font-weight:700; padding:6px 12px; cursor:pointer;">
-            <span>Execute ➔</span>
-          </button>
+          <div style="display:inline-flex; align-items:center; gap:6px;">
+            <button type="button" class="btn-ghost btn-sm btn-open-subtask-workspace" data-task-id="${taskId}" style="display:inline-flex; align-items:center; gap:5px; color:var(--text-bright); border-color:var(--border-subtle); padding:5px 9px; font-size:0.75rem; font-weight:600; border-radius:6px; cursor:pointer;" title="Open Individual Task Workspace (Screen 5)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span>Workspace</span>
+            </button>
+            <button type="button" class="btn-ghost btn-sm btn-subtask-action" data-task-id="${taskId}" style="display:inline-flex; align-items:center; gap:4px; color:var(--cyan); border-color:rgba(6,182,212,0.35); font-size:0.75rem; font-weight:700; padding:5px 9px; cursor:pointer;" title="Run 7-Stage Pipeline">
+              <span>Pipeline</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
         </td>
       </tr>
     `;
@@ -416,6 +425,28 @@ export function initDsarDetail() {
       }
     });
   }
+
+  // Open Screen 4: Team Distribution View
+  const teamDistBtn = document.getElementById('btn-open-team-distribution');
+  if (teamDistBtn) {
+    teamDistBtn.addEventListener('click', () => {
+      if (currentDetailRequestId && window.openDsarAssignmentView) {
+        window.openDsarAssignmentView(currentDetailRequestId);
+      }
+    });
+  }
+
+  // Open Screen 5: Individual Task Workspace from Subtask Table
+  document.addEventListener('click', (e) => {
+    const wsBtn = e.target.closest('.btn-open-subtask-workspace');
+    if (wsBtn) {
+      e.preventDefault();
+      const taskId = wsBtn.dataset.taskId;
+      if (currentDetailRequestId && taskId && window.openIndividualSubtaskView) {
+        window.openIndividualSubtaskView(currentDetailRequestId, taskId, 'screen3');
+      }
+    }
+  });
 
   // Expose global helper
   window.openDsarDetailView = openDsarDetailView;

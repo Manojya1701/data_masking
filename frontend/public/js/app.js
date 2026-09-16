@@ -14,6 +14,7 @@ import { initDsarIntake } from './dsar-intake.js';
 import { initDsarDashboard } from './dsar-dashboard.js';
 import { initDsarDiscovery } from './dsar-discovery.js';
 import { initDsarDetail } from './dsar-detail.js';
+import { initDsarAssignment } from './dsar-assignment.js';
 import { initDsarImpact } from './dsar-impact.js';
 import { initDsarPolicy } from './dsar-policy.js';
 import { initDsarExecution } from './dsar-execution.js';
@@ -551,6 +552,7 @@ if (mobileMenuBtn && headerNav) {
 initDsarIntake();
 initDsarDashboard();
 initDsarDetail();
+initDsarAssignment();
 initDsarDiscovery();
 initDsarImpact();
 initDsarPolicy();

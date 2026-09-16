@@ -1677,10 +1677,16 @@
               <p style="font-size:0.8rem; color:var(--text-muted); margin:4px 0 0 0;">Automatic task generation across CRM, HR, Marketing, Data Engineering, Vendor Mgmt, and Privacy teams.</p>
             </div>
 
-            <button type="button" id="btn-export-subtasks-csv" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); font-weight:700;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              <span>Export</span>
-            </button>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <button type="button" id="btn-open-team-distribution" class="btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:6px; font-weight:700; font-size:0.78rem;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Team Distribution (Screen 4) ➔</span>
+              </button>
+              <button type="button" id="btn-export-subtasks-csv" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); font-weight:700;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Export</span>
+              </button>
+            </div>
           </div>
 
           <!-- 6 Department Tasks Table (Matching Screen 3 Mockup) -->
@@ -1764,6 +1770,201 @@
       </div>
 
     </div> <!-- /#dsar-ticket-detail-view -->
+
+
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <!-- ── SCREEN 4: TEAM ASSIGNMENT & TASK DISTRIBUTION ──────────────────────── -->
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <div id="dsar-task-assignment-view" class="hidden" style="margin-bottom:28px;">
+      
+      <!-- Top Navigation & Header -->
+      <div class="db-card" style="padding:20px 24px; margin-bottom:20px; border-top:4px solid var(--cyan);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <button type="button" id="btn-assignment-back" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); font-weight:700;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <span id="assignment-back-label">← DSAR-2026-000125 > Task Assignment</span>
+          </button>
+          
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span id="assignment-request-pill" class="meta-pill primary" style="font-weight:700;">DSAR-2026-000125</span>
+            <span class="meta-pill badge-verified" style="font-size:0.75rem;">6 Tasks Generated</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Automatic Task Generation Banner (Matching Mockup 4) -->
+      <div class="db-card" style="padding:20px 24px; margin-bottom:22px; background:linear-gradient(135deg, rgba(6,182,212,0.08) 0%, rgba(139,92,246,0.08) 100%); border:1px solid rgba(6,182,212,0.25); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div style="display:flex; align-items:center; gap:16px; flex:1; min-width:280px;">
+          <div style="width:44px; height:44px; border-radius:12px; background:rgba(139,92,246,0.15); border:1px solid rgba(139,92,246,0.35); color:#a78bfa; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;">
+            🧠
+          </div>
+          <div>
+            <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-bright); margin:0 0 4px 0;">
+              Automatic Task Generation
+            </h3>
+            <p id="assignment-banner-desc" style="font-size:0.84rem; color:var(--text-secondary); margin:0; line-height:1.4;">
+              Based on the request type (Deletion) and data domains identified, we have created 6 tasks across 6 teams.
+            </p>
+          </div>
+        </div>
+
+        <button type="button" id="btn-assignment-view-tasks" class="btn-primary btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:6px; padding:9px 18px;">
+          <span>View Generated Tasks ➔</span>
+        </button>
+      </div>
+
+      <!-- Assign Teams & Members List (Matching Mockup 4) -->
+      <div class="db-card" style="padding:22px 26px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+          <div>
+            <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-bright); margin:0;">
+              Assign Teams & Members
+            </h3>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin:4px 0 0 0;">
+              Configure department leads, verify domain task scopes, and launch individual subtask workspaces.
+            </p>
+          </div>
+        </div>
+
+        <!-- Table / Card Stack for 6 Teams -->
+        <div id="assignment-teams-list" style="display:flex; flex-direction:column; gap:10px;">
+          <!-- Populated dynamically by dsar-assignment.js -->
+        </div>
+      </div>
+
+    </div> <!-- /#dsar-task-assignment-view -->
+
+
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <!-- ── SCREEN 5: TASK DETAIL VIEW (INDIVIDUAL SUBTASK WORKSPACE) ───────────── -->
+    <!-- ═════════════════════════════════════════════════════════════════════════ -->
+    <div id="dsar-subtask-detail-view" class="hidden" style="margin-bottom:28px;">
+      
+      <!-- Top Navigation & Header -->
+      <div class="db-card" style="padding:20px 24px; margin-bottom:20px; border-top:4px solid var(--cyan);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <button type="button" id="btn-subtask-back" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); font-weight:700;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>← Back</span>
+          </button>
+
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:0.85rem; color:var(--text-muted);">Status:</span>
+            <span id="subtask-detail-status-pill" class="meta-pill" style="background:rgba(6,182,212,0.15); color:var(--cyan); border:1px solid rgba(6,182,212,0.35); font-weight:700;">
+              ⏳ In Progress
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Subtask Container Card (Matching Mockup 5) -->
+      <div class="db-card" style="padding:24px 28px; margin-bottom:24px;">
+        
+        <!-- Title & Description -->
+        <div style="margin-bottom:22px; border-bottom:1px solid var(--border); padding-bottom:18px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+            <span id="subtask-detail-team-icon" style="font-size:1.3rem;">📋</span>
+            <h2 id="subtask-detail-title" style="font-size:1.35rem; font-weight:800; color:var(--text-bright); margin:0;">
+              Find customer records
+            </h2>
+          </div>
+          <p id="subtask-detail-desc" style="font-size:0.88rem; color:var(--text-secondary); margin:0; line-height:1.5;">
+            This task involves searching for customer data related to the requester across CRM systems and related databases.
+          </p>
+        </div>
+
+        <!-- Meta Grid (Team, Assignee, Priority, Due Date, Data Sources, Systems) -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px; margin-bottom:24px; padding:16px; background:var(--bg-input); border-radius:var(--radius-md); border:1px solid var(--border);">
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Team</div>
+            <div id="subtask-meta-team" style="font-weight:700; color:var(--text-bright); font-size:0.92rem; margin-top:3px;">CRM Team</div>
+          </div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Assignee</div>
+            <div id="subtask-meta-assignee" style="font-weight:700; color:var(--cyan); font-size:0.92rem; margin-top:3px;">John Tan</div>
+          </div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Priority</div>
+            <div id="subtask-meta-priority" style="font-weight:700; color:var(--red); font-size:0.92rem; margin-top:3px;">🔥 High</div>
+          </div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Due Date</div>
+            <div id="subtask-meta-due-date" style="font-weight:600; color:var(--text-bright); font-size:0.92rem; margin-top:3px;">Sep 18, 2026</div>
+          </div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Data Sources</div>
+            <div id="subtask-meta-datasources" style="font-weight:600; color:var(--text-bright); font-size:0.92rem; margin-top:3px;">CRM, Customer DB</div>
+          </div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Systems</div>
+            <div id="subtask-meta-systems" style="font-weight:600; color:var(--text-secondary); font-size:0.92rem; margin-top:3px;">Salesforce, Oracle</div>
+          </div>
+        </div>
+
+        <!-- 4-Tab Inner Navigation Bar (Instructions, Evidence, Comments, History) -->
+        <div class="subtask-detail-tabs" style="display:flex; gap:6px; border-bottom:1px solid var(--border); margin-bottom:18px;">
+          <button type="button" class="subtask-inner-tab-btn active" data-tab="instructions">Instructions</button>
+          <button type="button" class="subtask-inner-tab-btn" data-tab="evidence">Evidence</button>
+          <button type="button" class="subtask-inner-tab-btn" data-tab="comments">Comments</button>
+          <button type="button" class="subtask-inner-tab-btn" data-tab="history">History</button>
+        </div>
+
+        <!-- ── TAB PANELS ── -->
+        <!-- Tab 1: Instructions Checklist -->
+        <div id="subtask-panel-instructions" class="subtask-inner-panel">
+          <div id="subtask-instructions-list" style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Tab 2: Evidence Files & Upload -->
+        <div id="subtask-panel-evidence" class="subtask-inner-panel hidden">
+          <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h4 style="font-size:0.95rem; font-weight:700; color:var(--text-bright); margin:0;">Attached Verification Evidence</h4>
+              <button type="button" id="btn-add-sample-evidence" class="btn-ghost btn-sm" style="font-size:0.75rem;">+ Attach Verification Export</button>
+            </div>
+            <div id="subtask-evidence-list" style="display:flex; flex-direction:column; gap:8px;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Comments & Team Notes -->
+        <div id="subtask-panel-comments" class="subtask-inner-panel hidden">
+          <div style="margin-bottom:16px;">
+            <div id="subtask-comments-list" style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+              <!-- Populated dynamically -->
+            </div>
+            <!-- Add Comment Form -->
+            <div style="display:flex; gap:10px;">
+              <input type="text" id="subtask-comment-input" class="input-field" placeholder="Add operator note or finding..." style="flex:1;">
+              <button type="button" id="btn-submit-subtask-comment" class="btn-primary btn-sm">Post Comment</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Audit History -->
+        <div id="subtask-panel-history" class="subtask-inner-panel hidden">
+          <div id="subtask-history-list" style="display:flex; flex-direction:column; gap:8px;">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Subtask Action Footer -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-top:24px; padding-top:16px; border-top:1px solid var(--border);">
+          <div style="font-size:0.82rem; color:var(--text-muted);">
+            Operator Sign-off: <strong id="subtask-footer-operator" style="color:var(--text-bright);">John Tan (CRM Lead)</strong>
+          </div>
+          <button type="button" id="btn-mark-subtask-complete" class="btn-primary" style="padding:10px 24px; font-weight:700; display:inline-flex; align-items:center; gap:8px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Mark as Complete</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div> <!-- /#dsar-subtask-detail-view -->
 
 
     <!-- ═════════════════════════════════════════════════════════════════════════ -->

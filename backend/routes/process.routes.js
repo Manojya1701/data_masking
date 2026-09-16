@@ -901,6 +901,76 @@ router.get('/dsar/requests/:id/tasks/export', async (req, res) => {
   }
 });
 
+// ── SCREEN 4: TEAM ASSIGNMENT & TASK DISTRIBUTION ROUTES ───────────────────
+
+// GET /api/dsar/requests/:id/assignments — Get Screen 4 Team Assignment Overview
+router.get('/dsar/requests/:id/assignments', async (req, res) => {
+  try {
+    const result = await dsarService.getTaskAssignmentOverview(req.params.id);
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── SCREEN 5: INDIVIDUAL SUBTASK WORKSPACE ROUTES ──────────────────────────
+
+// GET /api/dsar/requests/:id/subtasks/:taskId/detail — Get Screen 5 Subtask Details
+router.get('/dsar/requests/:id/subtasks/:taskId/detail', async (req, res) => {
+  try {
+    const result = await dsarService.getIndividualSubtaskDetail(req.params.id, req.params.taskId);
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/requests/:id/subtasks/:taskId/instructions/:index — Toggle checklist
+router.post('/dsar/requests/:id/subtasks/:taskId/instructions/:index', async (req, res) => {
+  try {
+    const { completed } = req.body || {};
+    const result = await dsarService.toggleSubtaskInstruction(req.params.id, req.params.taskId, req.params.index, completed);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/requests/:id/subtasks/:taskId/evidence — Attach evidence
+router.post('/dsar/requests/:id/subtasks/:taskId/evidence', async (req, res) => {
+  try {
+    const result = await dsarService.addSubtaskEvidence(req.params.id, req.params.taskId, req.body || {});
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/requests/:id/subtasks/:taskId/comments — Add task comment
+router.post('/dsar/requests/:id/subtasks/:taskId/comments', async (req, res) => {
+  try {
+    const result = await dsarService.addSubtaskComment(req.params.id, req.params.taskId, req.body || {});
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 // ── DSAR STEP 2 IDENTITY DISCOVERY ROUTES ──────────────────────────────────
 
 // POST /api/dsar/discovery/scan — Perform identity resolution & PII discovery scan

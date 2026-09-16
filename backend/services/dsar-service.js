@@ -641,74 +641,172 @@ function generateCrossTeamTasks(requestId, requestType = 'Deletion', dataSubject
     {
       id: 'task_1',
       task: 'Find customer records',
-      description: 'Search customer profile, telemetry logs, and contact data across CRM systems and relational stores.',
+      description: 'This task involves searching for customer data related to the requester across CRM systems and related databases.',
       team: 'CRM Team',
+      teamIcon: '👥',
+      teamColor: '#f59e0b',
       assignee: 'John Tan',
+      lead: 'John Tan (Lead)',
       priority: 'High',
       due_date: 'Sep 18, 2026',
-      systems: 'Salesforce, CRM DB',
+      dataSources: 'CRM, Customer DB',
+      systems: 'Salesforce, Oracle',
       status: 'In Progress',
-      completed_at: null
+      completed_at: null,
+      instructions: [
+        { text: "Search for customer records matching the requester's details (name, email, phone number).", done: true },
+        { text: "Identify all related accounts and transactions.", done: true },
+        { text: "Export the data in the required format (JSON/CSV).", done: false },
+        { text: "Update task with findings and attach evidence.", done: false }
+      ],
+      evidence: [
+        { id: 'ev_1', name: 'crm_customer_lookup_DSAR-125.csv', size: '24.5 KB', uploadedAt: '2026-08-24 14:30', uploadedBy: 'John Tan' },
+        { id: 'ev_2', name: 'salesforce_account_snapshot.json', size: '12.8 KB', uploadedAt: '2026-08-24 14:32', uploadedBy: 'John Tan' }
+      ],
+      comments: [
+        { id: 'cmt_1', author: 'John Tan', role: 'CRM Lead', time: 'Aug 24, 2026, 02:35 PM', text: 'Queried Salesforce API cluster US-West. Located 2 matching accounts and customer telemetry logs.' },
+        { id: 'cmt_2', author: 'Anil Reddy', role: 'Chief DPO', time: 'Aug 24, 2026, 03:00 PM', text: 'Please ensure billing transaction history is flagged for 7-year statutory retention.' }
+      ],
+      history: [
+        { action: 'Task Generated & Assigned', timestamp: 'Aug 23, 2026, 08:40 AM', actor: 'Automated Orchestrator' },
+        { action: 'Status changed to In Progress', timestamp: 'Aug 24, 2026, 02:30 PM', actor: 'John Tan' },
+        { action: 'Evidence uploaded (2 files)', timestamp: 'Aug 24, 2026, 02:32 PM', actor: 'John Tan' }
+      ]
     },
     {
       id: 'task_2',
       task: 'Search employee records',
-      description: 'Search internal HRIS and employee identity databases for candidate or staff records.',
+      description: 'Search internal HRIS and employee identity databases for candidate, employee, or contractor records.',
       team: 'HR Team',
+      teamIcon: '🏢',
+      teamColor: '#10b981',
       assignee: 'Priya Sharma',
+      lead: 'Priya Sharma (Lead)',
       priority: 'High',
       due_date: 'Sep 18, 2026',
-      systems: 'HRIS, Employee DB',
+      dataSources: 'HRIS, Employee DB',
+      systems: 'Workday, BambooHR, Employee PostgreSQL',
       status: 'Not Started',
-      completed_at: null
+      completed_at: null,
+      instructions: [
+        { text: "Query internal HRIS for historical applicant or employee files matching email.", done: false },
+        { text: "Verify presence of tax documents, payroll slips, and resume attachments.", done: false },
+        { text: "Flag any active legal holds or statutory employment audit locks.", done: false },
+        { text: "Attach verification summary log.", done: false }
+      ],
+      evidence: [],
+      comments: [],
+      history: [
+        { action: 'Task Generated & Assigned', timestamp: 'Aug 23, 2026, 08:40 AM', actor: 'Automated Orchestrator' }
+      ]
     },
     {
       id: 'task_3',
       task: 'Marketing data search',
       description: 'Query marketing automation, newsletter email subscribers, and web telemetry tracking events.',
       team: 'Marketing Team',
+      teamIcon: '📢',
+      teamColor: '#a78bfa',
       assignee: 'David Lee',
+      lead: 'David Lee (Lead)',
       priority: 'Medium',
       due_date: 'Sep 20, 2026',
-      systems: 'Email Campaigns, Analytics',
+      dataSources: 'Email Campaigns, Analytics',
+      systems: 'HubSpot, Marketo, Google Analytics',
       status: 'Not Started',
-      completed_at: null
+      completed_at: null,
+      instructions: [
+        { text: "Search HubSpot and Mailchimp for marketing subscription profiles.", done: false },
+        { text: "Check analytics telemetry databases for tracking cookies and identifiers.", done: false },
+        { text: "Unsubscribe and purge ad retargeting segments.", done: false },
+        { text: "Log confirmation of unsubscribe and purge.", done: false }
+      ],
+      evidence: [],
+      comments: [],
+      history: [
+        { action: 'Task Generated & Assigned', timestamp: 'Aug 23, 2026, 08:40 AM', actor: 'Automated Orchestrator' }
+      ]
     },
     {
       id: 'task_4',
       task: 'Data deletion',
       description: 'Execute physical purge and cryptographic pseudonymization across central data lake and SQL tables.',
       team: 'Data Engineering',
+      teamIcon: '🗄️',
+      teamColor: '#06b6d4',
       assignee: 'Arun Kumar',
+      lead: 'Arun Kumar (Lead)',
       priority: 'High',
       due_date: 'Sep 22, 2026',
-      systems: 'Data Lake, PostgreSQL',
+      dataSources: 'Data Lake, Warehouses',
+      systems: 'PostgreSQL, Snowflake, AWS S3',
       status: 'Not Started',
-      completed_at: null
+      completed_at: null,
+      instructions: [
+        { text: "Execute automated SQL deletion queries on relational customer tables.", done: false },
+        { text: "Run cryptographic pseudonymization on historical financial transaction records.", done: false },
+        { text: "Purge object store temp logs and staging buckets.", done: false },
+        { text: "Verify database query execution hash.", done: false }
+      ],
+      evidence: [],
+      comments: [],
+      history: [
+        { action: 'Task Generated & Assigned', timestamp: 'Aug 23, 2026, 08:40 AM', actor: 'Automated Orchestrator' }
+      ]
     },
     {
       id: 'task_5',
       task: 'Third-party data check',
       description: 'Notify and request data wipe confirmation from integrated third-party SaaS vendors and sub-processors.',
       team: 'Vendor Mgmt',
+      teamIcon: '🤝',
+      teamColor: '#3b82f6',
       assignee: 'Sarah Lim',
+      lead: 'Sarah Lim (Lead)',
       priority: 'Medium',
       due_date: 'Sep 21, 2026',
-      systems: 'Vendors, Partner APIs',
+      dataSources: 'Vendors, Partners',
+      systems: 'Stripe, Zendesk, AWS Sub-processors',
       status: 'Not Started',
-      completed_at: null
+      completed_at: null,
+      instructions: [
+        { text: "Send automated erasure dispatch to third-party sub-processors (Stripe, Zendesk).", done: false },
+        { text: "Collect cryptographic deletion acknowledgments from all vendors.", done: false },
+        { text: "Verify vendor compliance within statutory SLA.", done: false },
+        { text: "Attach vendor confirmation certificates.", done: false }
+      ],
+      evidence: [],
+      comments: [],
+      history: [
+        { action: 'Task Generated & Assigned', timestamp: 'Aug 23, 2026, 08:40 AM', actor: 'Automated Orchestrator' }
+      ]
     },
     {
       id: 'task_6',
       task: 'Privacy review',
       description: 'Conduct statutory exemption check (DPDP Sec. 8 / GST / RBI) and sign off final compliance attestation.',
       team: 'Privacy Team',
+      teamIcon: '⚖️',
+      teamColor: '#ef4444',
       assignee: 'Anil Reddy',
+      lead: 'Anil Reddy (Lead)',
       priority: 'High',
       due_date: 'Sep 24, 2026',
-      systems: 'Compliance Ledger',
+      dataSources: 'Compliance Ledger',
+      systems: 'Segmento Policy Engine, Ledger DB',
       status: 'Not Started',
-      completed_at: null
+      completed_at: null,
+      instructions: [
+        { text: "Review overall DSAR package against India DPDP Act 2023 & GDPR Art. 17.", done: false },
+        { text: "Confirm compliance with statutory retention overrides (GST Act Sec. 36).", done: false },
+        { text: "Sign official DPO digital attestation seal.", done: false },
+        { text: "Prepare immutable audit trail manifest.", done: false }
+      ],
+      evidence: [],
+      comments: [],
+      history: [
+        { action: 'Task Generated & Assigned', timestamp: 'Aug 23, 2026, 08:40 AM', actor: 'Automated Orchestrator' }
+      ]
     }
   ];
 
@@ -925,6 +1023,157 @@ async function exportDsarTasksCsv(requestId) {
 }
 
 
+
+/**
+ * Screen 4: Fetch Team Assignment & Task Distribution Overview
+ */
+async function getTaskAssignmentOverview(requestId) {
+  const reqRes = await getDsarRequestById(requestId);
+  if (!reqRes.success) {
+    return { success: false, notFound: true, message: `DSAR Request ${requestId} not found` };
+  }
+
+  const record = reqRes.record;
+  const tasks = generateCrossTeamTasks(requestId, record.request_type, record.full_name);
+
+  return {
+    success: true,
+    requestId,
+    requestType: normalizeRequestType(record.request_type),
+    fullName: record.full_name,
+    email: record.email,
+    banner: {
+      title: 'Automatic Task Generation',
+      message: `Based on the request type (${normalizeRequestType(record.request_type)}) and data domains identified, we have created ${tasks.length} tasks across ${tasks.length} teams.`,
+      tasksCount: tasks.length,
+      teamsCount: tasks.length
+    },
+    teams: tasks.map(t => ({
+      taskId: t.id,
+      team: t.team,
+      teamIcon: t.teamIcon || '👥',
+      teamColor: t.teamColor || '#06b6d4',
+      lead: t.lead || `${t.assignee} (Lead)`,
+      assignee: t.assignee,
+      assignedTask: t.task,
+      priority: t.priority,
+      dueDate: t.due_date,
+      status: t.status,
+      systems: t.systems
+    }))
+  };
+}
+
+/**
+ * Screen 5: Fetch Individual Subtask Workspace Details
+ */
+async function getIndividualSubtaskDetail(requestId, taskId) {
+  const reqRes = await getDsarRequestById(requestId);
+  const record = reqRes.success ? reqRes.record : { request_id: requestId, full_name: 'Requester' };
+  const tasks = generateCrossTeamTasks(requestId, record.request_type, record.full_name);
+
+  const task = tasks.find(t => t.id === taskId);
+  if (!task) {
+    return { success: false, notFound: true, message: `Subtask ${taskId} not found for request ${requestId}` };
+  }
+
+  return {
+    success: true,
+    requestId,
+    requester: {
+      fullName: record.full_name,
+      email: record.email,
+      requestType: normalizeRequestType(record.request_type)
+    },
+    task
+  };
+}
+
+/**
+ * Screen 5: Toggle Subtask Instruction Checklist Item
+ */
+async function toggleSubtaskInstruction(requestId, taskId, instructionIndex, completed) {
+  const tasks = generateCrossTeamTasks(requestId);
+  const task = tasks.find(t => t.id === taskId);
+  if (!task) {
+    return { success: false, notFound: true, message: `Subtask ${taskId} not found` };
+  }
+
+  const idx = parseInt(instructionIndex, 10);
+  if (task.instructions && task.instructions[idx] !== undefined) {
+    task.instructions[idx].done = Boolean(completed);
+    task.history.push({
+      action: `Checklist item ${idx + 1} marked as ${completed ? 'completed' : 'incomplete'}`,
+      timestamp: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      actor: task.assignee
+    });
+    DSAR_SUBTASKS_MAP.set(requestId, tasks);
+    return { success: true, message: 'Checklist updated', task };
+  }
+
+  return { success: false, message: 'Invalid instruction index' };
+}
+
+/**
+ * Screen 5: Add Evidence Attachment to Subtask
+ */
+async function addSubtaskEvidence(requestId, taskId, evidenceData = {}) {
+  const tasks = generateCrossTeamTasks(requestId);
+  const task = tasks.find(t => t.id === taskId);
+  if (!task) {
+    return { success: false, notFound: true, message: `Subtask ${taskId} not found` };
+  }
+
+  const newEv = {
+    id: `ev_${Date.now()}`,
+    name: evidenceData.name || 'evidence_export.csv',
+    size: evidenceData.size || '18.4 KB',
+    uploadedAt: new Date().toISOString().replace('T', ' ').slice(0, 16),
+    uploadedBy: evidenceData.uploadedBy || task.assignee || 'Operator'
+  };
+
+  if (!task.evidence) task.evidence = [];
+  task.evidence.unshift(newEv);
+  task.history.push({
+    action: `Evidence attached: ${newEv.name}`,
+    timestamp: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+    actor: newEv.uploadedBy
+  });
+
+  DSAR_SUBTASKS_MAP.set(requestId, tasks);
+  return { success: true, message: 'Evidence attached successfully', evidence: newEv, task };
+}
+
+/**
+ * Screen 5: Add Comment to Subtask
+ */
+async function addSubtaskComment(requestId, taskId, commentData = {}) {
+  const tasks = generateCrossTeamTasks(requestId);
+  const task = tasks.find(t => t.id === taskId);
+  if (!task) {
+    return { success: false, notFound: true, message: `Subtask ${taskId} not found` };
+  }
+
+  const newComment = {
+    id: `cmt_${Date.now()}`,
+    author: commentData.author || task.assignee || 'Privacy Operator',
+    role: commentData.role || `${task.team} Member`,
+    time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+    text: commentData.text || ''
+  };
+
+  if (!task.comments) task.comments = [];
+  task.comments.push(newComment);
+  task.history.push({
+    action: `Comment added by ${newComment.author}`,
+    timestamp: newComment.time,
+    actor: newComment.author
+  });
+
+  DSAR_SUBTASKS_MAP.set(requestId, tasks);
+  return { success: true, message: 'Comment posted', comment: newComment, task };
+}
+
 module.exports = {
   createDsarRequest,
   getDsarRequests,
@@ -939,5 +1188,10 @@ module.exports = {
   getDsarTicketDetails,
   updateDsarSubtask,
   submitDsarApproval,
-  exportDsarTasksCsv
+  exportDsarTasksCsv,
+  getTaskAssignmentOverview,
+  getIndividualSubtaskDetail,
+  toggleSubtaskInstruction,
+  addSubtaskEvidence,
+  addSubtaskComment
 };
