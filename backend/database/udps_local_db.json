@@ -1896,6 +1896,20 @@
   ],
   "dsar_requests": [
     {
+      "id": 42,
+      "request_id": "DSAR-2026-557999",
+      "full_name": "Unknown",
+      "email": "unknown@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "Deletion",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "In Progress",
+      "due_date": "Sep 22, 2026",
+      "created_at": "2026-09-17T12:43:33.993Z"
+    },
+    {
       "id": 41,
       "request_id": "DSAR-2026-883762",
       "full_name": "Bob Johnson",
