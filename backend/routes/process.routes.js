@@ -971,6 +971,100 @@ router.post('/dsar/requests/:id/subtasks/:taskId/comments', async (req, res) => 
   }
 });
 
+// ── DSAR SCREEN 6 TEAM CONFIGURATION & SLA MANAGEMENT ROUTES ───────────────
+
+// GET /api/dsar/teams/config — Fetch 8 master department teams & SLA config
+router.get('/dsar/teams/config', async (req, res) => {
+  try {
+    const result = await dsarService.getTeamsConfig();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/teams/config (alternate route for direct /api prefix if router used without mount)
+router.get('/api/dsar/teams/config', async (req, res) => {
+  try {
+    const result = await dsarService.getTeamsConfig();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// PATCH /api/dsar/teams/config/:teamId — Update team properties or statutory SLA turnaround
+router.patch('/dsar/teams/config/:teamId', async (req, res) => {
+  try {
+    const result = await dsarService.updateTeamConfig(req.params.teamId, req.body || {});
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// PATCH /api/dsar/teams/config/:teamId (alternate route)
+router.patch('/api/dsar/teams/config/:teamId', async (req, res) => {
+  try {
+    const result = await dsarService.updateTeamConfig(req.params.teamId, req.body || {});
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/teams/config — Add new custom department team
+router.post('/dsar/teams/config', async (req, res) => {
+  try {
+    const result = await dsarService.createTeamConfig(req.body || {});
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.status(201).json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/teams/config (alternate route)
+router.post('/api/dsar/teams/config', async (req, res) => {
+  try {
+    const result = await dsarService.createTeamConfig(req.body || {});
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.status(201).json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/teams/config/reset — Reset teams to default 8 master department configurations
+router.post('/dsar/teams/config/reset', async (req, res) => {
+  try {
+    const result = await dsarService.resetTeamsConfig();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/teams/config/reset (alternate route)
+router.post('/api/dsar/teams/config/reset', async (req, res) => {
+  try {
+    const result = await dsarService.resetTeamsConfig();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 // ── DSAR STEP 2 IDENTITY DISCOVERY ROUTES ──────────────────────────────────
 
 // POST /api/dsar/discovery/scan — Perform identity resolution & PII discovery scan

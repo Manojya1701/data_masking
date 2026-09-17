@@ -590,6 +590,29 @@ export function initDsarAssignment() {
     });
   }
 
+  // Screen 4: Open Team Configuration & SLA Hub (Screen 6) button
+  const openTeamConfigBtn = document.getElementById('btn-assignment-open-team-config');
+  if (openTeamConfigBtn) {
+    openTeamConfigBtn.addEventListener('click', () => {
+      const assignmentSection = document.getElementById('dsar-task-assignment-view');
+      const detailSection = document.getElementById('dsar-ticket-detail-view');
+      const subtaskSection = document.getElementById('dsar-subtask-detail-view');
+      const dashSection = document.getElementById('dsar-dashboard-workspace');
+      const pipelineSection = document.getElementById('dsar-deep-pipeline-section');
+
+      if (assignmentSection) assignmentSection.classList.add('hidden');
+      if (detailSection) detailSection.classList.add('hidden');
+      if (subtaskSection) subtaskSection.classList.add('hidden');
+      if (pipelineSection) pipelineSection.classList.add('hidden');
+
+      if (dashSection) dashSection.classList.remove('hidden');
+      if (window.switchDsarSubView) {
+        window.switchDsarSubView('team_config');
+      }
+      if (dashSection) dashSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
   // Expose global hooks
   window.openDsarAssignmentView = openDsarAssignmentView;
   window.openIndividualSubtaskView = openIndividualSubtaskView;

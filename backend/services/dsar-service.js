@@ -1174,6 +1174,193 @@ async function addSubtaskComment(requestId, taskId, commentData = {}) {
   return { success: true, message: 'Comment posted', comment: newComment, task };
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// ── SCREEN 6: TEAM CONFIGURATION & SLA TURNAROUND MATRIX ──────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+
+const DEFAULT_TEAMS_CONFIG = [
+  {
+    id: 'team_privacy',
+    name: 'Privacy / DPO',
+    icon: '🛡️',
+    membersCount: 4,
+    members: ['Anil Reddy (DPO Lead)', 'Priya Sharma (Privacy Eng)', 'Kavita Rao (Compliance Analyst)', 'Deepak Verma (Audit Specialist)'],
+    systems: 'All systems',
+    slaDays: 3,
+    description: 'Data privacy oversight, legal review, statutory approvals, and overall orchestration across jurisdictions.'
+  },
+  {
+    id: 'team_data_eng',
+    name: 'Data Engineering',
+    icon: '🗄️',
+    membersCount: 4,
+    members: ['Alex Chen (Lead Eng)', 'Sneha Patil (Data Architect)', 'Rahul Mehra (Pipeline Eng)', 'Vikram Roy (DBA)'],
+    systems: 'Data Lake, Warehouses',
+    slaDays: 5,
+    description: 'Data warehouse batch purging, data lake pipeline erasure, and downstream data consistency.'
+  },
+  {
+    id: 'team_crm',
+    name: 'CRM / Customer Data',
+    icon: '👥',
+    membersCount: 5,
+    members: ['John Tan (Lead)', 'Sarah Lee (CRM Specialist)', 'Michael Wong (Support Admin)', 'Meera Nair (Ops)', 'David Kim (Analyst)'],
+    systems: 'Salesforce, CRM',
+    slaDays: 4,
+    description: 'Customer records, support interaction tickets, contact preferences, and CRM account deletion.'
+  },
+  {
+    id: 'team_hr',
+    name: 'HR',
+    icon: '🏢',
+    membersCount: 3,
+    members: ['Emma Watson (HR Lead)', 'Arun Gupta (People Ops)', 'Lisa Ray (Recruitment Lead)'],
+    systems: 'HRIS, Employee DB',
+    slaDays: 4,
+    description: 'Internal employee archives, candidate resumes, payroll records, and access logs.'
+  },
+  {
+    id: 'team_marketing',
+    name: 'Marketing',
+    icon: '📢',
+    membersCount: 4,
+    members: ['Lisa Wang (Marketing Lead)', 'Tom Jenkins (Campaign Mgr)', 'Sunita Rao (Email Ops)', 'Kevin Hall (Growth Eng)'],
+    systems: 'Email, Campaigns',
+    slaDays: 5,
+    description: 'Marketing opt-outs, tracking pixels, ad identifier suppression, and campaign distribution lists.'
+  },
+  {
+    id: 'team_legal',
+    name: 'Legal',
+    icon: '⚖️',
+    membersCount: 2,
+    members: ['Vikram Malhotra (Lead Legal Counsel)', 'Shreya Kapoor (Regulatory Counsel)'],
+    systems: 'Legal Records',
+    slaDays: 7,
+    description: 'Statutory hold review, tax/accounting retention verification, and legal defense readiness.'
+  },
+  {
+    id: 'team_vendor',
+    name: 'Third-Party / Vendor Mgmt',
+    icon: '🤝',
+    membersCount: 3,
+    members: ['Marcus Brody (Vendor Lead)', 'Anita Desai (Procurement)', 'Rohan Iyer (Security Auditor)'],
+    systems: 'Vendors, Partners',
+    slaDays: 6,
+    description: 'Downstream vendor deletion cascades, sub-processor notifications, and partner confirmation logs.'
+  },
+  {
+    id: 'team_security',
+    name: 'Security',
+    icon: '🔒',
+    membersCount: 2,
+    members: ['Farhan Ali (SecOps Lead)', 'Elena Rostova (Incident Lead)'],
+    systems: 'Security Logs',
+    slaDays: 5,
+    description: 'Authentication audit logs, SIEM telemetry retention, and security credential revocations.'
+  }
+];
+
+let teamsConfigStore = JSON.parse(JSON.stringify(DEFAULT_TEAMS_CONFIG));
+
+/**
+ * Screen 6: Get Teams & Responsibilities Matrix
+ */
+async function getTeamsConfig() {
+  return {
+    success: true,
+    count: teamsConfigStore.length,
+    teams: JSON.parse(JSON.stringify(teamsConfigStore))
+  };
+}
+
+/**
+ * Screen 6: Update Team Configuration (e.g. SLA turnaround days, member counts, systems)
+ */
+async function updateTeamConfig(teamId, updates = {}) {
+  const teamIndex = teamsConfigStore.findIndex(t => t.id === teamId || t.name.toLowerCase() === teamId.toLowerCase());
+  if (teamIndex === -1) {
+    return { success: false, notFound: true, message: `Team configuration '${teamId}' not found.` };
+  }
+
+  const team = teamsConfigStore[teamIndex];
+  if (updates.slaDays !== undefined) {
+    const slaNum = parseInt(updates.slaDays, 10);
+    if (!isNaN(slaNum) && slaNum > 0) {
+      team.slaDays = slaNum;
+    }
+  }
+  if (updates.membersCount !== undefined) {
+    const countNum = parseInt(updates.membersCount, 10);
+    if (!isNaN(countNum) && countNum >= 0) {
+      team.membersCount = countNum;
+    }
+  }
+  if (updates.systems !== undefined && typeof updates.systems === 'string') {
+    team.systems = updates.systems;
+  }
+  if (updates.name !== undefined && typeof updates.name === 'string' && updates.name.trim()) {
+    team.name = updates.name.trim();
+  }
+  if (updates.icon !== undefined && typeof updates.icon === 'string') {
+    team.icon = updates.icon;
+  }
+  if (updates.description !== undefined && typeof updates.description === 'string') {
+    team.description = updates.description;
+  }
+  if (Array.isArray(updates.members)) {
+    team.members = updates.members;
+    team.membersCount = updates.members.length;
+  }
+
+  return {
+    success: true,
+    message: `Team '${team.name}' updated successfully`,
+    team: JSON.parse(JSON.stringify(team))
+  };
+}
+
+/**
+ * Screen 6: Create New Custom Team Configuration
+ */
+async function createTeamConfig(teamData = {}) {
+  if (!teamData.name || !teamData.name.trim()) {
+    return { success: false, message: 'Team name is required.' };
+  }
+
+  const teamId = `team_${Date.now()}_${teamData.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+  const newTeam = {
+    id: teamId,
+    name: teamData.name.trim(),
+    icon: teamData.icon || '👥',
+    membersCount: parseInt(teamData.membersCount, 10) || (Array.isArray(teamData.members) ? teamData.members.length : 3),
+    members: Array.isArray(teamData.members) && teamData.members.length > 0 ? teamData.members : [`${teamData.name.trim()} Lead`, 'Team Specialist'],
+    systems: teamData.systems || 'Internal Systems',
+    slaDays: parseInt(teamData.slaDays, 10) || 5,
+    description: teamData.description || 'Departmental privacy and data compliance team.'
+  };
+
+  teamsConfigStore.push(newTeam);
+  return {
+    success: true,
+    message: `Team '${newTeam.name}' created successfully`,
+    team: JSON.parse(JSON.stringify(newTeam))
+  };
+}
+
+/**
+ * Screen 6: Reset Teams Configuration to Default 8 Master Teams
+ */
+async function resetTeamsConfig() {
+  teamsConfigStore = JSON.parse(JSON.stringify(DEFAULT_TEAMS_CONFIG));
+  return {
+    success: true,
+    message: 'Teams configuration reset to default 8 master department teams',
+    count: teamsConfigStore.length,
+    teams: JSON.parse(JSON.stringify(teamsConfigStore))
+  };
+}
+
 module.exports = {
   createDsarRequest,
   getDsarRequests,
@@ -1193,5 +1380,9 @@ module.exports = {
   getIndividualSubtaskDetail,
   toggleSubtaskInstruction,
   addSubtaskEvidence,
-  addSubtaskComment
+  addSubtaskComment,
+  getTeamsConfig,
+  updateTeamConfig,
+  createTeamConfig,
+  resetTeamsConfig
 };

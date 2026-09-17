@@ -142,7 +142,9 @@ export function switchDsarSubView(viewKey) {
     my_tasks: document.getElementById('dsar-subview-my-tasks'),
     team_tasks: document.getElementById('dsar-subview-team-tasks'),
     sla_breaches: document.getElementById('dsar-subview-dashboard'),
-    reports: document.getElementById('dsar-subview-reports')
+    reports: document.getElementById('dsar-subview-reports'),
+    team_config: document.getElementById('dsar-subview-team-config'),
+    settings: document.getElementById('dsar-subview-team-config')
   };
 
   // Hide all subviews
@@ -152,7 +154,7 @@ export function switchDsarSubView(viewKey) {
 
   // Highlight active sidebar item
   document.querySelectorAll('.dsar-sidebar-nav-item').forEach(item => {
-    if (item.dataset.tab === viewKey) {
+    if (item.dataset.tab === viewKey || (viewKey === 'team_config' && item.dataset.tab === 'settings') || (viewKey === 'settings' && item.dataset.tab === 'team_config')) {
       item.classList.add('active');
     } else {
       item.classList.remove('active');
@@ -176,6 +178,9 @@ export function switchDsarSubView(viewKey) {
   } else if (viewKey === 'reports') {
     if (views.reports) views.reports.classList.remove('hidden');
     loadComplianceReports();
+  } else if (viewKey === 'team_config' || viewKey === 'settings') {
+    if (views.team_config) views.team_config.classList.remove('hidden');
+    if (window.loadTeamsConfig) window.loadTeamsConfig();
   }
 }
 
@@ -209,6 +214,8 @@ export async function loadDsarDashboard() {
         renderTeamTasks();
       } else if (activeSubView === 'reports') {
         loadComplianceReports();
+      } else if (activeSubView === 'team_config' || activeSubView === 'settings') {
+        if (window.loadTeamsConfig) window.loadTeamsConfig();
       } else {
         renderDsarTable();
       }

@@ -1131,6 +1131,10 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             <span>Reports</span>
           </a>
+          <a class="dsar-sidebar-nav-item" data-tab="team_config">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Team Config</span>
+          </a>
           <a class="dsar-sidebar-nav-item" data-tab="settings">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             <span>Settings</span>
@@ -1472,6 +1476,57 @@
             </div>
 
           </div> <!-- /#dsar-subview-reports -->
+
+          <!-- ── SUB-VIEW 5: SCREEN 6 TEAM CONFIGURATION & SLA TURNAROUND ───── -->
+          <div id="dsar-subview-team-config" class="dsar-subview hidden">
+            
+            <!-- Teams Header & Action Bar -->
+            <div class="db-card" style="padding:22px 26px; margin-bottom:20px; border-left:4px solid var(--cyan);">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+                <div>
+                  <h3 style="font-size:1.25rem; font-weight:800; color:var(--text-bright); margin:0 0 4px 0; display:flex; align-items:center; gap:10px;">
+                    <span>🛡️ Teams & Responsibilities</span>
+                    <span id="teams-config-count-badge" class="meta-pill primary" style="font-size:0.75rem;">8 Teams</span>
+                  </h3>
+                  <p style="font-size:0.84rem; color:var(--text-muted); margin:0;">
+                    Configure departmental teams, member allocations, connected data systems, and default statutory SLA turnaround limits.
+                  </p>
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                  <button type="button" id="btn-reset-teams-config" class="btn-ghost btn-sm" style="font-size:0.75rem; color:var(--text-muted); border-color:rgba(255,255,255,0.15); display:inline-flex; align-items:center; gap:5px;" title="Reset to default 8 master department teams">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    <span>Reset Defaults</span>
+                  </button>
+                  <button type="button" id="btn-open-add-team-modal" class="btn-primary btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:6px; padding:8px 16px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span>+ Add Team</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Teams Configuration Table Card (Matching Screen 6 Mockup) -->
+            <div class="db-card" style="padding:22px 26px;">
+              <div style="overflow-x:auto;">
+                <table id="dsar-teams-config-table" style="width:100%; border-collapse:collapse;">
+                  <thead>
+                    <tr style="background:var(--bg-input);">
+                      <th style="padding:14px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); width:28%;">Team</th>
+                      <th style="padding:14px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); width:15%;">Members</th>
+                      <th style="padding:14px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); width:27%;">Connected Systems</th>
+                      <th style="padding:14px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); width:18%;">SLA Turnaround</th>
+                      <th style="padding:14px 16px; font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); text-align:right; width:12%;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dsar-teams-config-tbody">
+                    <!-- Populated dynamically by dsar-team-config.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div> <!-- /#dsar-subview-team-config -->
 
         </div>
 
@@ -1815,7 +1870,7 @@
 
       <!-- Assign Teams & Members List (Matching Mockup 4) -->
       <div class="db-card" style="padding:22px 26px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:1px solid var(--border); padding-bottom:12px; flex-wrap:wrap; gap:12px;">
           <div>
             <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-bright); margin:0;">
               Assign Teams & Members
@@ -1824,6 +1879,10 @@
               Configure department leads, verify domain task scopes, and launch individual subtask workspaces.
             </p>
           </div>
+          <button type="button" id="btn-assignment-open-team-config" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); font-weight:700; font-size:0.78rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Team Config & SLA Hub (Screen 6) ➔</span>
+          </button>
         </div>
 
         <!-- Table / Card Stack for 6 Teams -->
@@ -3073,6 +3132,84 @@
         <button type="button" id="btn-cancel-privacy-delete" class="btn-ghost btn-sm">CANCEL</button>
         <button type="button" id="btn-confirm-privacy-delete" class="btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:8px;">
           <span>CONFIRM & SAVE TO DATABASE</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 14. ADD TEAM CONFIGURATION MODAL (SCREEN 6) ────────────────────────── -->
+  <div id="modal-add-team" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-add-team-title">
+    <div id="modal-add-team-backdrop" class="modal-overlay"></div>
+    <div class="protection-preview-card" style="max-width: 540px; border: 1px solid var(--border); box-shadow: var(--shadow-xl);">
+      
+      <!-- Modal Header -->
+      <div class="prot-preview-header">
+        <div class="prot-preview-header-left">
+          <div class="prot-preview-icon-wrap" style="color: var(--cyan);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <h3 id="modal-add-team-title" class="prot-preview-title">Add Department Team</h3>
+            <p class="prot-preview-subtitle">Register a new department, member allocation, and SLA turnaround limit.</p>
+          </div>
+        </div>
+        <button type="button" id="btn-close-add-team-modal" class="prot-preview-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="prot-preview-body" style="padding: 20px 24px;">
+        <form id="form-add-team" onsubmit="return false;">
+          <div style="display:grid; grid-template-columns: 80px 1fr; gap:12px; margin-bottom:14px;">
+            <div>
+              <label for="new-team-icon" style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Icon</label>
+              <select id="new-team-icon" class="input-field" style="width:100%; font-size:1.1rem; text-align:center;">
+                <option value="👥">👥</option>
+                <option value="🛡️">🛡️</option>
+                <option value="🗄️">🗄️</option>
+                <option value="🏢">🏢</option>
+                <option value="📢">📢</option>
+                <option value="⚖️">⚖️</option>
+                <option value="🤝">🤝</option>
+                <option value="🔒">🔒</option>
+                <option value="💻">💻</option>
+                <option value="📊">📊</option>
+              </select>
+            </div>
+            <div>
+              <label for="new-team-name" style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Team Name *</label>
+              <input type="text" id="new-team-name" class="input-field" placeholder="e.g. Fraud Detection & Risk" required style="width:100%;">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+            <div>
+              <label for="new-team-members-count" style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Team Members Count</label>
+              <input type="number" id="new-team-members-count" class="input-field" min="1" max="50" value="3" style="width:100%;">
+            </div>
+            <div>
+              <label for="new-team-sla" style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Statutory SLA (Days) *</label>
+              <input type="number" id="new-team-sla" class="input-field" min="1" max="60" value="5" required style="width:100%;">
+            </div>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <label for="new-team-systems" style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Connected Systems & Databases</label>
+            <input type="text" id="new-team-systems" class="input-field" placeholder="e.g. Risk Engine DB, Fraud Telemetry, Kafka" style="width:100%;">
+          </div>
+
+          <div>
+            <label for="new-team-desc" style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Departmental Privacy Responsibilities</label>
+            <textarea id="new-team-desc" class="input-field" rows="2" placeholder="e.g. Performs risk engine log sanitization and verifies fraud exemption rules..." style="width:100%;"></textarea>
+          </div>
+        </form>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="prot-preview-footer" style="justify-content: flex-end; gap: 10px;">
+        <button type="button" id="btn-cancel-add-team" class="btn-ghost btn-sm">Cancel</button>
+        <button type="button" id="btn-submit-add-team" class="btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:6px;">
+          <span>Create Department Team</span>
         </button>
       </div>
 
