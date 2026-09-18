@@ -1176,8 +1176,8 @@ router.patch('/api/dsar/settings/:category', async (req, res) => {
 // POST /api/dsar/settings/test-email — Send test email dispatch
 router.post('/dsar/settings/test-email', async (req, res) => {
   try {
-    const { targetEmail, testType } = req.body || {};
-    const result = await emailNotificationService.sendTestEmail(targetEmail, testType);
+    const { targetEmail, testType, smtpConfig } = req.body || {};
+    const result = await emailNotificationService.sendTestEmail(targetEmail, testType, smtpConfig);
     if (!result.success) {
       return jsonError(res, 400, result.message);
     }
@@ -1190,8 +1190,8 @@ router.post('/dsar/settings/test-email', async (req, res) => {
 // POST /api/dsar/settings/test-email (alternate route)
 router.post('/api/dsar/settings/test-email', async (req, res) => {
   try {
-    const { targetEmail, testType } = req.body || {};
-    const result = await emailNotificationService.sendTestEmail(targetEmail, testType);
+    const { targetEmail, testType, smtpConfig } = req.body || {};
+    const result = await emailNotificationService.sendTestEmail(targetEmail, testType, smtpConfig);
     if (!result.success) {
       return jsonError(res, 400, result.message);
     }

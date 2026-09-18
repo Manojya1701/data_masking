@@ -1704,15 +1704,20 @@
                   </div>
                 </div>
 
+                <div style="margin-top:10px; font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
+                  💡 <strong>How it works:</strong> In <em>Free Test Inbox</em> mode, clicking send creates a live browser webmail link below. To deliver directly to your phone's Gmail app, click the <code>[Gmail]</code> preset above and enter your Gmail &amp; 16-character App Password.
+                </div>
+
                 <!-- Web Inbox Preview Link Box (Visible when test email is sent) -->
-                <div id="test-email-preview-link-wrap" class="hidden" style="margin-top:14px; padding:12px 16px; background:var(--bg-surface); border:1px solid var(--cyan); border-radius:6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-size:1.1rem;">📬</span>
-                    <div style="font-size:0.83rem; color:var(--text-bright);">
-                      <strong>Email Dispatched!</strong> View the live rendered message in the web test inbox:
+                <div id="test-email-preview-link-wrap" class="hidden" style="margin-top:14px; padding:14px 18px; background:#06232d; border:2px solid var(--cyan); border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; box-shadow:0 0 15px rgba(6,182,212,0.25);">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:1.4rem;">📬</span>
+                    <div>
+                      <div style="font-size:0.88rem; font-weight:700; color:#38bdf8;">Email Dispatched Successfully!</div>
+                      <div style="font-size:0.78rem; color:#cbd5e1;">Click the button on the right to view the full rendered message in your browser.</div>
                     </div>
                   </div>
-                  <a id="test-email-preview-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="color:var(--cyan); border-color:var(--cyan); font-weight:700; display:inline-flex; align-items:center; gap:5px; text-decoration:none;">
+                  <a id="test-email-preview-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-primary btn-sm" style="background:#06b6d4; color:#04131f; font-weight:800; display:inline-flex; align-items:center; gap:6px; text-decoration:none; padding:8px 16px; border-radius:6px;">
                     <span>🔗 Open Sent Email in Web Inbox ↗</span>
                   </a>
                 </div>

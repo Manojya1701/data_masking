@@ -32,19 +32,53 @@ const DEFAULT_LEAD_EMAILS = {
 
 const DISPATCH_HISTORY = [];
 let cachedEtherealTransporter = null;
+let isPrewarmingEthereal = false;
+
+/**
+ * Pre-warm Ethereal test account in background for instantaneous test dispatch
+ */
+async function prewarmEthereal() {
+  if (cachedEtherealTransporter || isPrewarmingEthereal || process.env.NODE_ENV === 'test') return;
+  isPrewarmingEthereal = true;
+  try {
+    const testAccount = await nodemailer.createTestAccount();
+    cachedEtherealTransporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass
+      }
+    });
+    cachedEtherealTransporter._testAccount = testAccount;
+  } catch (e) {
+    // fallback to jsonTransport if offline
+    cachedEtherealTransporter = nodemailer.createTransport({ jsonTransport: true });
+  } finally {
+    isPrewarmingEthereal = false;
+  }
+}
+
+// Start pre-warm immediately
+prewarmEthereal();
 
 /**
  * Resolve live mail transporter from platform settings or Ethereal test account
  */
-async function getMailTransporter() {
+async function getMailTransporter(customConfig = null) {
   let emailConfig = {};
-  try {
-    const settingsRes = await dsarSettingsService.getCategorySettings('email');
-    if (settingsRes && settingsRes.success && settingsRes.settings) {
-      emailConfig = settingsRes.settings;
+  if (customConfig && typeof customConfig === 'object') {
+    emailConfig = customConfig;
+  } else {
+    try {
+      const settingsRes = await dsarSettingsService.getCategorySettings('email');
+      if (settingsRes && settingsRes.success && settingsRes.settings) {
+        emailConfig = settingsRes.settings;
+      }
+    } catch (e) {
+      // fallback
     }
-  } catch (e) {
-    // fallback
   }
 
   const host = emailConfig.smtpHost || process.env.SMTP_HOST || '';
@@ -54,7 +88,7 @@ async function getMailTransporter() {
   const secure = Boolean(emailConfig.smtpSecure || port === 465);
 
   // 1. Real custom SMTP credentials provided
-  if (user && pass && host && !host.includes('internal') && host !== 'localhost') {
+  if (user && pass && host && !host.includes('internal') && host !== 'localhost' && !host.includes('ethereal')) {
     return {
       transporter: nodemailer.createTransport({
         host,
@@ -81,22 +115,9 @@ async function getMailTransporter() {
 
   // 3. Zero-config fallback: Ethereal test inbox (real live email rendering)
   if (!cachedEtherealTransporter) {
-    try {
-      const testAccount = await nodemailer.createTestAccount();
-      cachedEtherealTransporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
-        secure: false,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass
-        }
-      });
-      cachedEtherealTransporter._testAccount = testAccount;
-    } catch (e) {
-      cachedEtherealTransporter = nodemailer.createTransport({
-        jsonTransport: true
-      });
+    await prewarmEthereal();
+    if (!cachedEtherealTransporter) {
+      cachedEtherealTransporter = nodemailer.createTransport({ jsonTransport: true });
     }
   }
 
@@ -296,15 +317,23 @@ async function notifyAllAssignedTeams(requestId, customNotes = '') {
 /**
  * Send simulated or live test email to verify SMTP / Dispatcher health
  */
-async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMTP Health Check') {
+async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMTP Health Check', configOverride = null) {
   if (!targetEmail || !targetEmail.includes('@')) {
     return { success: false, message: 'Valid recipient email address is required.' };
   }
 
-  const { transporter, isTestAccount, sender } = await getMailTransporter();
+  let transporterInfo;
+  try {
+    transporterInfo = await getMailTransporter(configOverride);
+  } catch (initErr) {
+    return { success: false, message: `SMTP Configuration Error: ${initErr.message}` };
+  }
+
+  const { transporter, isTestAccount, sender } = transporterInfo;
   let messageId = `test_email_${Date.now()}`;
   let previewUrl = null;
   let deliveryStatus = 'Delivered';
+  let deliveryChannel = isTestAccount ? 'SMTP / Ethereal Live Test Pipeline' : 'SMTP / Live Enterprise Mailbox';
 
   try {
     const info = await transporter.sendMail({
@@ -324,6 +353,7 @@ async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMT
           <div style="background: #1e293b; padding: 12px 16px; border-radius: 6px; border-left: 4px solid #10b981; margin: 16px 0; font-size: 0.82rem; color: #cbd5e1;">
             <div><strong>Recipient:</strong> ${targetEmail}</div>
             <div><strong>Test Type:</strong> ${testType}</div>
+            <div><strong>Transport Channel:</strong> ${deliveryChannel}</div>
             <div><strong>Dispatched At:</strong> ${new Date().toISOString()}</div>
             <div><strong>Status:</strong> LIVE_DELIVERY_CONFIRMED</div>
           </div>
@@ -338,6 +368,13 @@ async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMT
       previewUrl = nodemailer.getTestMessageUrl(info);
     }
   } catch (err) {
+    // If user provided explicit SMTP credentials and they failed, return the exact diagnostic
+    if (!isTestAccount) {
+      return {
+        success: false,
+        message: `SMTP Delivery Failed: ${err.message}. If using Gmail, make sure you use a 16-character Google App Password (not your normal Gmail password).`
+      };
+    }
     console.warn(`[SMTP Test Dispatch Warning] ${err.message}`);
     deliveryStatus = 'Delivered (Logged)';
   }
@@ -346,20 +383,25 @@ async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMT
     id: messageId,
     recipient: targetEmail,
     subject: `[Segmento Protect] ${testType} — Notification Service Active`,
-    preview: `Test email successfully dispatched to ${targetEmail}. SMTP pipeline and template renderer operational.`,
+    preview: `Test email successfully dispatched to ${targetEmail}. SMTP pipeline operational.`,
     timestamp: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
     status: deliveryStatus,
-    channel: isTestAccount ? 'SMTP / Ethereal Live Test Pipeline' : 'SMTP / Live Server',
+    channel: deliveryChannel,
     previewUrl: previewUrl || null
   };
 
   DISPATCH_HISTORY.unshift(testReceipt);
 
+  const messageText = isTestAccount
+    ? `Test email dispatched to Ethereal live test inbox. Click [Open Sent Email in Web Inbox] to view.`
+    : `Live test email successfully dispatched via SMTP to ${targetEmail}! Check your inbox.`;
+
   return {
     success: true,
-    message: `Test email dispatched to ${targetEmail} (Status: ${deliveryStatus})`,
+    message: messageText,
     receipt: testReceipt,
-    previewUrl: testReceipt.previewUrl
+    previewUrl: testReceipt.previewUrl,
+    isTestAccount
   };
 }
 
@@ -367,18 +409,24 @@ async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMT
  * Get email dispatch logs
  */
 async function getEmailDispatchHistory(requestId = null) {
-  if (requestId) {
-    return DISPATCH_HISTORY.filter(h => h.requestId === requestId);
-  }
-  return [...DISPATCH_HISTORY];
+  const list = requestId
+    ? DISPATCH_HISTORY.filter(h => h.requestId === requestId)
+    : [...DISPATCH_HISTORY];
+  
+  // Attach helper properties for API compatibility
+  list.history = list;
+  list.count = list.length;
+  list.success = true;
+  list.requestId = requestId;
+  return list;
 }
 
 module.exports = {
+  getMailTransporter,
   sendTaskAssignmentEmail,
   notifyAllAssignedTeams,
   sendTestEmail,
   getEmailDispatchHistory,
   buildTaskEmailTemplate,
-  getMailTransporter,
   DEFAULT_LEAD_EMAILS
 };
