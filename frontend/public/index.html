@@ -1090,12 +1090,58 @@
             </svg>
           </div>
 
-          <!-- Operator Badge -->
-          <div style="display:flex; align-items:center; gap:10px; background:var(--bg-surface); border:1px solid var(--border); padding:6px 14px; border-radius:24px;">
-            <div style="width:28px; height:28px; border-radius:50%; background:rgba(6,182,212,0.15); color:var(--cyan); font-weight:800; font-size:0.78rem; display:flex; align-items:center; justify-content:center; border:1px solid rgba(6,182,212,0.3);">JD</div>
-            <div style="line-height:1.2;">
-              <div style="font-size:0.82rem; font-weight:700; color:var(--text-bright);">John Doe</div>
-              <div style="font-size:0.7rem; color:var(--text-muted);">Privacy Team</div>
+          <!-- Interactive Operator Profile Chip & Dropdown Trigger -->
+          <div style="position:relative;">
+            <button type="button" id="dsar-operator-profile-btn" class="dsar-profile-chip-btn" aria-haspopup="true" aria-expanded="false" style="display:flex; align-items:center; gap:10px; background:var(--bg-surface); border:1px solid var(--border); padding:5px 12px 5px 8px; border-radius:24px; cursor:pointer; transition:all var(--dur) ease; outline:none;" onmouseover="this.style.borderColor='rgba(6,182,212,0.6)'; this.style.boxShadow='0 2px 8px rgba(6,182,212,0.2)';" onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='none';" title="View Operator Profile & Workstation Settings">
+              <div id="operator-badge-avatar" style="width:28px; height:28px; border-radius:50%; background:rgba(6,182,212,0.15); color:var(--cyan); font-weight:800; font-size:0.78rem; display:flex; align-items:center; justify-content:center; border:1px solid rgba(6,182,212,0.3);">JD</div>
+              <div style="line-height:1.2; text-align:left;">
+                <div id="operator-badge-name" style="font-size:0.82rem; font-weight:700; color:var(--text-bright);">John Doe</div>
+                <div id="operator-badge-role" style="font-size:0.7rem; color:var(--text-muted);">Privacy Team</div>
+              </div>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2.5" style="margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+
+            <!-- Operator Profile Dropdown Menu Popover -->
+            <div id="dsar-operator-dropdown" class="dsar-profile-dropdown hidden" style="position:absolute; right:0; top:calc(100% + 8px); width:280px; background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,0.5); z-index:1000; padding:14px;">
+              <!-- User Header Card -->
+              <div style="display:flex; align-items:center; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+                <div id="dropdown-user-avatar" style="width:42px; height:42px; border-radius:50%; background:rgba(6,182,212,0.18); color:var(--cyan); font-weight:800; font-size:1.05rem; display:flex; align-items:center; justify-content:center; border:1.5px solid rgba(6,182,212,0.4); flex-shrink:0;">JD</div>
+                <div style="min-width:0; flex:1;">
+                  <div id="dropdown-user-name" style="font-size:0.92rem; font-weight:800; color:var(--text-bright); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">John Doe</div>
+                  <div id="dropdown-user-email" style="font-size:0.75rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">john.doe@segmento.com</div>
+                  <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
+                    <span id="dropdown-user-role-badge" class="meta-pill primary" style="font-size:0.68rem; padding:1px 6px;">Privacy Team</span>
+                    <span style="font-size:0.7rem; color:var(--emerald); display:inline-flex; align-items:center; gap:3px;">● Active</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Menu Actions -->
+              <div style="display:flex; flex-direction:column; gap:4px; padding-top:10px;">
+                <button type="button" id="btn-open-profile-edit-modal" class="profile-dropdown-item" style="display:flex; align-items:center; gap:10px; width:100%; padding:8px 10px; background:transparent; border:none; border-radius:6px; color:var(--text-bright); font-size:0.83rem; font-weight:600; cursor:pointer; text-align:left; transition:background 0.15s;" onmouseover="this.style.background='var(--bg-input)';" onmouseout="this.style.background='transparent';">
+                  <span style="font-size:1rem;">✏️</span>
+                  <span>Edit Profile & Name</span>
+                </button>
+
+                <button type="button" id="btn-profile-goto-settings" class="profile-dropdown-item" style="display:flex; align-items:center; gap:10px; width:100%; padding:8px 10px; background:transparent; border:none; border-radius:6px; color:var(--text-bright); font-size:0.83rem; font-weight:600; cursor:pointer; text-align:left; transition:background 0.15s;" onmouseover="this.style.background='var(--bg-input)';" onmouseout="this.style.background='transparent';">
+                  <span style="font-size:1rem;">⚙️</span>
+                  <span>System Preferences</span>
+                </button>
+
+                <button type="button" id="btn-profile-goto-teams" class="profile-dropdown-item" style="display:flex; align-items:center; gap:10px; width:100%; padding:8px 10px; background:transparent; border:none; border-radius:6px; color:var(--text-bright); font-size:0.83rem; font-weight:600; cursor:pointer; text-align:left; transition:background 0.15s;" onmouseover="this.style.background='var(--bg-input)';" onmouseout="this.style.background='transparent';">
+                  <span style="font-size:1rem;">👥</span>
+                  <span>Team Configurations</span>
+                </button>
+              </div>
+
+              <!-- Quick Switch Operator Section -->
+              <div style="margin-top:8px; padding-top:10px; border-top:1px solid var(--border);">
+                <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-muted); font-weight:700; margin-bottom:6px;">Switch Active Operator</div>
+                <div id="operator-quick-switch-list" style="display:flex; flex-wrap:wrap; gap:5px;">
+                  <!-- Dynamic quick switch pills -->
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -1269,7 +1315,7 @@
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
                 <div>
                   <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-bright); margin-bottom:4px; display:flex; align-items:center; gap:8px;">
-                    <span>👤 John Doe — My Assigned Privacy Tasks</span>
+                    <span id="mytasks-operator-title">👤 John Doe — My Assigned Privacy Tasks</span>
                     <span id="mytasks-badge-count" class="meta-pill primary" style="font-size:0.75rem;">0 Assigned</span>
                   </h3>
                   <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Personal action queue for DSAR verifications, policy approvals, and erasure executions.</p>
@@ -3417,6 +3463,94 @@
           <span>Create Department Team</span>
         </button>
       </div>
+
+    </div>
+  </div>
+
+  <!-- ── 10. OPERATOR PROFILE EDIT MODAL ────────────────────────────────────── -->
+  <div id="dsar-profile-edit-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title" style="z-index: 9999;">
+    <div class="modal-card" style="max-width: 520px; width: 92%; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.7); overflow: hidden; animation: fadeInDown 0.2s ease-out;">
+      
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--border); background: var(--bg-input);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.3rem;">👤</span>
+          <div>
+            <h3 id="profile-modal-title" style="margin: 0; font-size: 1.1rem; font-weight: 800; color: var(--text-bright);">Edit Operator Profile</h3>
+            <p style="margin: 0; font-size: 0.75rem; color: var(--text-muted);">Customize your workstation identity, department role, and avatar theme</p>
+          </div>
+        </div>
+        <button type="button" id="btn-close-profile-modal" class="btn-ghost" style="padding: 4px 8px; border: none; font-size: 1.2rem; cursor: pointer;" aria-label="Close modal">&times;</button>
+      </div>
+
+      <!-- Form Body -->
+      <form id="dsar-profile-edit-form" style="padding: 22px 24px; display: flex; flex-direction: column; gap: 16px;">
+        
+        <!-- Live Avatar Preview Card -->
+        <div style="display: flex; align-items: center; gap: 16px; padding: 14px 18px; background: var(--bg-input); border-radius: 10px; border: 1px solid var(--border);">
+          <div id="profile-modal-avatar-preview" style="width: 50px; height: 50px; border-radius: 50%; background: rgba(6,182,212,0.2); color: var(--cyan); font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; border: 2px solid var(--cyan); flex-shrink: 0; transition: all 0.2s ease;">JD</div>
+          <div>
+            <div id="profile-modal-name-preview" style="font-weight: 800; font-size: 0.98rem; color: var(--text-bright);">John Doe</div>
+            <div id="profile-modal-role-preview" style="font-size: 0.78rem; color: var(--cyan); font-weight: 600; margin-top: 2px;">Privacy Team • Senior Privacy Specialist</div>
+          </div>
+        </div>
+
+        <!-- Full Name -->
+        <div>
+          <label for="profile-input-name" style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Full Name *</label>
+          <input type="text" id="profile-input-name" class="input-field" placeholder="e.g. John Doe or Manojya Sharma" required style="width: 100%;">
+        </div>
+
+        <!-- Corporate Email Address -->
+        <div>
+          <label for="profile-input-email" style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Corporate Email Address *</label>
+          <input type="email" id="profile-input-email" class="input-field" placeholder="e.g. john.doe@segmento.com" required style="width: 100%;">
+        </div>
+
+        <!-- Department / Team Selection & Title -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label for="profile-select-department" style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Department / Team *</label>
+            <select id="profile-select-department" class="input-field" style="width: 100%; cursor: pointer;">
+              <option value="Privacy Team">Privacy Team / DPO</option>
+              <option value="CRM Team">CRM / Customer Data</option>
+              <option value="HR Team">HR</option>
+              <option value="Marketing Team">Marketing</option>
+              <option value="Data Engineering">Data Engineering</option>
+              <option value="Legal">Legal & Compliance</option>
+              <option value="Security">Security Operations</option>
+              <option value="Third-Party / Vendor Mgmt">Vendor Management</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="profile-input-title" style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Job Title / Designation</label>
+            <input type="text" id="profile-input-title" class="input-field" placeholder="e.g. Privacy Operations Lead" style="width: 100%;">
+          </div>
+        </div>
+
+        <!-- Avatar Color Accent -->
+        <div>
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">Avatar Color Accent</label>
+          <div id="profile-color-picker-grid" style="display: flex; gap: 12px; align-items: center;">
+            <button type="button" class="profile-color-btn active" data-color="#06b6d4" style="width: 30px; height: 30px; border-radius: 50%; background: #06b6d4; border: 2px solid #fff; cursor: pointer; outline: none; transition: transform 0.15s;" title="Cyan Accent"></button>
+            <button type="button" class="profile-color-btn" data-color="#8b5cf6" style="width: 30px; height: 30px; border-radius: 50%; background: #8b5cf6; border: 2px solid transparent; cursor: pointer; outline: none; transition: transform 0.15s;" title="Purple Accent"></button>
+            <button type="button" class="profile-color-btn" data-color="#10b981" style="width: 30px; height: 30px; border-radius: 50%; background: #10b981; border: 2px solid transparent; cursor: pointer; outline: none; transition: transform 0.15s;" title="Emerald Accent"></button>
+            <button type="button" class="profile-color-btn" data-color="#f59e0b" style="width: 30px; height: 30px; border-radius: 50%; background: #f59e0b; border: 2px solid transparent; cursor: pointer; outline: none; transition: transform 0.15s;" title="Amber Accent"></button>
+            <button type="button" class="profile-color-btn" data-color="#ef4444" style="width: 30px; height: 30px; border-radius: 50%; background: #ef4444; border: 2px solid transparent; cursor: pointer; outline: none; transition: transform 0.15s;" title="Rose Accent"></button>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--border);">
+          <button type="button" id="btn-cancel-profile-edit" class="btn-ghost" style="padding: 8px 18px; font-size: 0.85rem;">Cancel</button>
+          <button type="submit" id="btn-save-profile-edit" class="btn-primary" style="padding: 8px 22px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Save Profile Changes</span>
+          </button>
+        </div>
+
+      </form>
 
     </div>
   </div>

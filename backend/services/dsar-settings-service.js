@@ -115,10 +115,78 @@ async function getCategorySettings(category) {
   };
 }
 
+const DEFAULT_OPERATOR_PROFILE = {
+  name: 'John Doe',
+  email: 'john.doe@segmento.com',
+  role: 'Privacy Team',
+  title: 'Senior Privacy Operations Specialist',
+  initials: 'JD',
+  color: '#06b6d4',
+  status: 'Active'
+};
+
+let activeOperatorProfile = JSON.parse(JSON.stringify(DEFAULT_OPERATOR_PROFILE));
+
+/**
+ * Fetch current operator profile
+ */
+async function getOperatorProfile() {
+  return {
+    success: true,
+    profile: JSON.parse(JSON.stringify(activeOperatorProfile))
+  };
+}
+
+/**
+ * Update operator profile (name, email, role, title, color, status)
+ */
+async function updateOperatorProfile(updates = {}) {
+  if (typeof updates !== 'object' || updates === null) {
+    return { success: false, message: 'Profile updates must be an object.' };
+  }
+
+  if (updates.name && typeof updates.name === 'string') {
+    activeOperatorProfile.name = updates.name.trim();
+    const parts = activeOperatorProfile.name.split(/\s+/).filter(Boolean);
+    activeOperatorProfile.initials = parts.length > 1
+      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+      : (parts[0] ? parts[0].slice(0, 2).toUpperCase() : 'OP');
+  }
+
+  if (updates.email && typeof updates.email === 'string') {
+    activeOperatorProfile.email = updates.email.trim();
+  }
+
+  if (updates.role && typeof updates.role === 'string') {
+    activeOperatorProfile.role = updates.role.trim();
+  }
+
+  if (updates.title && typeof updates.title === 'string') {
+    activeOperatorProfile.title = updates.title.trim();
+  }
+
+  if (updates.color && typeof updates.color === 'string') {
+    activeOperatorProfile.color = updates.color.trim();
+  }
+
+  if (updates.status && typeof updates.status === 'string') {
+    activeOperatorProfile.status = updates.status.trim();
+  }
+
+  return {
+    success: true,
+    message: 'Operator profile updated successfully',
+    profile: JSON.parse(JSON.stringify(activeOperatorProfile))
+  };
+}
+
 module.exports = {
   getSettings,
   getCategorySettings,
   updateSettings,
   resetSettings,
-  DEFAULT_SETTINGS
+  getOperatorProfile,
+  updateOperatorProfile,
+  DEFAULT_SETTINGS,
+  DEFAULT_OPERATOR_PROFILE
 };

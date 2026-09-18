@@ -101,6 +101,41 @@ describe('DSAR Platform Settings & Email Notification Services', () => {
       check = await dsarSettingsService.getSettings();
       expect(check.settings.organization.companyName).toBe('Segmento Protect Enterprise');
     });
+
+    test('getOperatorProfile() should return active workstation profile defaults', async () => {
+      const res = await dsarSettingsService.getOperatorProfile();
+      expect(res.success).toBe(true);
+      expect(res.profile).toBeDefined();
+      expect(res.profile.name).toBe('John Doe');
+      expect(res.profile.email).toBe('john.doe@segmento.com');
+      expect(res.profile.role).toBe('Privacy Team');
+      expect(res.profile.initials).toBe('JD');
+      expect(res.profile.status).toBe('Active');
+    });
+
+    test('updateOperatorProfile() should update name, compute initials, and persist custom role and color', async () => {
+      const updateRes = await dsarSettingsService.updateOperatorProfile({
+        name: 'Manojya Sharma',
+        email: 'manojya@segmento.com',
+        role: 'Data Engineering',
+        title: 'Lead Privacy Architect',
+        color: '#8b5cf6'
+      });
+      expect(updateRes.success).toBe(true);
+      expect(updateRes.profile.name).toBe('Manojya Sharma');
+      expect(updateRes.profile.initials).toBe('MS');
+      expect(updateRes.profile.email).toBe('manojya@segmento.com');
+      expect(updateRes.profile.role).toBe('Data Engineering');
+      expect(updateRes.profile.color).toBe('#8b5cf6');
+
+      // Verify persistence via getOperatorProfile
+      const check = await dsarSettingsService.getOperatorProfile();
+      expect(check.profile.name).toBe('Manojya Sharma');
+      expect(check.profile.initials).toBe('MS');
+
+      // Reset profile back to John Doe for subsequent tests
+      await dsarSettingsService.updateOperatorProfile(dsarSettingsService.DEFAULT_OPERATOR_PROFILE);
+    });
   });
 
   // ══════════════════════════════════════════════════════════════════════════

@@ -1221,6 +1221,52 @@ router.post('/api/dsar/settings/reset', async (req, res) => {
   }
 });
 
+// GET /api/dsar/profile — Fetch current operator workstation profile
+router.get('/dsar/profile', async (req, res) => {
+  try {
+    const result = await dsarSettingsService.getOperatorProfile();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/profile (alternate route)
+router.get('/api/dsar/profile', async (req, res) => {
+  try {
+    const result = await dsarSettingsService.getOperatorProfile();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// PATCH /api/dsar/profile — Update operator workstation profile
+router.patch('/dsar/profile', async (req, res) => {
+  try {
+    const result = await dsarSettingsService.updateOperatorProfile(req.body || {});
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// PATCH /api/dsar/profile (alternate route)
+router.patch('/api/dsar/profile', async (req, res) => {
+  try {
+    const result = await dsarSettingsService.updateOperatorProfile(req.body || {});
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 // ── DSAR STEP 2 IDENTITY DISCOVERY ROUTES ──────────────────────────────────
 
 // POST /api/dsar/discovery/scan — Perform identity resolution & PII discovery scan

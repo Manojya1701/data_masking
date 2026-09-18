@@ -319,7 +319,8 @@ export function renderMyTasks() {
   const highPrioEl = document.getElementById('mytasks-high-priority-count');
   const completedEl = document.getElementById('mytasks-completed-count');
 
-  const myTasks = allDsarRequests.filter(r => (r.assigned_to || 'John Doe') === CURRENT_OPERATOR);
+  const currentOpName = (window.getCurrentOperatorProfile ? window.getCurrentOperatorProfile().name : CURRENT_OPERATOR) || 'John Doe';
+  const myTasks = allDsarRequests.filter(r => (r.assigned_to || 'John Doe') === currentOpName);
 
   let inProgCount = 0;
   let highPrioCount = 0;
@@ -346,7 +347,7 @@ export function renderMyTasks() {
   if (!tbody) return;
 
   if (myTasks.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:28px; color:var(--text-muted);">No tasks currently assigned to John Doe.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:28px; color:var(--text-muted);">No tasks currently assigned to ${escapeHtml(currentOpName)}.</td></tr>`;
     return;
   }
 
@@ -731,6 +732,7 @@ export function initDsarDashboard() {
   // Expose global refresh hook
   window.refreshDsarDashboard = loadDsarDashboard;
   window.switchDsarSubView = switchDsarSubView;
+  window.renderMyTasks = renderMyTasks;
 
   // Initial load
   loadDsarDashboard();
