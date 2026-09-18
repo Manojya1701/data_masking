@@ -96,6 +96,21 @@ initDbProtection();
 initPrivacyDeletion();
 initEmailSearch();
 
+// ── DSAR Automation & Lifecycle Modules ──────────────────────────────
+initDsarIntake();
+initDsarDashboard();
+initDsarDiscovery();
+initDsarDetail();
+initDsarAssignment();
+initDsarImpact();
+initDsarPolicy();
+initDsarExecution();
+initDsarVerification();
+initDsarCertificate();
+initDsarTeamConfig();
+initDsarSettings();
+initDsarProfile();
+
 initProtectionPreview((method) => {
   const targetOp = (method === 'tokenize') ? 'mask' : method;
   operations.selectOperation(targetOp);

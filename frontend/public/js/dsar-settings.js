@@ -10,7 +10,7 @@
  * - System defaults reset
  */
 
-import { showToast } from './dsar-main.js';
+import { showToast } from './toast.js';
 
 let activeSettingsTab = 'email';
 let cachedSettings = null;
