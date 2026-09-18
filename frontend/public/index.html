@@ -1613,10 +1613,22 @@
 
             <!-- Tab 1: Email & SMTP Notifications Panel -->
             <div id="settings-panel-email" class="db-card" style="padding:24px 28px; margin-bottom:20px;">
-              <h4 style="font-size:1.05rem; font-weight:700; color:var(--text-bright); margin-bottom:16px;">
-                ✉️ Enterprise SMTP Server & Notification Triggers
-              </h4>
-              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                <h4 style="font-size:1.05rem; font-weight:700; color:var(--text-bright); margin:0;">
+                  ✉️ Real SMTP Server & Live Dispatch Pipeline
+                </h4>
+                
+                <!-- Quick SMTP Presets -->
+                <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                  <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">Presets:</span>
+                  <button type="button" class="btn-ghost btn-sm btn-smtp-preset" data-preset="ethereal" style="font-size:0.72rem; padding:3px 8px; color:var(--cyan); border-color:rgba(6,182,212,0.3);">⚡ Free Test Inbox</button>
+                  <button type="button" class="btn-ghost btn-sm btn-smtp-preset" data-preset="gmail" style="font-size:0.72rem; padding:3px 8px; color:#ea4335; border-color:rgba(234,67,53,0.3);">Gmail</button>
+                  <button type="button" class="btn-ghost btn-sm btn-smtp-preset" data-preset="outlook" style="font-size:0.72rem; padding:3px 8px; color:#0078d4; border-color:rgba(0,120,212,0.3);">Outlook</button>
+                </div>
+              </div>
+
+              <!-- Main SMTP Connection Inputs -->
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:16px;">
                 <div>
                   <label for="setting-email-sender-name" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Sender Display Name</label>
                   <input type="text" id="setting-email-sender-name" class="input-field" value="Segmento Protect Privacy Office" style="width:100%;">
@@ -1627,11 +1639,29 @@
                 </div>
                 <div>
                   <label for="setting-email-smtp-host" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">SMTP Host</label>
-                  <input type="text" id="setting-email-smtp-host" class="input-field" value="smtp.segmento-protect.internal" style="width:100%;">
+                  <input type="text" id="setting-email-smtp-host" class="input-field" value="smtp.segmento-protect.internal" placeholder="e.g. smtp.gmail.com" style="width:100%;">
                 </div>
                 <div>
                   <label for="setting-email-smtp-port" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">SMTP Port</label>
-                  <input type="number" id="setting-email-smtp-port" class="input-field" value="587" style="width:100%;">
+                  <input type="number" id="setting-email-smtp-port" class="input-field" value="587" placeholder="587 or 465" style="width:100%;">
+                </div>
+              </div>
+
+              <!-- SMTP Authentication Credentials -->
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:20px; padding:14px; background:var(--bg-input); border-radius:8px; border:1px solid var(--border);">
+                <div>
+                  <label for="setting-email-smtp-user" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">SMTP Username / Account Email</label>
+                  <input type="text" id="setting-email-smtp-user" class="input-field" placeholder="your-email@gmail.com or apiKey" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-email-smtp-pass" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">SMTP Password / App Password</label>
+                  <input type="password" id="setting-email-smtp-pass" class="input-field" placeholder="••••••••••••••••" style="width:100%;">
+                </div>
+                <div style="display:flex; align-items:flex-end; padding-bottom:8px;">
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.83rem; color:var(--text-bright);">
+                    <input type="checkbox" id="setting-email-smtp-secure">
+                    <span>Use SSL / Secure Connection (Port 465)</span>
+                  </label>
                 </div>
               </div>
 
@@ -1656,17 +1686,35 @@
                 <input type="url" id="setting-email-webhook-url" class="input-field" value="https://api.segmento.internal/webhooks/dsar-events" style="width:100%;">
               </div>
 
-              <!-- Test Email Dispatcher Tool -->
-              <div style="padding:16px; background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.25); border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-                <div style="flex:1; min-width:240px;">
-                  <div style="font-weight:700; color:var(--text-bright); font-size:0.9rem;">Test Live Email Dispatcher</div>
-                  <div style="font-size:0.78rem; color:var(--text-muted);">Send an instant live simulated verification email to any test inbox.</div>
+              <!-- Live Test Email Dispatcher Tool with Web Inbox Preview -->
+              <div style="padding:18px 20px; background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.25); border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                  <div style="flex:1; min-width:240px;">
+                    <div style="font-weight:700; color:var(--text-bright); font-size:0.92rem; display:flex; align-items:center; gap:8px;">
+                      <span>⚡ Live Email Dispatcher & Verification</span>
+                      <span class="meta-pill badge-verified" style="font-size:0.7rem;">Real Delivery Active</span>
+                    </div>
+                    <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Send an instant real notification to your personal or corporate email address.</div>
+                  </div>
+                  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <input type="email" id="setting-email-test-address" class="input-field" placeholder="your-email@example.com" value="operator@segmento.com" style="width:220px; padding:6px 10px; font-size:0.82rem;">
+                    <button type="button" id="btn-send-test-email" class="btn-primary btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:5px; padding:7px 16px;">
+                      <span>⚡ Send Real Test Email</span>
+                    </button>
+                  </div>
                 </div>
-                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                  <input type="email" id="setting-email-test-address" class="input-field" placeholder="test-lead@segmento.com" value="lead@segmento.com" style="width:200px; padding:6px 10px; font-size:0.8rem;">
-                  <button type="button" id="btn-send-test-email" class="btn-ghost btn-sm" style="color:var(--cyan); border-color:rgba(6,182,212,0.4); font-weight:700; display:inline-flex; align-items:center; gap:5px;">
-                    <span>⚡ Send Test Email</span>
-                  </button>
+
+                <!-- Web Inbox Preview Link Box (Visible when test email is sent) -->
+                <div id="test-email-preview-link-wrap" class="hidden" style="margin-top:14px; padding:12px 16px; background:var(--bg-surface); border:1px solid var(--cyan); border-radius:6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.1rem;">📬</span>
+                    <div style="font-size:0.83rem; color:var(--text-bright);">
+                      <strong>Email Dispatched!</strong> View the live rendered message in the web test inbox:
+                    </div>
+                  </div>
+                  <a id="test-email-preview-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="color:var(--cyan); border-color:var(--cyan); font-weight:700; display:inline-flex; align-items:center; gap:5px; text-decoration:none;">
+                    <span>🔗 Open Sent Email in Web Inbox ↗</span>
+                  </a>
                 </div>
               </div>
             </div>

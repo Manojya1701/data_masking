@@ -4,8 +4,9 @@
  * DSAR Platform Settings & Preferences Controller
  * Manages:
  * - 4 Settings Hub Tabs (Email & SMTP, Compliance & SLAs, Security & Crypto, Organization Profile)
+ * - Real live SMTP authentication settings & quick presets (Gmail, Outlook, Ethereal)
  * - Live settings saving with instant backend persistence
- * - Live test email dispatch tester
+ * - Real live test email dispatch tester with Web Inbox preview links
  * - Canonical defaults reset
  */
 
@@ -60,6 +61,9 @@ function populateSettingsForms(settings) {
     const sEmail = document.getElementById('setting-email-sender-address');
     const sHost = document.getElementById('setting-email-smtp-host');
     const sPort = document.getElementById('setting-email-smtp-port');
+    const sUser = document.getElementById('setting-email-smtp-user');
+    const sPass = document.getElementById('setting-email-smtp-pass');
+    const sSecure = document.getElementById('setting-email-smtp-secure');
     const sAutoTask = document.getElementById('setting-email-auto-task');
     const sAutoApprove = document.getElementById('setting-email-auto-approve');
     const sWebhook = document.getElementById('setting-email-webhook-url');
@@ -68,6 +72,9 @@ function populateSettingsForms(settings) {
     if (sEmail) sEmail.value = settings.email.senderEmail || '';
     if (sHost) sHost.value = settings.email.smtpHost || '';
     if (sPort) sPort.value = settings.email.smtpPort || 587;
+    if (sUser) sUser.value = settings.email.smtpUser || '';
+    if (sPass) sPass.value = settings.email.smtpPass || '';
+    if (sSecure) sSecure.checked = Boolean(settings.email.smtpSecure);
     if (sAutoTask) sAutoTask.checked = Boolean(settings.email.autoNotifyOnAssignment);
     if (sAutoApprove) sAutoApprove.checked = Boolean(settings.email.autoNotifyOnApproval);
     if (sWebhook) sWebhook.value = settings.email.webhookUrl || '';
@@ -118,9 +125,9 @@ function populateSettingsForms(settings) {
 }
 
 /**
- * Switch settings tab
+ * Switch Settings Tab
  */
-function switchSettingsTab(tabKey) {
+export function switchSettingsTab(tabKey) {
   activeSettingsTab = tabKey;
 
   document.querySelectorAll('.settings-tab-btn').forEach(btn => {
@@ -147,6 +154,36 @@ function switchSettingsTab(tabKey) {
 }
 
 /**
+ * Apply SMTP Quick Preset
+ */
+function applySmtpPreset(preset) {
+  const sHost = document.getElementById('setting-email-smtp-host');
+  const sPort = document.getElementById('setting-email-smtp-port');
+  const sUser = document.getElementById('setting-email-smtp-user');
+  const sPass = document.getElementById('setting-email-smtp-pass');
+  const sSecure = document.getElementById('setting-email-smtp-secure');
+
+  if (preset === 'ethereal') {
+    if (sHost) sHost.value = 'smtp.ethereal.email';
+    if (sPort) sPort.value = 587;
+    if (sUser) sUser.value = '';
+    if (sPass) sPass.value = '';
+    if (sSecure) sSecure.checked = false;
+    showToast('⚡ Applied Ethereal Free Live Test Inbox Preset', 'info');
+  } else if (preset === 'gmail') {
+    if (sHost) sHost.value = 'smtp.gmail.com';
+    if (sPort) sPort.value = 587;
+    if (sSecure) sSecure.checked = false;
+    showToast('Applied Gmail SMTP Preset (Use App Password)', 'info');
+  } else if (preset === 'outlook') {
+    if (sHost) sHost.value = 'smtp-mail.outlook.com';
+    if (sPort) sPort.value = 587;
+    if (sSecure) sSecure.checked = false;
+    showToast('Applied Outlook SMTP Preset', 'info');
+  }
+}
+
+/**
  * Save active settings category
  */
 async function saveActiveSettingsCategory() {
@@ -159,6 +196,9 @@ async function saveActiveSettingsCategory() {
       senderEmail: document.getElementById('setting-email-sender-address')?.value?.trim(),
       smtpHost: document.getElementById('setting-email-smtp-host')?.value?.trim(),
       smtpPort: parseInt(document.getElementById('setting-email-smtp-port')?.value, 10) || 587,
+      smtpUser: document.getElementById('setting-email-smtp-user')?.value?.trim(),
+      smtpPass: document.getElementById('setting-email-smtp-pass')?.value?.trim(),
+      smtpSecure: Boolean(document.getElementById('setting-email-smtp-secure')?.checked),
       autoNotifyOnAssignment: Boolean(document.getElementById('setting-email-auto-task')?.checked),
       autoNotifyOnApproval: Boolean(document.getElementById('setting-email-auto-approve')?.checked),
       webhookUrl: document.getElementById('setting-email-webhook-url')?.value?.trim()
@@ -208,27 +248,49 @@ async function saveActiveSettingsCategory() {
 }
 
 /**
- * Trigger simulated test email
+ * Trigger real test email and display live web inbox URL
  */
 async function handleSendTestEmail() {
   const targetEmail = document.getElementById('setting-email-test-address')?.value?.trim() || document.getElementById('setting-email-sender-address')?.value?.trim() || 'operator@segmento.com';
 
+  const testBtn = document.getElementById('btn-send-test-email');
+  const previewBox = document.getElementById('test-email-preview-link-wrap');
+  const previewLink = document.getElementById('test-email-preview-link');
+
   try {
-    showToast(`Sending test notification to ${targetEmail}…`, 'info');
+    if (testBtn) {
+      testBtn.disabled = true;
+      testBtn.innerHTML = '<span>⏳ Sending Real Email…</span>';
+    }
+    showToast(`Sending real email notification to ${targetEmail}…`, 'info');
+
     const res = await fetch(`${window.location.origin}/api/dsar/settings/test-email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ targetEmail, testType: 'SMTP Live Validation' })
+      body: JSON.stringify({ targetEmail, testType: 'Live SMTP System Validation' })
     });
     const data = await res.json();
 
     if (data && data.success) {
-      showToast(`✓ Test email delivered to ${targetEmail}!`, 'success');
+      showToast(`✓ Email successfully delivered to ${targetEmail}!`, 'success');
+
+      // Check if real preview URL exists
+      const pUrl = data.previewUrl || (data.receipt && data.receipt.previewUrl);
+      if (pUrl && previewBox && previewLink) {
+        previewLink.href = pUrl;
+        previewBox.classList.remove('hidden');
+        previewBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     } else {
       showToast(data.message || 'Failed to dispatch test email', 'error');
     }
   } catch (err) {
     showToast(`Error sending test email: ${err.message}`, 'error');
+  } finally {
+    if (testBtn) {
+      testBtn.disabled = false;
+      testBtn.innerHTML = '<span>⚡ Send Real Test Email</span>';
+    }
   }
 }
 
@@ -261,6 +323,14 @@ export function initDsarSettings() {
     btn.addEventListener('click', () => {
       const tab = btn.dataset.tab;
       if (tab) switchSettingsTab(tab);
+    });
+  });
+
+  // Preset buttons
+  document.querySelectorAll('.btn-smtp-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const preset = btn.dataset.preset;
+      if (preset) applySmtpPreset(preset);
     });
   });
 

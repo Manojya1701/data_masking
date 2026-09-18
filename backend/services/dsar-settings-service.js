@@ -13,8 +13,11 @@ const DEFAULT_SETTINGS = {
   email: {
     senderName: 'Segmento Protect Privacy Office',
     senderEmail: 'privacy-notifications@segmento.com',
-    smtpHost: 'smtp.segmento-protect.internal',
-    smtpPort: 587,
+    smtpHost: process.env.SMTP_HOST || 'smtp.segmento-protect.internal',
+    smtpPort: parseInt(process.env.SMTP_PORT || '587', 10),
+    smtpUser: process.env.SMTP_USER || '',
+    smtpPass: process.env.SMTP_PASS || '',
+    smtpSecure: process.env.SMTP_SECURE === 'true',
     useTls: true,
     autoNotifyOnAssignment: true,
     autoNotifyOnApproval: true,
