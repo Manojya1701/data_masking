@@ -81,13 +81,38 @@ async function getMailTransporter(customConfig = null) {
     }
   }
 
-  const host = emailConfig.smtpHost || process.env.SMTP_HOST || '';
-  const user = emailConfig.smtpUser || process.env.SMTP_USER || '';
-  const pass = emailConfig.smtpPass || process.env.SMTP_PASS || '';
+  const host = (emailConfig.smtpHost || process.env.SMTP_HOST || '').trim();
+  const user = (emailConfig.smtpUser || process.env.SMTP_USER || '').trim();
+  const rawPass = (emailConfig.smtpPass || process.env.SMTP_PASS || '').trim();
+  const pass = rawPass.replace(/\s+/g, ''); // remove any spaces from Google App Password
   const port = parseInt(emailConfig.smtpPort || process.env.SMTP_PORT || '587', 10);
   const secure = Boolean(emailConfig.smtpSecure || port === 465);
 
-  // 1. Real custom SMTP credentials provided
+  // 1. Gmail service transport (handles SSL, ports, and app password authentication seamlessly)
+  if (user && pass && (host.includes('gmail') || user.includes('@gmail.com'))) {
+    return {
+      transporter: nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user, pass }
+      }),
+      isTestAccount: false,
+      sender: emailConfig.senderEmail || user
+    };
+  }
+
+  // 2. Outlook / Office365 service transport
+  if (user && pass && (host.includes('outlook') || host.includes('office365'))) {
+    return {
+      transporter: nodemailer.createTransport({
+        service: 'outlook',
+        auth: { user, pass }
+      }),
+      isTestAccount: false,
+      sender: emailConfig.senderEmail || user
+    };
+  }
+
+  // 3. Custom enterprise SMTP credentials provided
   if (user && pass && host && !host.includes('internal') && host !== 'localhost' && !host.includes('ethereal')) {
     return {
       transporter: nodemailer.createTransport({

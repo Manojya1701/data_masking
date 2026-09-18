@@ -6432,6 +6432,48 @@
   ],
   "dsar_requests": [
     {
+      "id": 122,
+      "request_id": "DSAR-2026-921718",
+      "full_name": "Unknown",
+      "email": "unknown@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "Deletion",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "In Progress",
+      "due_date": "Sep 22, 2026",
+      "created_at": "2026-09-18T12:55:07.086Z"
+    },
+    {
+      "id": 121,
+      "request_id": "DSAR-2026-888167",
+      "full_name": "Unknown",
+      "email": "unknown@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "Deletion",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "In Progress",
+      "due_date": "Sep 22, 2026",
+      "created_at": "2026-09-18T12:29:55.355Z"
+    },
+    {
+      "id": 120,
+      "request_id": "DSAR-2026-781194",
+      "full_name": "Unknown",
+      "email": "unknown@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "Deletion",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "In Progress",
+      "due_date": "Sep 22, 2026",
+      "created_at": "2026-09-18T11:08:05.862Z"
+    },
+    {
       "id": 119,
       "request_id": "DSAR-2026-596386",
       "full_name": "Vikram Patel",
