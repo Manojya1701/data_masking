@@ -144,7 +144,7 @@ export function switchDsarSubView(viewKey) {
     sla_breaches: document.getElementById('dsar-subview-dashboard'),
     reports: document.getElementById('dsar-subview-reports'),
     team_config: document.getElementById('dsar-subview-team-config'),
-    settings: document.getElementById('dsar-subview-team-config')
+    settings: document.getElementById('dsar-subview-settings')
   };
 
   // Hide all subviews
@@ -154,7 +154,7 @@ export function switchDsarSubView(viewKey) {
 
   // Highlight active sidebar item
   document.querySelectorAll('.dsar-sidebar-nav-item').forEach(item => {
-    if (item.dataset.tab === viewKey || (viewKey === 'team_config' && item.dataset.tab === 'settings') || (viewKey === 'settings' && item.dataset.tab === 'team_config')) {
+    if (item.dataset.tab === viewKey) {
       item.classList.add('active');
     } else {
       item.classList.remove('active');
@@ -178,9 +178,12 @@ export function switchDsarSubView(viewKey) {
   } else if (viewKey === 'reports') {
     if (views.reports) views.reports.classList.remove('hidden');
     loadComplianceReports();
-  } else if (viewKey === 'team_config' || viewKey === 'settings') {
+  } else if (viewKey === 'team_config') {
     if (views.team_config) views.team_config.classList.remove('hidden');
     if (window.loadTeamsConfig) window.loadTeamsConfig();
+  } else if (viewKey === 'settings') {
+    if (views.settings) views.settings.classList.remove('hidden');
+    if (window.loadPlatformSettings) window.loadPlatformSettings();
   }
 }
 

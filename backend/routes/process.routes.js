@@ -30,6 +30,8 @@ const dsarPolicyService = require('../services/dsar-policy-service');
 const dsarExecutionService = require('../services/dsar-execution-service');
 const dsarVerificationService = require('../services/dsar-verification-service');
 const dsarCertificateService = require('../services/dsar-certificate-service');
+const emailNotificationService = require('../services/email-notification-service');
+const dsarSettingsService = require('../services/dsar-settings-service');
 
 const router = express.Router();
 
@@ -1059,6 +1061,160 @@ router.post('/dsar/teams/config/reset', async (req, res) => {
 router.post('/api/dsar/teams/config/reset', async (req, res) => {
   try {
     const result = await dsarService.resetTeamsConfig();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── DSAR TASK ASSIGNMENT EMAIL NOTIFICATIONS & DISPATCHER ROUTES ───────────
+
+// POST /api/dsar/requests/:id/notify-teams — Bulk notify all 6 assigned department leads
+router.post('/dsar/requests/:id/notify-teams', async (req, res) => {
+  try {
+    const { customNotes } = req.body || {};
+    const result = await emailNotificationService.notifyAllAssignedTeams(req.params.id, customNotes);
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/requests/:id/notify-teams (alternate route)
+router.post('/api/dsar/requests/:id/notify-teams', async (req, res) => {
+  try {
+    const { customNotes } = req.body || {};
+    const result = await emailNotificationService.notifyAllAssignedTeams(req.params.id, customNotes);
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/requests/:id/subtasks/:taskId/notify — Notify individual task lead
+router.post('/dsar/requests/:id/subtasks/:taskId/notify', async (req, res) => {
+  try {
+    const { recipientEmail, customNotes } = req.body || {};
+    const result = await emailNotificationService.sendTaskAssignmentEmail(req.params.id, req.params.taskId, recipientEmail, customNotes);
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/requests/:id/subtasks/:taskId/notify (alternate route)
+router.post('/api/dsar/requests/:id/subtasks/:taskId/notify', async (req, res) => {
+  try {
+    const { recipientEmail, customNotes } = req.body || {};
+    const result = await emailNotificationService.sendTaskAssignmentEmail(req.params.id, req.params.taskId, recipientEmail, customNotes);
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── DSAR PLATFORM SETTINGS & PREFERENCES ROUTES ────────────────────────────
+
+// GET /api/dsar/settings — Fetch system preferences & SMTP/Compliance settings
+router.get('/dsar/settings', async (req, res) => {
+  try {
+    const result = await dsarSettingsService.getSettings();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// GET /api/dsar/settings (alternate route)
+router.get('/api/dsar/settings', async (req, res) => {
+  try {
+    const result = await dsarSettingsService.getSettings();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// PATCH /api/dsar/settings/:category — Update settings category (email, statutory, security, organization)
+router.patch('/dsar/settings/:category', async (req, res) => {
+  try {
+    const result = await dsarSettingsService.updateSettings(req.params.category, req.body || {});
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// PATCH /api/dsar/settings/:category (alternate route)
+router.patch('/api/dsar/settings/:category', async (req, res) => {
+  try {
+    const result = await dsarSettingsService.updateSettings(req.params.category, req.body || {});
+    if (!result.success) {
+      return jsonError(res, result.notFound ? 404 : 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/settings/test-email — Send test email dispatch
+router.post('/dsar/settings/test-email', async (req, res) => {
+  try {
+    const { targetEmail, testType } = req.body || {};
+    const result = await emailNotificationService.sendTestEmail(targetEmail, testType);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/settings/test-email (alternate route)
+router.post('/api/dsar/settings/test-email', async (req, res) => {
+  try {
+    const { targetEmail, testType } = req.body || {};
+    const result = await emailNotificationService.sendTestEmail(targetEmail, testType);
+    if (!result.success) {
+      return jsonError(res, 400, result.message);
+    }
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/settings/reset — Reset settings to defaults
+router.post('/dsar/settings/reset', async (req, res) => {
+  try {
+    const result = await dsarSettingsService.resetSettings();
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// POST /api/dsar/settings/reset (alternate route)
+router.post('/api/dsar/settings/reset', async (req, res) => {
+  try {
+    const result = await dsarSettingsService.resetSettings();
     return res.json(result);
   } catch (err) {
     return jsonError(res, 500, err.message);

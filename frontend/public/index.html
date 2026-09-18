@@ -1528,6 +1528,201 @@
 
           </div> <!-- /#dsar-subview-team-config -->
 
+          <!-- ── SUB-VIEW 6: SETTINGS & SYSTEM PREFERENCES HUB ──────────────── -->
+          <div id="dsar-subview-settings" class="dsar-subview hidden">
+            
+            <!-- Settings Top Card Header -->
+            <div class="db-card" style="padding:22px 26px; margin-bottom:20px; border-left:4px solid #a78bfa;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+                <div>
+                  <h3 style="font-size:1.25rem; font-weight:800; color:var(--text-bright); margin:0 0 4px 0; display:flex; align-items:center; gap:10px;">
+                    <span>⚙️ Platform Settings & Preferences</span>
+                    <span class="meta-pill primary" style="font-size:0.75rem;">System Preferences</span>
+                  </h3>
+                  <p style="font-size:0.84rem; color:var(--text-muted); margin:0;">
+                    Configure enterprise SMTP notifications, statutory compliance thresholds, DPO cryptographic security seals, and organization details.
+                  </p>
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                  <button type="button" id="btn-reset-platform-settings" class="btn-ghost btn-sm" style="font-size:0.75rem; color:var(--text-muted); border-color:rgba(255,255,255,0.15); display:inline-flex; align-items:center; gap:5px;" title="Reset settings to system defaults">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    <span>Reset Defaults</span>
+                  </button>
+                  <button type="button" id="btn-save-platform-settings" class="btn-primary btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:6px; padding:8px 18px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    <span>Save Settings</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 4 Settings Tabs Header -->
+              <div class="dsar-detail-tabs" style="display:flex; gap:4px; margin-top:20px; border-bottom:1px solid var(--border); overflow-x:auto;">
+                <button type="button" class="settings-tab-btn active dsar-detail-tab-btn" data-tab="email">✉️ Email & Notifications</button>
+                <button type="button" class="settings-tab-btn dsar-detail-tab-btn" data-tab="statutory">⚖️ Compliance & SLAs</button>
+                <button type="button" class="settings-tab-btn dsar-detail-tab-btn" data-tab="security">🔒 Security & Crypto</button>
+                <button type="button" class="settings-tab-btn dsar-detail-tab-btn" data-tab="organization">🏢 Organization Profile</button>
+              </div>
+            </div>
+
+            <!-- Tab 1: Email & SMTP Notifications Panel -->
+            <div id="settings-panel-email" class="db-card" style="padding:24px 28px; margin-bottom:20px;">
+              <h4 style="font-size:1.05rem; font-weight:700; color:var(--text-bright); margin-bottom:16px;">
+                ✉️ Enterprise SMTP Server & Notification Triggers
+              </h4>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:20px;">
+                <div>
+                  <label for="setting-email-sender-name" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Sender Display Name</label>
+                  <input type="text" id="setting-email-sender-name" class="input-field" value="Segmento Protect Privacy Office" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-email-sender-address" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Sender Email Address</label>
+                  <input type="email" id="setting-email-sender-address" class="input-field" value="privacy-notifications@segmento.com" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-email-smtp-host" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">SMTP Host</label>
+                  <input type="text" id="setting-email-smtp-host" class="input-field" value="smtp.segmento-protect.internal" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-email-smtp-port" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">SMTP Port</label>
+                  <input type="number" id="setting-email-smtp-port" class="input-field" value="587" style="width:100%;">
+                </div>
+              </div>
+
+              <!-- Automated Notification Triggers -->
+              <div style="padding:16px; background:var(--bg-input); border-radius:8px; border:1px solid var(--border); margin-bottom:20px;">
+                <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px;">Automatic Notification Dispatch Triggers:</div>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:var(--text-bright);">
+                    <input type="checkbox" id="setting-email-auto-task" checked>
+                    <span><strong>Auto-dispatch email to Department Leads</strong> when cross-team subtasks are generated.</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:var(--text-bright);">
+                    <input type="checkbox" id="setting-email-auto-approve" checked>
+                    <span><strong>Auto-notify DPO & Legal Counsel</strong> when requests reach the statutory approval stage.</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Webhook integration -->
+              <div style="margin-bottom:20px;">
+                <label for="setting-email-webhook-url" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Enterprise Event Webhook URL (Slack / Teams / SIEM)</label>
+                <input type="url" id="setting-email-webhook-url" class="input-field" value="https://api.segmento.internal/webhooks/dsar-events" style="width:100%;">
+              </div>
+
+              <!-- Test Email Dispatcher Tool -->
+              <div style="padding:16px; background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.25); border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div style="flex:1; min-width:240px;">
+                  <div style="font-weight:700; color:var(--text-bright); font-size:0.9rem;">Test Live Email Dispatcher</div>
+                  <div style="font-size:0.78rem; color:var(--text-muted);">Send an instant live simulated verification email to any test inbox.</div>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                  <input type="email" id="setting-email-test-address" class="input-field" placeholder="test-lead@segmento.com" value="lead@segmento.com" style="width:200px; padding:6px 10px; font-size:0.8rem;">
+                  <button type="button" id="btn-send-test-email" class="btn-ghost btn-sm" style="color:var(--cyan); border-color:rgba(6,182,212,0.4); font-weight:700; display:inline-flex; align-items:center; gap:5px;">
+                    <span>⚡ Send Test Email</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 2: Compliance & Statutory SLAs Panel -->
+            <div id="settings-panel-statutory" class="db-card hidden" style="padding:24px 28px; margin-bottom:20px;">
+              <h4 style="font-size:1.05rem; font-weight:700; color:var(--text-bright); margin-bottom:16px;">
+                ⚖️ Statutory Turnaround Limits & SLA Escalation Rules
+              </h4>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:20px;">
+                <div>
+                  <label for="setting-statutory-default-sla" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Default Statutory SLA (Days)</label>
+                  <input type="number" id="setting-statutory-default-sla" class="input-field" value="30" min="1" max="90" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-statutory-grace-buffer" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Grace Buffer Warning Window (Days)</label>
+                  <input type="number" id="setting-statutory-grace-buffer" class="input-field" value="5" min="1" max="15" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-statutory-esc-threshold" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Escalation Alert Threshold (% SLA Elapsed)</label>
+                  <input type="number" id="setting-statutory-esc-threshold" class="input-field" value="80" min="50" max="95" style="width:100%;">
+                </div>
+              </div>
+
+              <!-- Enforced Legal Overrides -->
+              <div style="padding:16px; background:var(--bg-input); border-radius:8px; border:1px solid var(--border);">
+                <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px;">Enforced Legal Retention Overrides:</div>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:var(--text-bright);">
+                    <input type="checkbox" id="setting-statutory-gst-lock" checked>
+                    <span><strong>Enforce 7-Year GST Act 2017 Sec. 36 Inviolability Lock</strong> (prevents accidental tax record wipe).</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:var(--text-bright);">
+                    <input type="checkbox" id="setting-statutory-rbi-lock" checked>
+                    <span><strong>Enforce 5-Year RBI / PMLA 2002 Customer KYC Retention Rule</strong>.</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 3: Security & Cryptographic Seals Panel -->
+            <div id="settings-panel-security" class="db-card hidden" style="padding:24px 28px; margin-bottom:20px;">
+              <h4 style="font-size:1.05rem; font-weight:700; color:var(--text-bright); margin-bottom:16px;">
+                🔒 Cryptographic Audit Ledger & DPO Digital Certificates
+              </h4>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:20px;">
+                <div>
+                  <label for="setting-sec-cert-id" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">DPO Digital Signature Certificate ID</label>
+                  <input type="text" id="setting-sec-cert-id" class="input-field" value="CERT-DPO-SG-2026-9941" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-sec-ret-years" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Immutable Audit Retention (Years)</label>
+                  <input type="number" id="setting-sec-ret-years" class="input-field" value="7" min="1" max="20" style="width:100%;">
+                </div>
+              </div>
+
+              <div style="padding:16px; background:var(--bg-input); border-radius:8px; border:1px solid var(--border);">
+                <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px;">Cryptographic Ledger Protections:</div>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:var(--text-bright);">
+                    <input type="checkbox" id="setting-sec-sha-seals" checked>
+                    <span><strong>Generate SHA-256 Merkle Seals</strong> on every stage execution and ticket closure.</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:var(--text-bright);">
+                    <input type="checkbox" id="setting-sec-dpo-sig" checked>
+                    <span><strong>Mandate Digital DPO Signature</strong> prior to releasing Official Erasure Certificates.</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 4: Organization Profile Panel -->
+            <div id="settings-panel-organization" class="db-card hidden" style="padding:24px 28px; margin-bottom:20px;">
+              <h4 style="font-size:1.05rem; font-weight:700; color:var(--text-bright); margin-bottom:16px;">
+                🏢 Enterprise Organization & Privacy Leadership Dossier
+              </h4>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+                <div>
+                  <label for="setting-org-company-name" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Company / Legal Entity Name</label>
+                  <input type="text" id="setting-org-company-name" class="input-field" value="Segmento Protect Enterprise" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-org-dpo-name" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Chief Data Protection Officer (DPO)</label>
+                  <input type="text" id="setting-org-dpo-name" class="input-field" value="Anil Reddy (Chief DPO)" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-org-dpo-email" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">DPO Direct Email</label>
+                  <input type="email" id="setting-org-dpo-email" class="input-field" value="dpo@segmento.com" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-org-legal-lead" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Lead Regulatory Legal Counsel</label>
+                  <input type="text" id="setting-org-legal-lead" class="input-field" value="Vikram Malhotra (Lead Counsel)" style="width:100%;">
+                </div>
+                <div>
+                  <label for="setting-org-support-email" style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Privacy Inquiries Public Inbox</label>
+                  <input type="email" id="setting-org-support-email" class="input-field" value="privacy@segmento.com" style="width:100%;">
+                </div>
+              </div>
+            </div>
+
+          </div> <!-- /#dsar-subview-settings -->
+
         </div>
 
       </div>
@@ -1863,9 +2058,15 @@
           </div>
         </div>
 
-        <button type="button" id="btn-assignment-view-tasks" class="btn-primary btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:6px; padding:9px 18px;">
-          <span>View Generated Tasks ➔</span>
-        </button>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <button type="button" id="btn-assignment-notify-all" class="btn-ghost btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:6px; padding:8px 14px; color:var(--cyan); border-color:rgba(6,182,212,0.4); background:rgba(6,182,212,0.1);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span>✉️ Notify All 6 Team Leads</span>
+          </button>
+          <button type="button" id="btn-assignment-view-tasks" class="btn-primary btn-sm" style="font-weight:700; display:inline-flex; align-items:center; gap:6px; padding:9px 18px;">
+            <span>View Generated Tasks ➔</span>
+          </button>
+        </div>
       </div>
 
       <!-- Assign Teams & Members List (Matching Mockup 4) -->
@@ -1907,7 +2108,11 @@
             <span>← Back</span>
           </button>
 
-          <div style="display:flex; align-items:center; gap:10px;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <button type="button" id="btn-subtask-send-email" class="btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px; color:var(--cyan); border-color:rgba(6,182,212,0.35); font-weight:700; font-size:0.75rem;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span>✉️ Send Task Email to Lead</span>
+            </button>
             <span style="font-size:0.85rem; color:var(--text-muted);">Status:</span>
             <span id="subtask-detail-status-pill" class="meta-pill" style="background:rgba(6,182,212,0.15); color:var(--cyan); border:1px solid rgba(6,182,212,0.35); font-weight:700;">
               ⏳ In Progress

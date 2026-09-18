@@ -160,10 +160,14 @@ function renderAssignmentTeamsList(teams) {
         </div>
 
         <!-- Right: Status & Action Chevron -->
-        <div style="display:flex; align-items:center; gap:14px;">
+        <div style="display:flex; align-items:center; gap:10px;">
           ${formatPriorityBadge(t.priority)}
           ${formatStatusBadge(t.status)}
           
+          <button type="button" class="btn btn-outline btn-sm btn-notify-lead" data-task-id="${taskId}" style="padding:4px 10px; font-size:0.75rem; border-color:rgba(6,182,212,0.4); color:var(--cyan); display:flex; align-items:center; gap:4px;" title="Email Lead">
+            <span>✉️ Email Lead</span>
+          </button>
+
           <button type="button" class="btn-open-individual-task" data-task-id="${taskId}" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; padding:6px; border-radius:6px; display:flex; align-items:center; justify-content:center;" title="Open Task Workspace">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
@@ -445,15 +449,75 @@ export function initDsarAssignment() {
   }
 
   // Screen 4: Click delegation on team rows / chevrons -> open Screen 5
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', async (e) => {
+    // 1. Individual Notify Lead Button
+    const notifyLeadBtn = e.target.closest('.btn-notify-lead');
+    if (notifyLeadBtn) {
+      e.stopPropagation();
+      e.preventDefault();
+      const taskId = notifyLeadBtn.dataset.taskId;
+      if (!currentAssignmentRequestId || !taskId) return;
+
+      try {
+        notifyLeadBtn.disabled = true;
+        notifyLeadBtn.innerHTML = '<span>⏳ Sending...</span>';
+        const res = await fetch(`${window.location.origin}/api/dsar/requests/${encodeURIComponent(currentAssignmentRequestId)}/subtasks/${encodeURIComponent(taskId)}/notify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sender: 'Segmento DPO Office' })
+        });
+        const data = await res.json();
+        if (data && data.success) {
+          showToast(`✓ ${data.message || 'Task email sent to department lead!'}`, 'success');
+        } else {
+          showToast(data.message || 'Failed to dispatch email', 'error');
+        }
+      } catch (err) {
+        showToast(`Error sending email: ${err.message}`, 'error');
+      } finally {
+        notifyLeadBtn.disabled = false;
+        notifyLeadBtn.innerHTML = '<span>✉️ Email Lead</span>';
+      }
+      return;
+    }
+
+    // 2. Open individual task row
     const teamRow = e.target.closest('.assignment-team-row');
-    if (teamRow && !e.target.closest('select')) {
+    if (teamRow && !e.target.closest('select') && !e.target.closest('button')) {
       const taskId = teamRow.dataset.taskId;
       if (taskId) {
         openIndividualSubtaskView(currentAssignmentRequestId, taskId, 'screen4');
       }
     }
   });
+
+  // Screen 4: "Notify All 6 Team Leads" button
+  const notifyAllBtn = document.getElementById('btn-assignment-notify-all');
+  if (notifyAllBtn) {
+    notifyAllBtn.addEventListener('click', async () => {
+      if (!currentAssignmentRequestId) return;
+      try {
+        notifyAllBtn.disabled = true;
+        notifyAllBtn.textContent = '⏳ Sending Emails...';
+        const res = await fetch(`${window.location.origin}/api/dsar/requests/${encodeURIComponent(currentAssignmentRequestId)}/notify-teams`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sender: 'Segmento DPO Office' })
+        });
+        const data = await res.json();
+        if (data && data.success) {
+          showToast(`✓ ${data.message || 'Task emails dispatched to all assigned department leads!'}`, 'success');
+        } else {
+          showToast(data.message || 'Failed to dispatch task emails', 'error');
+        }
+      } catch (err) {
+        showToast(`Error dispatching emails: ${err.message}`, 'error');
+      } finally {
+        notifyAllBtn.disabled = false;
+        notifyAllBtn.textContent = '✉️ Notify All 6 Team Leads';
+      }
+    });
+  }
 
   // Screen 5: Back button
   const subtaskBackBtn = document.getElementById('btn-subtask-back');
@@ -531,6 +595,34 @@ export function initDsarAssignment() {
         }
       } catch (err) {
         showToast(`Error completing subtask: ${err.message}`, 'error');
+      }
+    });
+  }
+
+  // Screen 5: Send Task Email to Lead button
+  const subtaskSendEmailBtn = document.getElementById('btn-subtask-send-email');
+  if (subtaskSendEmailBtn) {
+    subtaskSendEmailBtn.addEventListener('click', async () => {
+      if (!currentAssignmentRequestId || !currentSubtaskId) return;
+      try {
+        subtaskSendEmailBtn.disabled = true;
+        subtaskSendEmailBtn.textContent = '⏳ Sending Email...';
+        const res = await fetch(`${window.location.origin}/api/dsar/requests/${encodeURIComponent(currentAssignmentRequestId)}/subtasks/${encodeURIComponent(currentSubtaskId)}/notify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sender: 'Segmento DPO Office' })
+        });
+        const data = await res.json();
+        if (data && data.success) {
+          showToast(`✓ ${data.message || 'Task assignment email dispatched to lead!'}`, 'success');
+        } else {
+          showToast(data.message || 'Failed to dispatch lead email', 'error');
+        }
+      } catch (err) {
+        showToast(`Error sending lead email: ${err.message}`, 'error');
+      } finally {
+        subtaskSendEmailBtn.disabled = false;
+        subtaskSendEmailBtn.textContent = '✉️ Send Task Email to Lead';
       }
     });
   }
