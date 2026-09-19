@@ -1187,17 +1187,34 @@ router.post('/dsar/settings/test-email', async (req, res) => {
   }
 });
 
-// POST /api/dsar/settings/test-email (alternate route)
-router.post('/api/dsar/settings/test-email', async (req, res) => {
+// GET /api/dsar/preview-email/:id — Render sent HTML email in browser
+router.get('/dsar/preview-email/:id', async (req, res) => {
   try {
-    const { targetEmail, testType, smtpConfig } = req.body || {};
-    const result = await emailNotificationService.sendTestEmail(targetEmail, testType, smtpConfig);
-    if (!result.success) {
-      return jsonError(res, 400, result.message);
+    const { id } = req.params;
+    const history = await emailNotificationService.getEmailDispatchHistory();
+    const item = Array.isArray(history) ? history.find(h => h.id === id || h.id.includes(id)) : null;
+    if (!item || !item.html) {
+      return res.status(404).send('<div style="font-family:Arial;padding:40px;text-align:center;color:#64748b;"><h2>📬 Email preview not found or expired</h2><p>Please send a new test email to generate a live preview.</p></div>');
     }
-    return res.json(result);
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.send(item.html);
   } catch (err) {
-    return jsonError(res, 500, err.message);
+    return res.status(500).send(`<h2>Error rendering preview: ${err.message}</h2>`);
+  }
+});
+
+router.get('/api/dsar/preview-email/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const history = await emailNotificationService.getEmailDispatchHistory();
+    const item = Array.isArray(history) ? history.find(h => h.id === id || h.id.includes(id)) : null;
+    if (!item || !item.html) {
+      return res.status(404).send('<div style="font-family:Arial;padding:40px;text-align:center;color:#64748b;"><h2>📬 Email preview not found or expired</h2><p>Please send a new test email to generate a live preview.</p></div>');
+    }
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.send(item.html);
+  } catch (err) {
+    return res.status(500).send(`<h2>Error rendering preview: ${err.message}</h2>`);
   }
 });
 

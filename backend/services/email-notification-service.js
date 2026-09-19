@@ -9,7 +9,7 @@ if (typeof dns.setDefaultResultOrder === 'function') {
  * DSAR Email Notification & Dispatcher Service
  * Manages:
  * - Real live SMTP email delivery via Nodemailer (Gmail, Outlook, SendGrid, AWS SES, or Custom SMTP)
- * - Auto-provisioned Ethereal test inbox for zero-configuration live email preview verification
+ * - Auto-provisioned Ethereal test inbox + built-in webmail fallback for zero-configuration live email preview verification
  * - Dynamic task assignment notification dispatching to department leads
  * - Single subtask and bulk (all 6 teams) email notifications
  * - Formatted HTML/Plaintext email payloads with deep links and SLA deadlines
@@ -39,6 +39,13 @@ const DISPATCH_HISTORY = [];
 let cachedEtherealTransporter = null;
 let isPrewarmingEthereal = false;
 
+const TIMEOUT_OPTS = {
+  family: 4,
+  connectionTimeout: 8000,
+  greetingTimeout: 8000,
+  socketTimeout: 10000
+};
+
 /**
  * Pre-warm Ethereal test account in background for instantaneous test dispatch
  */
@@ -51,7 +58,7 @@ async function prewarmEthereal() {
       host: 'smtp.ethereal.email',
       port: 587,
       secure: false,
-      family: 4,
+      ...TIMEOUT_OPTS,
       auth: {
         user: testAccount.user,
         pass: testAccount.pass
@@ -59,7 +66,6 @@ async function prewarmEthereal() {
     });
     cachedEtherealTransporter._testAccount = testAccount;
   } catch (e) {
-    // fallback to jsonTransport if offline
     cachedEtherealTransporter = nodemailer.createTransport({ jsonTransport: true });
   } finally {
     isPrewarmingEthereal = false;
@@ -101,7 +107,7 @@ async function getMailTransporter(customConfig = null) {
         host: 'smtp.gmail.com',
         port: 465,
         secure: true,
-        family: 4,
+        ...TIMEOUT_OPTS,
         auth: { user, pass }
       }),
       isTestAccount: false,
@@ -116,7 +122,7 @@ async function getMailTransporter(customConfig = null) {
         host: 'smtp-mail.outlook.com',
         port: 587,
         secure: false,
-        family: 4,
+        ...TIMEOUT_OPTS,
         auth: { user, pass }
       }),
       isTestAccount: false,
@@ -131,7 +137,7 @@ async function getMailTransporter(customConfig = null) {
         host,
         port,
         secure,
-        family: 4,
+        ...TIMEOUT_OPTS,
         auth: { user, pass },
         tls: { rejectUnauthorized: false }
       }),
@@ -140,7 +146,7 @@ async function getMailTransporter(customConfig = null) {
     };
   }
 
-  // 2. Unit testing environment optimization (fast in-memory json transport)
+  // 4. Unit testing environment optimization (fast in-memory json transport)
   if (process.env.NODE_ENV === 'test') {
     return {
       transporter: nodemailer.createTransport({
@@ -151,7 +157,7 @@ async function getMailTransporter(customConfig = null) {
     };
   }
 
-  // 3. Zero-config fallback: Ethereal test inbox (real live email rendering)
+  // 5. Zero-config fallback: Ethereal test inbox (real live email rendering)
   if (!cachedEtherealTransporter) {
     await prewarmEthereal();
     if (!cachedEtherealTransporter) {
@@ -282,6 +288,10 @@ async function sendTaskAssignmentEmail(requestId, taskId, recipientOverride = nu
     deliveryStatus = 'Queued (Local Delivery)';
   }
 
+  if (!previewUrl && isTestAccount) {
+    previewUrl = `/api/dsar/preview-email/${encodeURIComponent(messageId)}`;
+  }
+
   const dispatchReceipt = {
     id: messageId,
     requestId,
@@ -295,7 +305,8 @@ async function sendTaskAssignmentEmail(requestId, taskId, recipientOverride = nu
     timestamp: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
     status: deliveryStatus,
     channel: isTestAccount ? 'SMTP / Ethereal Live Test Pipeline' : 'SMTP / Live Enterprise Server',
-    previewUrl: previewUrl || null
+    previewUrl: previewUrl || null,
+    html: emailPayload.html
   };
 
   DISPATCH_HISTORY.unshift(dispatchReceipt);
@@ -373,30 +384,32 @@ async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMT
   let deliveryStatus = 'Delivered';
   let deliveryChannel = isTestAccount ? 'SMTP / Ethereal Live Test Pipeline' : 'SMTP / Live Enterprise Mailbox';
 
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 580px; margin: 0 auto; background: #0f172a; color: #f8fafc; border: 1px solid #334155; border-radius: 8px; padding: 24px;">
+      <div style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); padding: 14px 18px; border-radius: 6px; color: #ffffff; margin-bottom: 16px;">
+        <h2 style="margin: 0; font-size: 1.15rem;">Segmento Protect — Live SMTP Validation</h2>
+      </div>
+      <p style="font-size: 0.95rem;">Hello,</p>
+      <p style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.5;">
+        This is a live test notification verifying that the <strong>Universal Data Protection System (UDPS)</strong> email notification pipeline is operational.
+      </p>
+      <div style="background: #1e293b; padding: 12px 16px; border-radius: 6px; border-left: 4px solid #10b981; margin: 16px 0; font-size: 0.82rem; color: #cbd5e1;">
+        <div><strong>Recipient:</strong> ${targetEmail}</div>
+        <div><strong>Test Type:</strong> ${testType}</div>
+        <div><strong>Transport Channel:</strong> ${deliveryChannel}</div>
+        <div><strong>Dispatched At:</strong> ${new Date().toISOString()}</div>
+        <div><strong>Status:</strong> LIVE_DELIVERY_CONFIRMED</div>
+      </div>
+    </div>
+  `;
+
   try {
     const info = await transporter.sendMail({
       from: `"Segmento Protect Security Office" <${sender}>`,
       to: targetEmail,
       subject: `[Segmento Protect] ${testType} — Notification Service Active`,
       text: `Test email successfully dispatched to ${targetEmail}. SMTP transport pipeline operational.`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 580px; margin: 0 auto; background: #0f172a; color: #f8fafc; border: 1px solid #334155; border-radius: 8px; padding: 24px;">
-          <div style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); padding: 14px 18px; border-radius: 6px; color: #ffffff; margin-bottom: 16px;">
-            <h2 style="margin: 0; font-size: 1.15rem;">Segmento Protect — Live SMTP Validation</h2>
-          </div>
-          <p style="font-size: 0.95rem;">Hello,</p>
-          <p style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.5;">
-            This is a live test notification verifying that the <strong>Universal Data Protection System (UDPS)</strong> email notification pipeline is operational.
-          </p>
-          <div style="background: #1e293b; padding: 12px 16px; border-radius: 6px; border-left: 4px solid #10b981; margin: 16px 0; font-size: 0.82rem; color: #cbd5e1;">
-            <div><strong>Recipient:</strong> ${targetEmail}</div>
-            <div><strong>Test Type:</strong> ${testType}</div>
-            <div><strong>Transport Channel:</strong> ${deliveryChannel}</div>
-            <div><strong>Dispatched At:</strong> ${new Date().toISOString()}</div>
-            <div><strong>Status:</strong> LIVE_DELIVERY_CONFIRMED</div>
-          </div>
-        </div>
-      `
+      html: htmlContent
     });
 
     if (info && info.messageId) {
@@ -406,7 +419,6 @@ async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMT
       previewUrl = nodemailer.getTestMessageUrl(info);
     }
   } catch (err) {
-    // If user provided explicit SMTP credentials and they failed, return the exact diagnostic
     if (!isTestAccount) {
       return {
         success: false,
@@ -417,6 +429,11 @@ async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMT
     deliveryStatus = 'Delivered (Logged)';
   }
 
+  // Fallback web preview URL if external test account URL is null
+  if (!previewUrl && isTestAccount) {
+    previewUrl = `/api/dsar/preview-email/${encodeURIComponent(messageId)}`;
+  }
+
   const testReceipt = {
     id: messageId,
     recipient: targetEmail,
@@ -425,13 +442,14 @@ async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMT
     timestamp: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
     status: deliveryStatus,
     channel: deliveryChannel,
-    previewUrl: previewUrl || null
+    previewUrl: previewUrl || null,
+    html: htmlContent
   };
 
   DISPATCH_HISTORY.unshift(testReceipt);
 
   const messageText = isTestAccount
-    ? `Test email dispatched to Ethereal live test inbox. Click [Open Sent Email in Web Inbox] to view.`
+    ? `Test email dispatched to live test inbox. Click [Open Sent Email in Web Inbox] to view.`
     : `Live test email successfully dispatched via SMTP to ${targetEmail}! Check your inbox.`;
 
   return {
