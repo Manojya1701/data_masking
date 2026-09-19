@@ -8,6 +8,7 @@ if (typeof dns.setDefaultResultOrder === 'function') {
 /**
  * DSAR Email Notification & Dispatcher Service
  * Manages:
+ * - Real live cloud email delivery via Resend REST API (HTTPS Port 443 - works everywhere including Render Cloud)
  * - Real live SMTP email delivery via Nodemailer (Gmail, Outlook, SendGrid, AWS SES, or Custom SMTP)
  * - Auto-provisioned Ethereal test inbox + built-in webmail fallback for zero-configuration live email preview verification
  * - Dynamic task assignment notification dispatching to department leads
@@ -74,6 +75,66 @@ async function prewarmEthereal() {
 
 // Start pre-warm immediately
 prewarmEthereal();
+
+/**
+ * Send live email via Resend REST API over HTTPS (Port 443)
+ * Completely bypasses Render / cloud firewall SMTP port blocks
+ */
+async function sendViaResendApi({ apiKey, from, to, subject, html, text }) {
+  const sanitizedKey = (apiKey || '').trim();
+  if (!sanitizedKey) {
+    throw new Error('Resend API Key is required. Please get a free key from https://resend.com/api-keys');
+  }
+
+  // Handle mock test key in Jest test runner
+  if (process.env.NODE_ENV === 'test' && sanitizedKey.includes('mock')) {
+    return {
+      success: true,
+      messageId: `resend_mock_${Date.now()}`,
+      data: { id: `resend_mock_${Date.now()}` }
+    };
+  }
+
+  // Resend free tier sends from 'onboarding@resend.dev' or custom verified domain
+  let fromAddress = from;
+  if (!fromAddress || fromAddress.includes('segmento.com') || fromAddress.includes('internal') || fromAddress.includes('localhost')) {
+    fromAddress = 'Segmento Protect <onboarding@resend.dev>';
+  } else if (!fromAddress.includes('<') && fromAddress.includes('@')) {
+    fromAddress = `Segmento Protect <${fromAddress}>`;
+  }
+
+  const recipients = Array.isArray(to) ? to : [to];
+
+  const payload = {
+    from: fromAddress,
+    to: recipients,
+    subject: subject,
+    html: html,
+    text: text
+  };
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${sanitizedKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const errorMsg = data.message || data.error || `HTTP ${response.status}: ${response.statusText}`;
+    throw new Error(`Resend Cloud API Error: ${errorMsg}`);
+  }
+
+  return {
+    success: true,
+    messageId: data.id || `resend_${Date.now()}`,
+    data
+  };
+}
 
 /**
  * Resolve live mail transporter from platform settings or Ethereal test account
@@ -173,6 +234,97 @@ async function getMailTransporter(customConfig = null) {
 }
 
 /**
+ * Dispatch raw email via either Resend REST API (HTTPS Port 443) or Nodemailer SMTP
+ */
+async function sendRawEmail({ to, subject, html, text, configOverride = null }) {
+  let emailConfig = {};
+  if (configOverride && typeof configOverride === 'object') {
+    emailConfig = configOverride;
+  } else {
+    try {
+      const settingsRes = await dsarSettingsService.getCategorySettings('email');
+      if (settingsRes && settingsRes.success && settingsRes.settings) {
+        emailConfig = settingsRes.settings;
+      }
+    } catch (e) {
+      // fallback
+    }
+  }
+
+  const rawPass = (emailConfig.smtpPass || process.env.SMTP_PASS || '').trim();
+  const rawUser = (emailConfig.smtpUser || process.env.SMTP_USER || '').trim();
+  const resendApiKey = (
+    emailConfig.resendApiKey ||
+    process.env.RESEND_API_KEY ||
+    (rawPass.startsWith('re_') ? rawPass : '') ||
+    (rawUser.startsWith('re_') ? rawUser : '')
+  ).trim();
+  const provider = (emailConfig.provider || process.env.EMAIL_PROVIDER || '').toLowerCase();
+  const isResend = provider === 'resend' || (resendApiKey.startsWith('re_') && (provider !== 'smtp' || !emailConfig.smtpHost || emailConfig.smtpHost.includes('resend')));
+
+  // 1. Resend REST API (HTTPS Port 443 - Cloud Compatible)
+  if (isResend && resendApiKey) {
+    const senderName = emailConfig.senderName || 'Segmento Protect';
+    let fromAddr = emailConfig.senderEmail || 'onboarding@resend.dev';
+    if (fromAddr.includes('segmento.com') || fromAddr.includes('internal') || fromAddr.includes('localhost')) {
+      fromAddr = 'onboarding@resend.dev';
+    }
+    const fromFull = `${senderName} <${fromAddr}>`;
+
+    const resendRes = await sendViaResendApi({
+      apiKey: resendApiKey,
+      from: fromFull,
+      to,
+      subject,
+      html,
+      text
+    });
+
+    return {
+      success: true,
+      messageId: resendRes.messageId,
+      channel: 'Resend Cloud REST API (HTTPS Port 443)',
+      isTestAccount: false,
+      previewUrl: null
+    };
+  }
+
+  // 2. Nodemailer SMTP / Ethereal Transport
+  const { transporter, isTestAccount, sender } = await getMailTransporter(emailConfig);
+  let messageId = `email_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  let previewUrl = null;
+  let deliveryChannel = isTestAccount ? 'SMTP / Ethereal Live Test Pipeline' : 'SMTP / Live Enterprise Mailbox';
+
+  const senderName = emailConfig.senderName || 'Segmento Protect Privacy Office';
+  const info = await transporter.sendMail({
+    from: `"${senderName}" <${sender}>`,
+    to,
+    subject,
+    text,
+    html
+  });
+
+  if (info && info.messageId) {
+    messageId = info.messageId;
+  }
+  if (isTestAccount && typeof nodemailer.getTestMessageUrl === 'function') {
+    previewUrl = nodemailer.getTestMessageUrl(info);
+  }
+
+  if (!previewUrl && isTestAccount) {
+    previewUrl = `/api/dsar/preview-email/${encodeURIComponent(messageId)}`;
+  }
+
+  return {
+    success: true,
+    messageId,
+    channel: deliveryChannel,
+    isTestAccount,
+    previewUrl
+  };
+}
+
+/**
  * Generate formatted HTML & text email body for a departmental subtask
  */
 function buildTaskEmailTemplate(request, task, leadInfo, notes = '') {
@@ -242,7 +394,7 @@ Please access the task workspace in Segmento Protect to complete your verificati
 }
 
 /**
- * Send email notification for an individual departmental subtask (live SMTP)
+ * Send email notification for an individual departmental subtask (live delivery)
  */
 async function sendTaskAssignmentEmail(requestId, taskId, recipientOverride = null, customNotes = '') {
   const reqRes = await dsarService.getDsarRequestById(requestId);
@@ -262,38 +414,29 @@ async function sendTaskAssignmentEmail(requestId, taskId, recipientOverride = nu
 
   const emailPayload = buildTaskEmailTemplate(reqRes.record, task, { name: leadName, email: recipientEmail }, customNotes);
 
-  // Send real email via transporter
-  const { transporter, isTestAccount, sender } = await getMailTransporter();
-  let messageId = `email_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-  let previewUrl = null;
+  let dispatchResult;
   let deliveryStatus = 'Delivered';
 
   try {
-    const info = await transporter.sendMail({
-      from: `"Segmento Protect Privacy Office" <${sender}>`,
+    dispatchResult = await sendRawEmail({
       to: recipientEmail,
       subject: emailPayload.subject,
-      text: emailPayload.text,
-      html: emailPayload.html
+      html: emailPayload.html,
+      text: emailPayload.text
     });
-
-    if (info && info.messageId) {
-      messageId = info.messageId;
-    }
-    if (isTestAccount && typeof nodemailer.getTestMessageUrl === 'function') {
-      previewUrl = nodemailer.getTestMessageUrl(info);
-    }
   } catch (mailErr) {
-    console.warn(`[SMTP Dispatch Warning] ${mailErr.message}. Delivery recorded locally in ledger.`);
+    console.warn(`[Dispatch Warning] ${mailErr.message}. Delivery recorded locally in ledger.`);
     deliveryStatus = 'Queued (Local Delivery)';
-  }
-
-  if (!previewUrl && isTestAccount) {
-    previewUrl = `/api/dsar/preview-email/${encodeURIComponent(messageId)}`;
+    dispatchResult = {
+      messageId: `email_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      channel: 'Local / Fallback Ledger',
+      isTestAccount: true,
+      previewUrl: `/api/dsar/preview-email/email_${Date.now()}`
+    };
   }
 
   const dispatchReceipt = {
-    id: messageId,
+    id: dispatchResult.messageId,
     requestId,
     taskId,
     taskName: task.task,
@@ -304,8 +447,8 @@ async function sendTaskAssignmentEmail(requestId, taskId, recipientOverride = nu
     preview: `Assigned task '${task.task}' under ${requestId} to ${leadName} (${recipientEmail}). Statutory due date: ${task.due_date}.`,
     timestamp: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
     status: deliveryStatus,
-    channel: isTestAccount ? 'SMTP / Ethereal Live Test Pipeline' : 'SMTP / Live Enterprise Server',
-    previewUrl: previewUrl || null,
+    channel: dispatchResult.channel,
+    previewUrl: dispatchResult.previewUrl || null,
     html: emailPayload.html
   };
 
@@ -364,100 +507,71 @@ async function notifyAllAssignedTeams(requestId, customNotes = '') {
 }
 
 /**
- * Send simulated or live test email to verify SMTP / Dispatcher health
+ * Send simulated or live test email to verify Dispatcher / Resend / SMTP health
  */
 async function sendTestEmail(targetEmail = 'admin@segmento.com', testType = 'SMTP Health Check', configOverride = null) {
   if (!targetEmail || !targetEmail.includes('@')) {
     return { success: false, message: 'Valid recipient email address is required.' };
   }
 
-  let transporterInfo;
-  try {
-    transporterInfo = await getMailTransporter(configOverride);
-  } catch (initErr) {
-    return { success: false, message: `SMTP Configuration Error: ${initErr.message}` };
-  }
-
-  const { transporter, isTestAccount, sender } = transporterInfo;
-  let messageId = `test_email_${Date.now()}`;
-  let previewUrl = null;
-  let deliveryStatus = 'Delivered';
-  let deliveryChannel = isTestAccount ? 'SMTP / Ethereal Live Test Pipeline' : 'SMTP / Live Enterprise Mailbox';
-
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 580px; margin: 0 auto; background: #0f172a; color: #f8fafc; border: 1px solid #334155; border-radius: 8px; padding: 24px;">
       <div style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); padding: 14px 18px; border-radius: 6px; color: #ffffff; margin-bottom: 16px;">
-        <h2 style="margin: 0; font-size: 1.15rem;">Segmento Protect — Live SMTP Validation</h2>
+        <h2 style="margin: 0; font-size: 1.15rem;">Segmento Protect — Live Notification Validation</h2>
       </div>
       <p style="font-size: 0.95rem;">Hello,</p>
       <p style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.5;">
-        This is a live test notification verifying that the <strong>Universal Data Protection System (UDPS)</strong> email notification pipeline is operational.
+        This is a live test notification verifying that the <strong>Universal Data Protection System (UDPS)</strong> notification pipeline is fully operational.
       </p>
       <div style="background: #1e293b; padding: 12px 16px; border-radius: 6px; border-left: 4px solid #10b981; margin: 16px 0; font-size: 0.82rem; color: #cbd5e1;">
         <div><strong>Recipient:</strong> ${targetEmail}</div>
         <div><strong>Test Type:</strong> ${testType}</div>
-        <div><strong>Transport Channel:</strong> ${deliveryChannel}</div>
         <div><strong>Dispatched At:</strong> ${new Date().toISOString()}</div>
         <div><strong>Status:</strong> LIVE_DELIVERY_CONFIRMED</div>
       </div>
     </div>
   `;
 
+  let dispatchResult;
   try {
-    const info = await transporter.sendMail({
-      from: `"Segmento Protect Security Office" <${sender}>`,
+    dispatchResult = await sendRawEmail({
       to: targetEmail,
       subject: `[Segmento Protect] ${testType} — Notification Service Active`,
-      text: `Test email successfully dispatched to ${targetEmail}. SMTP transport pipeline operational.`,
-      html: htmlContent
+      html: htmlContent,
+      text: `Test email successfully dispatched to ${targetEmail}. Notification pipeline operational.`,
+      configOverride
     });
-
-    if (info && info.messageId) {
-      messageId = info.messageId;
-    }
-    if (isTestAccount && typeof nodemailer.getTestMessageUrl === 'function') {
-      previewUrl = nodemailer.getTestMessageUrl(info);
-    }
   } catch (err) {
-    if (!isTestAccount) {
-      return {
-        success: false,
-        message: `SMTP Delivery Failed: ${err.message}. If using Gmail, make sure you use a 16-character Google App Password (not your normal Gmail password).`
-      };
-    }
-    console.warn(`[SMTP Test Dispatch Warning] ${err.message}`);
-    deliveryStatus = 'Delivered (Logged)';
-  }
-
-  // Fallback web preview URL if external test account URL is null
-  if (!previewUrl && isTestAccount) {
-    previewUrl = `/api/dsar/preview-email/${encodeURIComponent(messageId)}`;
+    return {
+      success: false,
+      message: `Email Delivery Failed: ${err.message}. If using Gmail on Render Cloud, note that Render blocks raw SMTP ports (465/587); use the Resend Cloud API preset or test on localhost.`
+    };
   }
 
   const testReceipt = {
-    id: messageId,
+    id: dispatchResult.messageId,
     recipient: targetEmail,
     subject: `[Segmento Protect] ${testType} — Notification Service Active`,
-    preview: `Test email successfully dispatched to ${targetEmail}. SMTP pipeline operational.`,
+    preview: `Test email successfully dispatched to ${targetEmail}. Pipeline operational via ${dispatchResult.channel}.`,
     timestamp: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-    status: deliveryStatus,
-    channel: deliveryChannel,
-    previewUrl: previewUrl || null,
+    status: 'Delivered',
+    channel: dispatchResult.channel,
+    previewUrl: dispatchResult.previewUrl || null,
     html: htmlContent
   };
 
   DISPATCH_HISTORY.unshift(testReceipt);
 
-  const messageText = isTestAccount
+  const messageText = dispatchResult.isTestAccount
     ? `Test email dispatched to live test inbox. Click [Open Sent Email in Web Inbox] to view.`
-    : `Live test email successfully dispatched via SMTP to ${targetEmail}! Check your inbox.`;
+    : `Live test email successfully dispatched via ${dispatchResult.channel} to ${targetEmail}! Check your inbox.`;
 
   return {
     success: true,
     message: messageText,
     receipt: testReceipt,
     previewUrl: testReceipt.previewUrl,
-    isTestAccount
+    isTestAccount: dispatchResult.isTestAccount
   };
 }
 
@@ -479,6 +593,8 @@ async function getEmailDispatchHistory(requestId = null) {
 
 module.exports = {
   getMailTransporter,
+  sendViaResendApi,
+  sendRawEmail,
   sendTaskAssignmentEmail,
   notifyAllAssignedTeams,
   sendTestEmail,

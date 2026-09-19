@@ -231,6 +231,39 @@ describe('DSAR Platform Settings & Email Notification Services', () => {
       expect(res.receipt.id).toBeDefined();
     });
 
+    test('sendViaResendApi() and sendTestEmail() with Resend Cloud API configuration', async () => {
+      // Test direct Resend method with test mock key
+      const directRes = await emailNotificationService.sendViaResendApi({
+        apiKey: 're_test_mock_key',
+        from: 'Segmento Protect <onboarding@resend.dev>',
+        to: 'user@example.com',
+        subject: 'Resend API Cloud Test',
+        html: '<p>Test</p>',
+        text: 'Test'
+      });
+      expect(directRes.success).toBe(true);
+      expect(directRes.messageId).toContain('resend_mock');
+
+      // Test sendTestEmail with Resend config override
+      const testRes = await emailNotificationService.sendTestEmail('user@example.com', 'Resend Validation', {
+        resendApiKey: 're_test_mock_key',
+        provider: 'resend'
+      });
+      expect(testRes.success).toBe(true);
+      expect(testRes.receipt.channel).toContain('Resend Cloud');
+      expect(testRes.receipt.recipient).toBe('user@example.com');
+    });
+
+    test('sendViaResendApi() should reject empty API key', async () => {
+      await expect(emailNotificationService.sendViaResendApi({
+        apiKey: '',
+        from: 'onboarding@resend.dev',
+        to: 'user@example.com',
+        subject: 'Test',
+        html: '<p>Test</p>'
+      })).rejects.toThrow('Resend API Key is required');
+    });
+
     test('getEmailDispatchHistory() should retrieve dispatch log with filtering', async () => {
       await emailNotificationService.sendTestEmail('audit@segmento.com', 'Audit Test');
       const history = await emailNotificationService.getEmailDispatchHistory();

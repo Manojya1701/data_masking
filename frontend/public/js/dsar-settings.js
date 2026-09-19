@@ -47,6 +47,7 @@ function hydrateSettingsForms(settings) {
     const sUser = document.getElementById('setting-email-smtp-user');
     const sPass = document.getElementById('setting-email-smtp-pass');
     const sSecure = document.getElementById('setting-email-smtp-secure');
+    const sResendKey = document.getElementById('setting-email-resend-key');
     const sAutoTask = document.getElementById('setting-email-auto-task');
     const sAutoApprove = document.getElementById('setting-email-auto-approve');
     const sWebhook = document.getElementById('setting-email-webhook-url');
@@ -54,6 +55,7 @@ function hydrateSettingsForms(settings) {
 
     if (sName && e.senderName) sName.value = e.senderName;
     if (sAddr && e.senderEmail) sAddr.value = e.senderEmail;
+    if (sResendKey && e.resendApiKey) sResendKey.value = e.resendApiKey;
     if (sHost && e.smtpHost) sHost.value = e.smtpHost;
     if (sPort && e.smtpPort) sPort.value = e.smtpPort;
     if (sUser && e.smtpUser) sUser.value = e.smtpUser;
@@ -181,6 +183,12 @@ function applySmtpPreset(preset) {
     if (sPass) sPass.value = '';
     if (sSecure) sSecure.checked = false;
     showToast('⚡ Free Test Inbox Mode: Emails will generate instant viewable browser links!', 'info');
+  } else if (preset === 'resend') {
+    const sAddr = document.getElementById('setting-email-sender-address');
+    const sResendKey = document.getElementById('setting-email-resend-key');
+    if (sAddr) sAddr.value = 'onboarding@resend.dev';
+    if (sResendKey && !sResendKey.value) sResendKey.focus();
+    showToast('🟣 Resend API active! Enter your Resend API Key (starts with re_).', 'info');
   } else if (preset === 'gmail') {
     if (sHost) sHost.value = 'smtp.gmail.com';
     if (sPort) sPort.value = 465;
@@ -206,6 +214,7 @@ async function saveActiveSettingsCategory() {
     payload = {
       senderName: document.getElementById('setting-email-sender-name')?.value?.trim(),
       senderEmail: document.getElementById('setting-email-sender-address')?.value?.trim(),
+      resendApiKey: document.getElementById('setting-email-resend-key')?.value?.trim(),
       smtpHost: document.getElementById('setting-email-smtp-host')?.value?.trim(),
       smtpPort: parseInt(document.getElementById('setting-email-smtp-port')?.value, 10) || 587,
       smtpUser: document.getElementById('setting-email-smtp-user')?.value?.trim(),
@@ -273,6 +282,7 @@ async function handleSendTestEmail() {
   const smtpConfig = {
     senderName: document.getElementById('setting-email-sender-name')?.value?.trim(),
     senderEmail: document.getElementById('setting-email-sender-address')?.value?.trim(),
+    resendApiKey: document.getElementById('setting-email-resend-key')?.value?.trim(),
     smtpHost: document.getElementById('setting-email-smtp-host')?.value?.trim(),
     smtpPort: parseInt(document.getElementById('setting-email-smtp-port')?.value, 10) || 587,
     smtpUser: document.getElementById('setting-email-smtp-user')?.value?.trim(),

@@ -1622,8 +1622,21 @@
                 <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
                   <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">Presets:</span>
                   <button type="button" class="btn-ghost btn-sm btn-smtp-preset" data-preset="ethereal" style="font-size:0.72rem; padding:3px 8px; color:var(--cyan); border-color:rgba(6,182,212,0.3);">⚡ Free Test Inbox</button>
+                  <button type="button" class="btn-ghost btn-sm btn-smtp-preset" data-preset="resend" style="font-size:0.72rem; padding:3px 8px; color:#a855f7; border-color:rgba(168,85,247,0.3);">🟣 Resend API (Render Cloud)</button>
                   <button type="button" class="btn-ghost btn-sm btn-smtp-preset" data-preset="gmail" style="font-size:0.72rem; padding:3px 8px; color:#ea4335; border-color:rgba(234,67,53,0.3);">Gmail</button>
                   <button type="button" class="btn-ghost btn-sm btn-smtp-preset" data-preset="outlook" style="font-size:0.72rem; padding:3px 8px; color:#0078d4; border-color:rgba(0,120,212,0.3);">Outlook</button>
+                </div>
+              </div>
+
+              <!-- Resend REST API Configuration (Bypasses Render SMTP Port Blocks via HTTPS Port 443) -->
+              <div id="resend-config-card" style="padding:14px 16px; background:rgba(168,85,247,0.08); border:1px solid rgba(168,85,247,0.3); border-radius:8px; margin-bottom:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+                  <label for="setting-email-resend-key" style="font-size:0.78rem; font-weight:700; color:#c084fc;">🟣 Resend Cloud API Key (Port 443 HTTPS - Works on Render)</label>
+                  <a href="https://resend.com/api-keys" target="_blank" rel="noopener" style="font-size:0.72rem; color:var(--cyan); text-decoration:none; font-weight:600;">🔑 Get Free API Key at resend.com ↗</a>
+                </div>
+                <input type="password" id="setting-email-resend-key" class="input-field" placeholder="re_123456789_abcdef..." style="width:100%; border-color:rgba(168,85,247,0.4);">
+                <div style="font-size:0.72rem; color:var(--text-muted); margin-top:5px; line-height:1.4;">
+                  ✨ <strong>Live Cloud Delivery:</strong> Resend API uses standard HTTPS (Port 443), which bypasses Render's SMTP port firewall. Provides 3,000 free emails/month.
                 </div>
               </div>
 

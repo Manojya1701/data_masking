@@ -22,6 +22,8 @@ const DEFAULT_SETTINGS = {
     autoNotifyOnAssignment: true,
     autoNotifyOnApproval: true,
     notifyRequesterOnComplete: true,
+    resendApiKey: process.env.RESEND_API_KEY || '',
+    provider: process.env.EMAIL_PROVIDER || 'smtp',
     webhookUrl: 'https://api.segmento.internal/webhooks/dsar-events'
   },
   statutory: {
