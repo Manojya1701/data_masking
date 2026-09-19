@@ -1,5 +1,10 @@
 'use strict';
 
+const dns = require('dns');
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
 /**
  * DSAR Email Notification & Dispatcher Service
  * Manages:
@@ -46,6 +51,7 @@ async function prewarmEthereal() {
       host: 'smtp.ethereal.email',
       port: 587,
       secure: false,
+      family: 4,
       auth: {
         user: testAccount.user,
         pass: testAccount.pass
@@ -88,11 +94,14 @@ async function getMailTransporter(customConfig = null) {
   const port = parseInt(emailConfig.smtpPort || process.env.SMTP_PORT || '587', 10);
   const secure = Boolean(emailConfig.smtpSecure || port === 465);
 
-  // 1. Gmail service transport (handles SSL, ports, and app password authentication seamlessly)
+  // 1. Gmail service transport with IPv4 resolution (fixes ENETUNREACH on Windows Wi-Fi / ISPs)
   if (user && pass && (host.includes('gmail') || user.includes('@gmail.com'))) {
     return {
       transporter: nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        family: 4,
         auth: { user, pass }
       }),
       isTestAccount: false,
@@ -104,7 +113,10 @@ async function getMailTransporter(customConfig = null) {
   if (user && pass && (host.includes('outlook') || host.includes('office365'))) {
     return {
       transporter: nodemailer.createTransport({
-        service: 'outlook',
+        host: 'smtp-mail.outlook.com',
+        port: 587,
+        secure: false,
+        family: 4,
         auth: { user, pass }
       }),
       isTestAccount: false,
@@ -119,6 +131,7 @@ async function getMailTransporter(customConfig = null) {
         host,
         port,
         secure,
+        family: 4,
         auth: { user, pass },
         tls: { rejectUnauthorized: false }
       }),

@@ -1,5 +1,10 @@
 'use strict';
 
+const dns = require('dns');
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
 require('dotenv').config({
   path: require('path').join(__dirname, '../.env')
 });
