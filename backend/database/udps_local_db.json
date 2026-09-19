@@ -6432,6 +6432,20 @@
   ],
   "dsar_requests": [
     {
+      "id": 123,
+      "request_id": "DSAR-2026-729298",
+      "full_name": "Unknown",
+      "email": "unknown@example.com",
+      "phone": null,
+      "customer_id": null,
+      "request_type": "Deletion",
+      "subject_category": "customer",
+      "verification_evidence": null,
+      "status": "In Progress",
+      "due_date": "Sep 22, 2026",
+      "created_at": "2026-09-19T04:32:16.357Z"
+    },
+    {
       "id": 122,
       "request_id": "DSAR-2026-921718",
       "full_name": "Unknown",

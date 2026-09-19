@@ -252,7 +252,7 @@ async function saveActiveSettingsCategory() {
       showToast(`✓ ${category.charAt(0).toUpperCase() + category.slice(1)} settings saved successfully!`, 'success');
       await loadPlatformSettings();
     } else {
-      showToast(data.message || 'Failed to update settings', 'error');
+      showToast(data.error || data.message || 'Failed to update settings', 'error');
     }
   } catch (err) {
     showToast(`Error saving settings: ${err.message}`, 'error');
@@ -305,10 +305,10 @@ async function handleSendTestEmail() {
         showToast(`✓ Live email successfully dispatched to ${targetEmail}!`, 'success');
       }
     } else {
-      showToast(data.message || 'Failed to dispatch test email', 'error');
+      showToast(data.error || data.message || 'Failed to dispatch test email', 'error', 7000);
     }
   } catch (err) {
-    showToast(`Error sending test email: ${err.message}`, 'error');
+    showToast(`Error sending test email: ${err.message}`, 'error', 7000);
   } finally {
     if (testBtn) {
       testBtn.disabled = false;
