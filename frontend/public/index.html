@@ -2455,16 +2455,32 @@
           <!-- ── CARD 1: Request Submission ────────────────────────────── -->
           <div id="card-step1-submission" class="db-card dsar-step-card active" style="padding:22px 20px; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; position:relative;">
             
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:18px;">
-              <div style="width:28px; height:28px; border-radius:6px; background:rgba(37,99,235,0.12); color:#3b82f6; display:flex; align-items:center; justify-content:center; font-size:0.9rem;">
-                📄
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:28px; height:28px; border-radius:6px; background:rgba(37,99,235,0.12); color:#3b82f6; display:flex; align-items:center; justify-content:center; font-size:0.9rem;">
+                  📄
+                </div>
+                <h3 style="font-size:0.98rem; font-weight:700; color:var(--text-bright); margin:0;">Data Subject Request</h3>
               </div>
-              <h3 style="font-size:0.98rem; font-weight:700; color:var(--text-bright); margin:0;">Data Subject Request</h3>
+              <span class="meta-pill primary" style="font-size:0.7rem; padding:2px 8px;">Step 1 of 3</span>
             </div>
 
-            <!-- Natural Language Request Textarea -->
-            <div style="margin-bottom:16px;">
-              <label for="intake-request-text" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Your request</label>
+            <!-- Quick Privacy Right Scope Badges -->
+            <div style="margin-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label for="intake-request-text" style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);">Your request (Natural Language)</label>
+                <span id="intake-char-counter" style="font-size:0.68rem; color:var(--text-muted); font-family:monospace;">89 chars</span>
+              </div>
+              
+              <!-- Privacy Rights Tags -->
+              <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+                <span class="scope-pill-toggle active" data-intent="access" title="Request copy of personal data">📦 Access</span>
+                <span class="scope-pill-toggle active" data-intent="deletion" title="Request erasure/deletion">🗑️ Deletion</span>
+                <span class="scope-pill-toggle active" data-intent="marketing" title="Opt out of marketing & newsletters">📢 Marketing</span>
+                <span class="scope-pill-toggle" data-intent="rectification" title="Correct inaccurate records">✏️ Rectify</span>
+                <span class="scope-pill-toggle" data-intent="restriction" title="Freeze data processing">⏸️ Restrict</span>
+              </div>
+
               <textarea id="intake-request-text" class="input-field" rows="4" style="width:100%; resize:vertical; font-size:0.85rem; line-height:1.45;" placeholder="I want all information your company holds about me and I also want my marketing data removed.">I want all information your company holds about me and I also want my marketing data removed.</textarea>
               
               <!-- Quick Suggestion Chips -->
@@ -2473,44 +2489,123 @@
                 <button type="button" class="btn-ghost btn-sm intake-sample-chip" data-sample="Please permanently delete and erase all my account records, purchase logs, and telemetry under GDPR Art 17." style="font-size:0.7rem; padding:2px 8px; border-radius:12px; color:#ec4899; border-color:rgba(236,72,153,0.3);">🗑️ Pure Deletion</button>
                 <button type="button" class="btn-ghost btn-sm intake-sample-chip" data-sample="Please provide an export of all my personal data, customer transactions, and communications in machine-readable format." style="font-size:0.7rem; padding:2px 8px; border-radius:12px; color:#3b82f6; border-color:rgba(59,130,246,0.3);">📦 Data Access</button>
               </div>
+
+              <!-- Live NLP Intent Preview Banner -->
+              <div id="intake-intent-live-preview" style="margin-top:8px; padding:6px 10px; background:rgba(6,182,212,0.06); border:1px dashed rgba(6,182,212,0.3); border-radius:6px; font-size:0.72rem; color:var(--text-secondary); display:flex; align-items:center; justify-content:space-between;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span>🧠 Live AI Intent:</span>
+                  <span id="intake-live-intent-badges" style="font-weight:700; color:var(--cyan);">Access + Deletion + Marketing</span>
+                </div>
+                <span style="color:#10b981; font-weight:600;">✓ Ready</span>
+              </div>
             </div>
 
             <!-- Contact details -->
-            <div style="margin-bottom:16px; border-top:1px solid var(--border); padding-top:14px;">
-              <div style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
-                <span>👤 Contact details</span>
+            <div style="margin-bottom:14px; border-top:1px solid var(--border); padding-top:14px;">
+              <div style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:10px; display:flex; align-items:center; justify-content:space-between;">
+                <span style="display:flex; align-items:center; gap:6px;">👤 Requester Contact Details</span>
+                <span style="font-size:0.7rem; color:var(--text-muted);">Required for identity verification</span>
               </div>
-              <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div>
-                  <label for="intake-full-name" style="display:block; font-size:0.74rem; font-weight:600; color:var(--text-muted); margin-bottom:4px;">Full name</label>
+                  <label for="intake-full-name" style="display:block; font-size:0.74rem; font-weight:600; color:var(--text-muted); margin-bottom:4px;">Full name *</label>
                   <input type="text" id="intake-full-name" class="input-field" value="Alex Johnson" placeholder="Alex Johnson" style="width:100%;">
                 </div>
                 <div>
-                  <label for="intake-email" style="display:block; font-size:0.74rem; font-weight:600; color:var(--text-muted); margin-bottom:4px;">Email address</label>
+                  <label for="intake-email" style="display:block; font-size:0.74rem; font-weight:600; color:var(--text-muted); margin-bottom:4px;">Email address *</label>
                   <input type="email" id="intake-email" class="input-field" value="alex.johnson@example.com" placeholder="alex.johnson@example.com" style="width:100%;">
                 </div>
               </div>
             </div>
 
             <!-- Preferred channel -->
-            <div style="margin-bottom:20px; border-top:1px solid var(--border); padding-top:14px;">
-              <div style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-                <span>✉️ Preferred channel</span>
+            <div style="margin-bottom:16px; border-top:1px solid var(--border); padding-top:14px;">
+              <div style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
+                <span style="display:flex; align-items:center; gap:6px;">✉️ Preferred Delivery Channel</span>
+                <span style="font-size:0.7rem; color:var(--cyan); font-weight:600;">Interactive</span>
               </div>
-              <div style="display:flex; flex-direction:column; gap:8px;">
-                <label style="display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--text-bright); cursor:pointer;">
+              
+              <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-bottom:10px;">
+                <!-- Channel 1: Web portal -->
+                <label class="channel-tile-option active" id="tile-channel-web">
                   <input type="radio" name="intake-preferred-channel" id="intake-channel-web" value="Web portal" checked>
-                  <span>Web portal</span>
+                  <div>
+                    <div style="font-weight:700; font-size:0.8rem; color:var(--text-bright);">🌐 Web Portal</div>
+                    <div style="font-size:0.65rem; color:var(--text-muted);">Secure Portal</div>
+                  </div>
                 </label>
-                <label style="display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--text-bright); cursor:pointer;">
+                
+                <!-- Channel 2: Email -->
+                <label class="channel-tile-option" id="tile-channel-email">
                   <input type="radio" name="intake-preferred-channel" id="intake-channel-email" value="Email">
-                  <span>Email</span>
+                  <div>
+                    <div style="font-weight:700; font-size:0.8rem; color:var(--text-bright);">✉️ Email</div>
+                    <div style="font-size:0.65rem; color:var(--text-muted);">Encrypted Link</div>
+                  </div>
                 </label>
-                <label style="display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--text-bright); cursor:pointer;">
+
+                <!-- Channel 3: Phone / SMS -->
+                <label class="channel-tile-option" id="tile-channel-phone">
                   <input type="radio" name="intake-preferred-channel" id="intake-channel-phone" value="Phone">
-                  <span>Phone</span>
+                  <div>
+                    <div style="font-weight:700; font-size:0.8rem; color:var(--text-bright);">📱 Phone SMS</div>
+                    <div style="font-size:0.65rem; color:var(--text-muted);">Mobile OTP</div>
+                  </div>
                 </label>
               </div>
+
+              <!-- Conditional Channel Details Sub-Boxes -->
+              <!-- Sub-Box 1: Web Portal Note -->
+              <div id="channel-details-web" class="channel-detail-subbox" style="padding:8px 12px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.2); border-radius:6px; font-size:0.72rem; color:var(--text-secondary); display:flex; align-items:center; gap:8px;">
+                <span>🔒</span>
+                <span>Results and certificate will be securely delivered to your authenticated Segmento Privacy Dashboard.</span>
+              </div>
+
+              <!-- Sub-Box 2: Email Note & Alternate Email Input (Hidden by default) -->
+              <div id="channel-details-email" class="channel-detail-subbox hidden" style="padding:10px 12px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2); border-radius:6px; font-size:0.72rem; color:var(--text-secondary);">
+                <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                  <span>✉️</span>
+                  <span>Direct delivery to primary email. You may also specify an alternate secure email:</span>
+                </div>
+                <input type="email" id="intake-alt-email" class="input-field" placeholder="Alternate notification email (optional)" style="width:100%; font-size:0.75rem; padding:4px 8px;">
+              </div>
+
+              <!-- Sub-Box 3: Phone Number Input (Hidden by default, shown when Phone selected) -->
+              <div id="channel-details-phone" class="channel-detail-subbox hidden" style="padding:10px 12px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:6px; font-size:0.72rem; color:var(--text-secondary);">
+                <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                  <span>📱</span>
+                  <span>Enter mobile phone number for secure SMS OTP verification:</span>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <select id="intake-phone-country" class="input-field" style="width:110px; font-size:0.75rem; padding:4px 8px;">
+                    <option value="+65">+65 (SG)</option>
+                    <option value="+91">+91 (IN)</option>
+                    <option value="+1">+1 (US)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+61">+61 (AU)</option>
+                    <option value="+49">+49 (DE)</option>
+                  </select>
+                  <input type="tel" id="intake-phone-number" class="input-field" value="9123 4567" placeholder="e.g. 9123 4567" style="flex:1; font-size:0.75rem; padding:4px 8px;">
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Optional Customer ID / Reference Ref -->
+            <div style="margin-bottom:16px; border-top:1px solid var(--border); padding-top:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label for="intake-customer-ref" style="font-size:0.74rem; font-weight:600; color:var(--text-muted);">Customer / Account ID (Optional)</label>
+                <span style="font-size:0.68rem; color:var(--text-muted);">Speeds up cross-database scan</span>
+              </div>
+              <input type="text" id="intake-customer-ref" class="input-field" value="CUST-8842" placeholder="e.g. CUST-8842 or EMP-9021" style="width:100%; font-size:0.78rem;">
+            </div>
+
+            <!-- Statutory Declaration Consent Checkbox -->
+            <div style="margin-bottom:18px;">
+              <label style="display:flex; align-items:flex-start; gap:8px; font-size:0.73rem; color:var(--text-secondary); cursor:pointer; line-height:1.35;">
+                <input type="checkbox" id="intake-statutory-consent" checked style="margin-top:2px; accent-color:#2563eb;">
+                <span>I confirm I am the authorized data subject (or representative) submitting this statutory request under PDPA / GDPR / DPDP regulations.</span>
+              </label>
             </div>
 
             <!-- Submit Button -->

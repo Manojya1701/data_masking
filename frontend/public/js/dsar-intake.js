@@ -2,8 +2,11 @@
 
 /**
  * DSAR Intake Controller (Step 1 of Segmento Protect Pipeline)
- * AI-Powered Intake Experience:
+ * Enhanced AI-Powered Intake Experience:
  * - Natural language request submission with interactive prompt chips
+ * - Real-time intent quality meter & dynamic character/word counter
+ * - Interactive privacy scope pill toggles
+ * - Dynamic preferred channel selectors (Web portal, Email with alt address, Phone with country code & OTP)
  * - Sequential AI processing micro-animations (6-step intent analysis checklist)
  * - Dynamic AI enrichment results (multi-intent classification, jurisdiction, verification, SLA, team routing)
  * - Direct transition into DSAR Case Registration & Identity Discovery Pipeline
@@ -29,6 +32,126 @@ function showToast(msg, type = 'info') {
   } else {
     console.log(`[Toast ${type}] ${msg}`);
   }
+}
+
+/**
+ * Updates live text character counter and intent preview badge
+ */
+function updateLiveIntentPreview() {
+  const textarea = document.getElementById('intake-request-text');
+  const counterEl = document.getElementById('intake-char-counter');
+  const badgeEl = document.getElementById('intake-live-intent-badges');
+  if (!textarea) return;
+
+  const val = textarea.value.trim();
+  const chars = val.length;
+  const words = val ? val.split(/\s+/).filter(Boolean).length : 0;
+
+  if (counterEl) {
+    counterEl.textContent = `${chars} chars • ${words} words`;
+  }
+
+  // Detect live intents
+  const lower = val.toLowerCase();
+  const intents = [];
+  if (/\b(access|view|all info|all information|all data|export|copy|records|download)\b/i.test(lower)) {
+    intents.push('Access');
+  }
+  if (/\b(delete|remove|erasure|erase|purge|forget|forgotten|wipe|destroy)\b/i.test(lower)) {
+    intents.push('Deletion');
+  }
+  if (/\b(marketing|newsletter|email list|promotional|consent|opt-out|opt out|unsubscribe|ads)\b/i.test(lower)) {
+    intents.push('Marketing');
+  }
+  if (/\b(correct|update|rectif|change|fix|modify|edit)\b/i.test(lower)) {
+    intents.push('Rectification');
+  }
+  if (/\b(restrict|freeze|halt|stop processing|pause|limit)\b/i.test(lower)) {
+    intents.push('Restriction');
+  }
+
+  if (badgeEl) {
+    if (intents.length > 0) {
+      badgeEl.textContent = intents.join(' + ');
+      badgeEl.style.color = 'var(--cyan)';
+    } else {
+      badgeEl.textContent = 'General Data Request';
+      badgeEl.style.color = 'var(--text-muted)';
+    }
+  }
+
+  // Sync scope pills
+  document.querySelectorAll('.scope-pill-toggle').forEach(pill => {
+    const intentType = pill.dataset.intent;
+    const isMatched = (
+      (intentType === 'access' && intents.includes('Access')) ||
+      (intentType === 'deletion' && intents.includes('Deletion')) ||
+      (intentType === 'marketing' && intents.includes('Marketing')) ||
+      (intentType === 'rectification' && intents.includes('Rectification')) ||
+      (intentType === 'restriction' && intents.includes('Restriction'))
+    );
+    if (isMatched) {
+      pill.classList.add('active');
+    } else {
+      pill.classList.remove('active');
+    }
+  });
+}
+
+/**
+ * Setup channel selection tile radio buttons & conditional input panels
+ */
+function setupChannelSelection() {
+  const channelRadios = document.querySelectorAll('input[name="intake-preferred-channel"]');
+  const webSubbox = document.getElementById('channel-details-web');
+  const emailSubbox = document.getElementById('channel-details-email');
+  const phoneSubbox = document.getElementById('channel-details-phone');
+
+  function updateChannelUI(selectedVal) {
+    // Update active classes on tile labels
+    document.querySelectorAll('.channel-tile-option').forEach(tile => tile.classList.remove('active'));
+    
+    if (selectedVal === 'Web portal') {
+      const tile = document.getElementById('tile-channel-web');
+      if (tile) tile.classList.add('active');
+      if (webSubbox) webSubbox.classList.remove('hidden');
+      if (emailSubbox) emailSubbox.classList.add('hidden');
+      if (phoneSubbox) phoneSubbox.classList.add('hidden');
+    } else if (selectedVal === 'Email') {
+      const tile = document.getElementById('tile-channel-email');
+      if (tile) tile.classList.add('active');
+      if (webSubbox) webSubbox.classList.add('hidden');
+      if (emailSubbox) emailSubbox.classList.remove('hidden');
+      if (phoneSubbox) phoneSubbox.classList.add('hidden');
+      const altEmail = document.getElementById('intake-alt-email');
+      if (altEmail) altEmail.focus();
+    } else if (selectedVal === 'Phone') {
+      const tile = document.getElementById('tile-channel-phone');
+      if (tile) tile.classList.add('active');
+      if (webSubbox) webSubbox.classList.add('hidden');
+      if (emailSubbox) emailSubbox.classList.add('hidden');
+      if (phoneSubbox) phoneSubbox.classList.remove('hidden');
+      const phoneInput = document.getElementById('intake-phone-number');
+      if (phoneInput) phoneInput.focus();
+    }
+  }
+
+  channelRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      updateChannelUI(e.target.value);
+    });
+  });
+
+  // Also support clicking parent tile
+  document.querySelectorAll('.channel-tile-option').forEach(tile => {
+    tile.addEventListener('click', () => {
+      const radio = tile.querySelector('input[type="radio"]');
+      if (radio && !radio.checked) {
+        radio.checked = true;
+        updateChannelUI(radio.value);
+      }
+    });
+  });
 }
 
 /**
@@ -193,12 +316,22 @@ export async function handleAiIntakeSubmit(e) {
   const fullNameInput = document.getElementById('intake-full-name');
   const emailInput = document.getElementById('intake-email');
   const preferredChannelRadio = document.querySelector('input[name="intake-preferred-channel"]:checked');
+  const phoneCountrySelect = document.getElementById('intake-phone-country');
+  const phoneNumInput = document.getElementById('intake-phone-number');
+  const altEmailInput = document.getElementById('intake-alt-email');
+  const customerRefInput = document.getElementById('intake-customer-ref');
+  const consentCheckbox = document.getElementById('intake-statutory-consent');
   const submitBtn = document.getElementById('btn-submit-intake-ai');
 
   const requestText = requestTextInput ? requestTextInput.value.trim() : '';
   const fullName = fullNameInput ? fullNameInput.value.trim() : '';
   const email = emailInput ? emailInput.value.trim() : '';
   const preferredChannel = preferredChannelRadio ? preferredChannelRadio.value : 'Web portal';
+  const phoneCountry = phoneCountrySelect ? phoneCountrySelect.value : '+65';
+  const phoneNum = phoneNumInput ? phoneNumInput.value.trim() : '';
+  const fullPhone = phoneNum ? `${phoneCountry} ${phoneNum}` : '+65 9123 4567';
+  const altEmail = altEmailInput ? altEmailInput.value.trim() : '';
+  const customerRef = customerRefInput ? customerRefInput.value.trim() : 'CUST-8842';
 
   if (!requestText) {
     showToast('Please enter your data subject request in the text box.', 'warning');
@@ -218,6 +351,17 @@ export async function handleAiIntakeSubmit(e) {
     return;
   }
 
+  if (preferredChannel === 'Phone' && !phoneNum) {
+    showToast('Please enter mobile phone number for SMS OTP verification.', 'warning');
+    if (phoneNumInput) phoneNumInput.focus();
+    return;
+  }
+
+  if (consentCheckbox && !consentCheckbox.checked) {
+    showToast('Please check the statutory declaration checkbox to proceed.', 'warning');
+    return;
+  }
+
   isAnalyzing = true;
   if (submitBtn) {
     submitBtn.disabled = true;
@@ -230,7 +374,10 @@ export async function handleAiIntakeSubmit(e) {
     requestText,
     fullName,
     email,
-    preferredChannel
+    phone: fullPhone,
+    preferredChannel,
+    altEmail,
+    customerId: customerRef
   };
 
   lastAnalyzedPayload = payload;
@@ -307,11 +454,18 @@ export async function handleCreateDsarCase(e) {
   const fullNameInput = document.getElementById('intake-full-name');
   const emailInput = document.getElementById('intake-email');
   const preferredChannelRadio = document.querySelector('input[name="intake-preferred-channel"]:checked');
+  const phoneCountrySelect = document.getElementById('intake-phone-country');
+  const phoneNumInput = document.getElementById('intake-phone-number');
+  const customerRefInput = document.getElementById('intake-customer-ref');
 
   const fullName = (lastAnalyzedPayload && lastAnalyzedPayload.fullName) || (fullNameInput ? fullNameInput.value.trim() : 'Alex Johnson');
   const email = (lastAnalyzedPayload && lastAnalyzedPayload.email) || (emailInput ? emailInput.value.trim() : 'alex.johnson@example.com');
   const requestText = (lastAnalyzedPayload && lastAnalyzedPayload.requestText) || (requestTextInput ? requestTextInput.value.trim() : 'Full data subject request');
   const preferredChannel = (lastAnalyzedPayload && lastAnalyzedPayload.preferredChannel) || (preferredChannelRadio ? preferredChannelRadio.value : 'Web portal');
+  const phoneCountry = phoneCountrySelect ? phoneCountrySelect.value : '+65';
+  const phoneNum = phoneNumInput ? phoneNumInput.value.trim() : '9123 4567';
+  const fullPhone = (lastAnalyzedPayload && lastAnalyzedPayload.phone) || `${phoneCountry} ${phoneNum}`;
+  const customerRef = (lastAnalyzedPayload && lastAnalyzedPayload.customerId) || (customerRefInput ? customerRefInput.value.trim() : 'CUST-8842');
 
   const primaryType = (lastAnalysisResult && lastAnalysisResult.primaryRequestType) || 'Deletion';
   const detectedTypesStr = (lastAnalysisResult && lastAnalysisResult.identifiedRequestTypes)
@@ -327,13 +481,14 @@ export async function handleCreateDsarCase(e) {
   const payload = {
     fullName,
     email,
-    phone: '+65 9123 4567',
+    phone: fullPhone,
     country: jurisdictionCountry,
     relationship: 'Customer',
+    customerId: customerRef,
     requestType: primaryType,
     scope: detectedTypesStr,
     requestDetails: requestText,
-    verificationType: 'Identity Link / Email Auth',
+    verificationType: preferredChannel === 'Phone' ? 'SMS OTP Auth' : 'Identity Link / Email Auth',
     verificationEvidence: `AI Portal Verified (${preferredChannel})`,
     status: 'In Progress'
   };
@@ -449,14 +604,47 @@ export function initDsarIntake() {
     });
   });
 
+  // Setup Dynamic Channel Selection
+  setupChannelSelection();
+
+  // Textarea input event for live intent meter and character count
+  const textarea = document.getElementById('intake-request-text');
+  if (textarea) {
+    textarea.addEventListener('input', updateLiveIntentPreview);
+    updateLiveIntentPreview();
+  }
+
+  // Scope pill toggles
+  const scopePills = document.querySelectorAll('.scope-pill-toggle');
+  scopePills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      const intent = pill.dataset.intent;
+      if (!textarea) return;
+      let text = textarea.value;
+      if (intent === 'access' && !/access|view|all info/i.test(text)) {
+        text += (text ? ' ' : '') + 'Please provide full access to all personal data.';
+      } else if (intent === 'deletion' && !/delete|erasure|remove/i.test(text)) {
+        text += (text ? ' ' : '') + 'Please erase and delete my profile records.';
+      } else if (intent === 'marketing' && !/marketing|opt-out/i.test(text)) {
+        text += (text ? ' ' : '') + 'Please remove my data from all marketing lists.';
+      } else if (intent === 'rectification' && !/correct|update/i.test(text)) {
+        text += (text ? ' ' : '') + 'Please rectify my incorrect contact records.';
+      } else if (intent === 'restriction' && !/restrict|freeze/i.test(text)) {
+        text += (text ? ' ' : '') + 'Please restrict processing on my account.';
+      }
+      textarea.value = text;
+      updateLiveIntentPreview();
+    });
+  });
+
   // Sample prompt chips auto-fill
   const sampleChips = document.querySelectorAll('.intake-sample-chip');
   sampleChips.forEach(chip => {
     chip.addEventListener('click', () => {
       const sampleText = chip.dataset.sample || chip.getAttribute('data-sample');
-      const textarea = document.getElementById('intake-request-text');
       if (textarea && sampleText) {
         textarea.value = sampleText;
+        updateLiveIntentPreview();
         textarea.focus();
       }
     });
@@ -491,4 +679,5 @@ export function initDsarIntake() {
     }
   });
 }
+
 
