@@ -762,6 +762,16 @@ router.get('/formats', (req, res) => {
 
 // ── DSAR ERASURE WORKFLOW ROUTES (Segmento Protect Step 1) ─────────────────
 
+// POST /api/dsar/analyze-intent — AI Natural Language Intent & Multi-Type Classification
+router.post('/dsar/analyze-intent', async (req, res) => {
+  try {
+    const result = await dsarService.analyzeDsarIntent(req.body || {});
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
 // POST /api/dsar/requests — Submit new DSAR intake request
 router.post('/dsar/requests', async (req, res) => {
   try {

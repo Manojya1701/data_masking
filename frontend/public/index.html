@@ -2396,143 +2396,345 @@
         </div>
       </div>
 
-      <!-- ── Step 1: DSAR Intake & Requester Submission Card ─────────────────── -->
-      <div id="dsar-step1-intake-card" class="db-card" style="margin-bottom:24px; border:1px solid rgba(6,182,212,0.3); background:var(--bg-card);">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:12px;">
-          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:8px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            <span>Step 1: Data Subject Request Intake & Identity Details</span>
-          </h3>
-          <span class="meta-pill primary" style="font-size:0.75rem;">Intake Registration</span>
+      <!-- ── AI-Powered DSAR Intake Hub (3-Step Intelligent Classification & Routing Flow) ── -->
+      <div id="dsar-step1-intake-card" class="dsar-ai-intake-container" style="margin-bottom:28px;">
+        
+        <!-- Header Banner: Segmento | DSAR -->
+        <div class="dsar-ai-header" style="margin-bottom:24px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+            <div style="width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, #2563eb, #06b6d4); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(37,99,235,0.35);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div style="display:flex; align-items:baseline; gap:8px;">
+              <h2 style="font-size:1.5rem; font-weight:800; color:var(--text-bright); margin:0; letter-spacing:-0.02em;">Segmento</h2>
+              <span style="font-size:0.95rem; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:0.05em; padding:2px 8px; background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.25); border-radius:6px;">DSAR</span>
+            </div>
+          </div>
+          <p style="font-size:0.88rem; color:var(--text-muted); margin:0; font-weight:500;">AI-powered intake. Smarter classification. Faster response.</p>
         </div>
 
-        <form id="dsar-intake-form" onsubmit="return false;">
-          <!-- Requester Personal Info Grid -->
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px; margin-bottom:16px;">
+        <!-- 3-Step Flow Progression Bar -->
+        <div class="dsar-ai-flow-bar" style="display:grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items:center; gap:12px; margin-bottom:24px;">
+          
+          <!-- Step 1 Header Indicator -->
+          <div class="dsar-flow-step-header active" id="flow-header-step-1" style="display:flex; align-items:center; gap:10px;">
+            <div class="flow-step-num-badge" style="width:28px; height:28px; border-radius:50%; background:#2563eb; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.82rem; box-shadow:0 0 10px rgba(37,99,235,0.4);">1</div>
             <div>
-              <label for="intake-full-name" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Full Name *</label>
-              <input type="text" id="intake-full-name" class="input-field" placeholder="e.g. Vikram Malhotra" required style="width:100%;">
-            </div>
-            <div>
-              <label for="intake-email" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Email Address *</label>
-              <input type="email" id="intake-email" class="input-field" placeholder="e.g. vikram.legal@company.com" required style="width:100%;">
-            </div>
-            <div>
-              <label for="intake-phone" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Phone Number</label>
-              <input type="text" id="intake-phone" class="input-field" placeholder="+91 99887 76655" style="width:100%;">
-            </div>
-            <div>
-              <label for="intake-country" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Country / Jurisdiction *</label>
-              <select id="intake-country" class="input-field" style="width:100%;">
-                <option value="India" selected>India (DPDP Act 2023)</option>
-                <option value="Singapore">Singapore (PDPA)</option>
-                <option value="European Union">European Union (GDPR)</option>
-                <option value="United States">United States (CCPA/CPRA)</option>
-                <option value="United Kingdom">United Kingdom (UK GDPR)</option>
-                <option value="South Korea">South Korea (PIPA)</option>
-                <option value="Australia">Australia (Privacy Act)</option>
-              </select>
-            </div>
-            <div>
-              <label for="intake-relationship" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Subject Relationship *</label>
-              <select id="intake-relationship" class="input-field" style="width:100%;">
-                <option value="Customer" selected>Customer</option>
-                <option value="Former Customer">Former Customer</option>
-                <option value="Employee">Employee / Candidate</option>
-                <option value="Vendor">Vendor / Partner</option>
-                <option value="Other">Other</option>
-              </select>
+              <div style="font-size:0.88rem; font-weight:700; color:var(--text-bright);">Request Submission</div>
+              <div style="font-size:0.72rem; color:var(--text-muted); line-height:1.2;">The requester submits their request through a secure portal.</div>
             </div>
           </div>
 
-          <!-- Request Type Interactive Selection Cards -->
-          <div style="margin-bottom:18px;">
-            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Request Privacy Right Type:</label>
-            <div class="intake-type-grid">
-              <div class="intake-type-option-card active" data-type="Deletion">
-                <div class="intake-type-icon">🗑️</div>
-                <div class="intake-type-title">Deletion (Erasure)</div>
-                <div class="intake-type-desc">Right to be Forgotten. Permanently remove or pseudonymize all personal records.</div>
-              </div>
-              <div class="intake-type-option-card" data-type="Access">
-                <div class="intake-type-icon">📦</div>
-                <div class="intake-type-title">Access / Export</div>
-                <div class="intake-type-desc">Request complete export of personal records & processing history.</div>
-              </div>
-              <div class="intake-type-option-card" data-type="Rectification">
-                <div class="intake-type-icon">✏️</div>
-                <div class="intake-type-title">Rectification</div>
-                <div class="intake-type-desc">Correct inaccurate, incomplete, or outdated personal data.</div>
-              </div>
-              <div class="intake-type-option-card" data-type="Restrict">
-                <div class="intake-type-icon">🔒</div>
-                <div class="intake-type-title">Restrict Processing</div>
-                <div class="intake-type-desc">Freeze or restrict automated processing across active systems.</div>
-              </div>
-              <div class="intake-type-option-card" data-type="Portability">
-                <div class="intake-type-icon">🔄</div>
-                <div class="intake-type-title">Data Portability</div>
-                <div class="intake-type-desc">Structured, machine-readable JSON/CSV export for transfer.</div>
-              </div>
-            </div>
-          </div>
+          <div style="color:var(--text-muted); font-size:1.1rem; opacity:0.6;">➔</div>
 
-          <!-- Target Scope Checkboxes & Instructions -->
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:18px;">
+          <!-- Step 2 Header Indicator -->
+          <div class="dsar-flow-step-header" id="flow-header-step-2" style="display:flex; align-items:center; gap:10px;">
+            <div class="flow-step-num-badge" style="width:28px; height:28px; border-radius:50%; background:var(--bg-input); border:1px solid var(--border); color:var(--text-muted); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.82rem;">2</div>
             <div>
-              <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Target Data Domains:</label>
-              <div class="intake-scope-grid" style="grid-template-columns: 1fr 1fr;">
-                <label class="intake-scope-label">
-                  <input type="checkbox" class="intake-scope-checkbox" value="Profile & Auth" checked>
-                  <span>👤 Profile & Auth</span>
-                </label>
-                <label class="intake-scope-label">
-                  <input type="checkbox" class="intake-scope-checkbox" value="Billing & Financial" checked>
-                  <span>💳 Billing & Tax</span>
-                </label>
-                <label class="intake-scope-label">
-                  <input type="checkbox" class="intake-scope-checkbox" value="Marketing & Telemetry" checked>
-                  <span>📢 Marketing Data</span>
-                </label>
-                <label class="intake-scope-label">
-                  <input type="checkbox" class="intake-scope-checkbox" value="Support & Logs" checked>
-                  <span>💬 Support Tickets</span>
-                </label>
-              </div>
+              <div style="font-size:0.88rem; font-weight:700; color:var(--text-bright);">AI Analysis</div>
+              <div style="font-size:0.72rem; color:var(--text-muted); line-height:1.2;">Our AI understands the request and identifies key details, required actions and the right teams.</div>
             </div>
+          </div>
+
+          <div style="color:var(--text-muted); font-size:1.1rem; opacity:0.6;">➔</div>
+
+          <!-- Step 3 Header Indicator -->
+          <div class="dsar-flow-step-header" id="flow-header-step-3" style="display:flex; align-items:center; gap:10px;">
+            <div class="flow-step-num-badge" style="width:28px; height:28px; border-radius:50%; background:var(--bg-input); border:1px solid var(--border); color:var(--text-muted); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.82rem;">3</div>
             <div>
-              <label for="intake-details-text" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Specific Instructions (Optional):</label>
-              <textarea id="intake-details-text" class="input-field" rows="3" placeholder="e.g. Purge all marketing profiles, billing accounts, and newsletter subscriptions..." style="width:100%; height:calc(100% - 28px);"></textarea>
+              <div style="font-size:0.88rem; font-weight:700; color:var(--text-bright);">AI Analysis Results</div>
+              <div style="font-size:0.72rem; color:var(--text-muted); line-height:1.2;">The request is classified and enriched with actionable details.</div>
             </div>
           </div>
 
-          <!-- Identity Verification Method -->
-          <div style="margin-bottom:18px;">
-            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Identity Verification Method & Reference:</label>
-            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-              <div style="display:flex; gap:6px;">
-                <button type="button" class="dsar-dash-filter-pill active intake-verif-tab" data-method="Government ID">🪪 Government ID</button>
-                <button type="button" class="dsar-dash-filter-pill intake-verif-tab" data-method="Email OTP">✉️ Registered Email OTP</button>
-                <button type="button" class="dsar-dash-filter-pill intake-verif-tab" data-method="Account Auth">🔑 Account SSO / Auth</button>
+        </div>
+
+        <!-- 3-Column Card Grid Container -->
+        <div class="dsar-ai-cards-grid" style="display:grid; grid-template-columns: 1fr 1fr 1.25fr; gap:20px; align-items:start; margin-bottom:24px;">
+
+          <!-- ── CARD 1: Request Submission ────────────────────────────── -->
+          <div id="card-step1-submission" class="db-card dsar-step-card active" style="padding:22px 20px; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; position:relative;">
+            
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:18px;">
+              <div style="width:28px; height:28px; border-radius:6px; background:rgba(37,99,235,0.12); color:#3b82f6; display:flex; align-items:center; justify-content:center; font-size:0.9rem;">
+                📄
               </div>
-              <div style="flex:1; min-width:220px;">
-                <input type="text" id="intake-id-ref" class="input-field" placeholder="ID / Verification Reference (e.g. PASS-8891 / OTP-334)" style="width:100%;">
+              <h3 style="font-size:0.98rem; font-weight:700; color:var(--text-bright); margin:0;">Data Subject Request</h3>
+            </div>
+
+            <!-- Natural Language Request Textarea -->
+            <div style="margin-bottom:16px;">
+              <label for="intake-request-text" style="display:block; font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Your request</label>
+              <textarea id="intake-request-text" class="input-field" rows="4" style="width:100%; resize:vertical; font-size:0.85rem; line-height:1.45;" placeholder="I want all information your company holds about me and I also want my marketing data removed.">I want all information your company holds about me and I also want my marketing data removed.</textarea>
+              
+              <!-- Quick Suggestion Chips -->
+              <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                <button type="button" class="btn-ghost btn-sm intake-sample-chip" data-sample="I want all information your company holds about me and I also want my marketing data removed." style="font-size:0.7rem; padding:2px 8px; border-radius:12px; color:var(--cyan); border-color:rgba(6,182,212,0.3);">⚡ Multi-Intent Demo</button>
+                <button type="button" class="btn-ghost btn-sm intake-sample-chip" data-sample="Please permanently delete and erase all my account records, purchase logs, and telemetry under GDPR Art 17." style="font-size:0.7rem; padding:2px 8px; border-radius:12px; color:#ec4899; border-color:rgba(236,72,153,0.3);">🗑️ Pure Deletion</button>
+                <button type="button" class="btn-ghost btn-sm intake-sample-chip" data-sample="Please provide an export of all my personal data, customer transactions, and communications in machine-readable format." style="font-size:0.7rem; padding:2px 8px; border-radius:12px; color:#3b82f6; border-color:rgba(59,130,246,0.3);">📦 Data Access</button>
               </div>
             </div>
-          </div>
 
-          <!-- Consent & Submit Button -->
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding-top:14px; border-top:1px solid var(--border);">
-            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.82rem; color:var(--text-secondary);">
-              <input type="checkbox" id="intake-consent-checkbox" checked>
-              <span>I confirm identity verification accuracy under DPDP Act 2023 & GDPR Art. 17 statutory regulations.</span>
-            </label>
-            <button type="button" id="btn-submit-final-intake" class="btn-primary" style="padding:10px 26px; font-weight:800; display:inline-flex; align-items:center; gap:8px;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              <span>Submit & Start AI Discovery Pipeline ➔</span>
+            <!-- Contact details -->
+            <div style="margin-bottom:16px; border-top:1px solid var(--border); padding-top:14px;">
+              <div style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                <span>👤 Contact details</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div>
+                  <label for="intake-full-name" style="display:block; font-size:0.74rem; font-weight:600; color:var(--text-muted); margin-bottom:4px;">Full name</label>
+                  <input type="text" id="intake-full-name" class="input-field" value="Alex Johnson" placeholder="Alex Johnson" style="width:100%;">
+                </div>
+                <div>
+                  <label for="intake-email" style="display:block; font-size:0.74rem; font-weight:600; color:var(--text-muted); margin-bottom:4px;">Email address</label>
+                  <input type="email" id="intake-email" class="input-field" value="alex.johnson@example.com" placeholder="alex.johnson@example.com" style="width:100%;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Preferred channel -->
+            <div style="margin-bottom:20px; border-top:1px solid var(--border); padding-top:14px;">
+              <div style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                <span>✉️ Preferred channel</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--text-bright); cursor:pointer;">
+                  <input type="radio" name="intake-preferred-channel" id="intake-channel-web" value="Web portal" checked>
+                  <span>Web portal</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--text-bright); cursor:pointer;">
+                  <input type="radio" name="intake-preferred-channel" id="intake-channel-email" value="Email">
+                  <span>Email</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--text-bright); cursor:pointer;">
+                  <input type="radio" name="intake-preferred-channel" id="intake-channel-phone" value="Phone">
+                  <span>Phone</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="button" id="btn-submit-intake-ai" class="btn-primary" style="width:100%; padding:12px 18px; font-weight:700; font-size:0.92rem; display:flex; align-items:center; justify-content:center; gap:8px; background:#2563eb; border-radius:8px; box-shadow:0 4px 14px rgba(37,99,235,0.35);">
+              <span>Submit Request</span>
+              <span style="font-size:1.1rem;">➔</span>
             </button>
+
           </div>
-        </form>
+
+          <!-- ── CARD 2: AI Analysis (Processing Animation) ────────────── -->
+          <div id="card-step2-processing" class="db-card dsar-step-card" style="padding:24px 20px; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; min-height:480px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            
+            <!-- AI Avatar Bot -->
+            <div id="dsar-ai-avatar-wrap" class="ai-bot-avatar-anim" style="margin-bottom:16px; position:relative;">
+              <div style="width:68px; height:68px; border-radius:50%; background:linear-gradient(135deg, rgba(37,99,235,0.2), rgba(6,182,212,0.2)); border:2px solid rgba(37,99,235,0.4); display:flex; align-items:center; justify-content:center; font-size:2rem; box-shadow:0 0 20px rgba(37,99,235,0.25);">
+                🤖
+              </div>
+            </div>
+
+            <h4 id="dsar-ai-process-title" style="font-size:1.05rem; font-weight:700; color:var(--text-bright); margin:0 0 20px 0; text-align:center;">AI Processing...</h4>
+
+            <!-- 6 Sequential Checklist Steps -->
+            <div id="dsar-ai-checklist" style="width:100%; max-width:280px; display:flex; flex-direction:column; gap:12px;">
+              
+              <div class="ai-check-item" data-index="1" style="display:flex; align-items:center; gap:10px; font-size:0.84rem; color:var(--text-secondary);">
+                <div class="ai-check-icon" style="width:20px; height:20px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.72rem; color:transparent; transition:all 0.3s ease;">✓</div>
+                <span>Analyzing request intent</span>
+              </div>
+
+              <div class="ai-check-item" data-index="2" style="display:flex; align-items:center; gap:10px; font-size:0.84rem; color:var(--text-secondary);">
+                <div class="ai-check-icon" style="width:20px; height:20px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.72rem; color:transparent; transition:all 0.3s ease;">✓</div>
+                <span>Identifying request types</span>
+              </div>
+
+              <div class="ai-check-item" data-index="3" style="display:flex; align-items:center; gap:10px; font-size:0.84rem; color:var(--text-secondary);">
+                <div class="ai-check-icon" style="width:20px; height:20px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.72rem; color:transparent; transition:all 0.3s ease;">✓</div>
+                <span>Determining jurisdiction</span>
+              </div>
+
+              <div class="ai-check-item" data-index="4" style="display:flex; align-items:center; gap:10px; font-size:0.84rem; color:var(--text-secondary);">
+                <div class="ai-check-icon" style="width:20px; height:20px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.72rem; color:transparent; transition:all 0.3s ease;">✓</div>
+                <span>Checking verification requirements</span>
+              </div>
+
+              <div class="ai-check-item" data-index="5" style="display:flex; align-items:center; gap:10px; font-size:0.84rem; color:var(--text-secondary);">
+                <div class="ai-check-icon" style="width:20px; height:20px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.72rem; color:transparent; transition:all 0.3s ease;">✓</div>
+                <span>Calculating SLA</span>
+              </div>
+
+              <div class="ai-check-item" data-index="6" style="display:flex; align-items:center; gap:10px; font-size:0.84rem; color:var(--text-secondary);">
+                <div class="ai-check-icon" style="width:20px; height:20px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.72rem; color:transparent; transition:all 0.3s ease;">✓</div>
+                <span>Mapping to internal teams</span>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- ── CARD 3: AI Analysis Results ───────────────────────────── -->
+          <div id="card-step3-results" class="db-card dsar-step-card" style="padding:22px 20px; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; opacity:0.85;">
+            
+            <!-- Success Status Alert Banner -->
+            <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:12px 14px; display:flex; align-items:flex-start; gap:10px; margin-bottom:16px;">
+              <div style="width:22px; height:22px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; flex-shrink:0;">✓</div>
+              <div>
+                <div id="ai-res-status-title" style="font-size:0.86rem; font-weight:700; color:#10b981;">Request Analyzed</div>
+                <div id="ai-res-status-desc" style="font-size:0.75rem; color:var(--text-secondary); line-height:1.3; margin-top:2px;">The AI has successfully classified your request and identified the next steps.</div>
+              </div>
+            </div>
+
+            <!-- Identified Request Types (Multi-Intent Badges) -->
+            <div style="margin-bottom:16px;">
+              <div style="font-size:0.76rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                <span>🏷️ Identified Request Types</span>
+              </div>
+              <div id="ai-res-identified-types" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:8px;">
+                <!-- Type 1: Access -->
+                <div style="padding:8px 10px; background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.3); border-radius:8px;">
+                  <div style="font-size:0.8rem; font-weight:700; color:#3b82f6;">Access Request</div>
+                  <div style="font-size:0.68rem; color:var(--text-secondary);">(view all personal data)</div>
+                </div>
+                <!-- Type 2: Deletion -->
+                <div style="padding:8px 10px; background:rgba(236,72,153,0.12); border:1px solid rgba(236,72,153,0.3); border-radius:8px;">
+                  <div style="font-size:0.8rem; font-weight:700; color:#ec4899;">Deletion Request</div>
+                  <div style="font-size:0.68rem; color:var(--text-secondary);">(remove marketing data)</div>
+                </div>
+                <!-- Type 3: Marketing -->
+                <div style="padding:8px 10px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:8px;">
+                  <div style="font-size:0.8rem; font-weight:700; color:#10b981;">Marketing / Consent</div>
+                  <div style="font-size:0.68rem; color:var(--text-secondary);">(opt-out of marketing)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Applicable Jurisdiction -->
+            <div style="margin-bottom:14px;">
+              <div style="font-size:0.76rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+                <span>🌐 Applicable Jurisdiction</span>
+              </div>
+              <div style="padding:10px 14px; background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div style="font-size:1.1rem; color:#3b82f6;">ℹ️</div>
+                  <div>
+                    <div id="ai-res-jurisdiction-name" style="font-size:0.85rem; font-weight:700; color:var(--text-bright);">Singapore (PDPA)</div>
+                    <div id="ai-res-jurisdiction-desc" style="font-size:0.72rem; color:var(--text-secondary);">Data protection regulations applicable to your request.</div>
+                  </div>
+                </div>
+                <div style="color:var(--text-muted); font-size:0.9rem;">➔</div>
+              </div>
+            </div>
+
+            <!-- Required Verification Box -->
+            <div style="margin-bottom:16px;">
+              <div style="font-size:0.76rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+                <span>🛡️ Required Verification</span>
+              </div>
+              <div style="padding:10px 14px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:8px; display:flex; align-items:center; gap:10px;">
+                <div style="font-size:1.1rem; color:#f59e0b;">👤</div>
+                <div>
+                  <div id="ai-res-verif-title" style="font-size:0.83rem; font-weight:700; color:#f59e0b;">Identity verification required</div>
+                  <div id="ai-res-verif-desc" style="font-size:0.72rem; color:var(--text-secondary);">We will send a verification link to your email and/or mobile number.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dual Grid: SLA & Relevant Internal Teams -->
+            <div style="display:grid; grid-template-columns: 1fr 1.3fr; gap:12px; margin-bottom:18px;">
+              
+              <!-- SLA Box -->
+              <div style="padding:12px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">
+                <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; gap:4px;">
+                  <span>🕒 SLA</span>
+                </div>
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <span style="font-size:1.2rem;">📅</span>
+                  <div>
+                    <div id="ai-res-sla-title" style="font-size:0.95rem; font-weight:800; color:var(--text-bright);">30 days</div>
+                    <div id="ai-res-sla-desc" style="font-size:0.68rem; color:var(--text-muted); line-height:1.25; margin-top:2px;">Standard response time (extendable by 30 days if needed).</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Relevant Internal Teams -->
+              <div style="padding:12px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">
+                <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; gap:4px;">
+                  <span>👥 Relevant Internal Teams</span>
+                </div>
+                <div id="ai-res-teams-list" style="display:flex; flex-direction:column; gap:5px; font-size:0.74rem;">
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <span style="color:#3b82f6;">👤</span>
+                    <span style="font-weight:600; color:var(--text-bright);">Privacy Team</span>
+                    <span style="font-size:0.65rem; color:var(--text-muted);">(overall coordination)</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <span style="color:#8b5cf6;">👤</span>
+                    <span style="font-weight:600; color:var(--text-bright);">Data Engineering</span>
+                    <span style="font-size:0.65rem; color:var(--text-muted);">(data discovery & collection)</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <span style="color:#10b981;">👤</span>
+                    <span style="font-weight:600; color:var(--text-bright);">Marketing Team</span>
+                    <span style="font-size:0.65rem; color:var(--text-muted);">(marketing data deletion)</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <span style="color:#f59e0b;">👤</span>
+                    <span style="font-weight:600; color:var(--text-bright);">Legal / Compliance</span>
+                    <span style="font-size:0.65rem; color:var(--text-muted);">(regulatory checks)</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Create DSAR Case Action Button -->
+            <button type="button" id="btn-create-dsar-case-final" class="btn-primary" style="width:100%; padding:12px 18px; font-weight:700; font-size:0.92rem; display:flex; align-items:center; justify-content:center; gap:8px; background:#2563eb; border-radius:8px; box-shadow:0 4px 14px rgba(37,99,235,0.35);">
+              <span>➔ Create DSAR Case</span>
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- 4 Feature Highlights Banner (Bottom) -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; padding:14px 18px; background:var(--bg-input); border-radius:10px; border:1px solid var(--border);">
+          
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:34px; height:34px; border-radius:50%; background:rgba(37,99,235,0.12); color:#3b82f6; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">
+              🧠
+            </div>
+            <div style="font-size:0.78rem; font-weight:600; color:var(--text-secondary); line-height:1.3;">
+              AI understands natural language
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:34px; height:34px; border-radius:50%; background:rgba(6,182,212,0.12); color:var(--cyan); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">
+              🎯
+            </div>
+            <div style="font-size:0.78rem; font-weight:600; color:var(--text-secondary); line-height:1.3;">
+              Automatically classifies and enriches the request
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:34px; height:34px; border-radius:50%; background:rgba(16,185,129,0.12); color:#10b981; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">
+              🛡️
+            </div>
+            <div style="font-size:0.78rem; font-weight:600; color:var(--text-secondary); line-height:1.3;">
+              Ensures compliance and security
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:34px; height:34px; border-radius:50%; background:rgba(168,85,247,0.12); color:#a855f7; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">
+              ⚡
+            </div>
+            <div style="font-size:0.78rem; font-weight:600; color:var(--text-secondary); line-height:1.3;">
+              Gets the right teams on the right tasks
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
       <!-- Step 2 Identity Resolution & Data Discovery Card (Hidden by Default until Proceed is clicked) -->

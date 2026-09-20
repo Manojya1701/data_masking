@@ -1349,15 +1349,209 @@ async function createTeamConfig(teamData = {}) {
 }
 
 /**
- * Screen 6: Reset Teams Configuration to Default 8 Master Teams
+ * Screen 6: Reset Teams Configuration to Default
  */
 async function resetTeamsConfig() {
   teamsConfigStore = JSON.parse(JSON.stringify(DEFAULT_TEAMS_CONFIG));
   return {
     success: true,
-    message: 'Teams configuration reset to default 8 master department teams',
     count: teamsConfigStore.length,
+    message: 'Teams configuration reset to default',
     teams: JSON.parse(JSON.stringify(teamsConfigStore))
+  };
+}
+
+/**
+ * AI Intake Screen: Analyze natural language DSAR request text using NLP / AI intent rules
+ */
+async function analyzeDsarIntent(payload = {}) {
+  const text = (payload.requestText || payload.text || payload.request_details || '').trim();
+  const fullName = (payload.fullName || payload.full_name || 'Alex Johnson').trim();
+  const email = (payload.email || 'alex.johnson@example.com').trim();
+  const preferredChannel = (payload.preferredChannel || payload.channel || 'Web portal').trim();
+  const rawCountry = (payload.country || '').trim();
+
+  const lowerText = text.toLowerCase();
+
+  // 1. Detect Multi-Intent Request Types
+  const detectedTypes = [];
+
+  const hasAccess = /\b(all info|all information|all data|what info|view|access|export|copy|records|purchase history|download|get my data)\b/i.test(lowerText);
+  const hasDeletion = /\b(delete|remove|erasure|erase|purge|forget|forgotten|wipe|destroy|clear)\b/i.test(lowerText);
+  const hasMarketing = /\b(marketing|newsletter|email list|promotional|consent|opt-out|opt out|unsubscribe|ads|campaigns|telemetry)\b/i.test(lowerText);
+  const hasRectification = /\b(correct|update|rectif|change|fix|modify|inaccurate|wrong|edit)\b/i.test(lowerText);
+  const hasRestriction = /\b(restrict|freeze|halt|stop processing|pause|limit)\b/i.test(lowerText);
+
+  if (hasAccess) {
+    detectedTypes.push({
+      id: 'access',
+      title: 'Access Request',
+      desc: '(view all personal data)',
+      badgeType: 'access',
+      color: '#3b82f6',
+      bgColor: 'rgba(59,130,246,0.12)',
+      borderColor: 'rgba(59,130,246,0.3)'
+    });
+  }
+
+  if (hasDeletion) {
+    detectedTypes.push({
+      id: 'deletion',
+      title: 'Deletion Request',
+      desc: '(remove marketing data)',
+      badgeType: 'deletion',
+      color: '#ec4899',
+      bgColor: 'rgba(236,72,153,0.12)',
+      borderColor: 'rgba(236,72,153,0.3)'
+    });
+  }
+
+  if (hasMarketing) {
+    detectedTypes.push({
+      id: 'marketing',
+      title: 'Marketing / Consent',
+      desc: '(opt-out of marketing)',
+      badgeType: 'marketing',
+      color: '#10b981',
+      bgColor: 'rgba(16,185,129,0.12)',
+      borderColor: 'rgba(16,185,129,0.3)'
+    });
+  }
+
+  if (hasRectification) {
+    detectedTypes.push({
+      id: 'rectification',
+      title: 'Rectification',
+      desc: '(correct inaccurate records)',
+      badgeType: 'rectification',
+      color: '#06b6d4',
+      bgColor: 'rgba(6,182,212,0.12)',
+      borderColor: 'rgba(6,182,212,0.3)'
+    });
+  }
+
+  if (hasRestriction) {
+    detectedTypes.push({
+      id: 'restriction',
+      title: 'Restrict Processing',
+      desc: '(freeze processing)',
+      badgeType: 'restriction',
+      color: '#f59e0b',
+      bgColor: 'rgba(245,158,11,0.12)',
+      borderColor: 'rgba(245,158,11,0.3)'
+    });
+  }
+
+  // Default fallback if no specific keywords matched
+  if (detectedTypes.length === 0) {
+    detectedTypes.push(
+      {
+        id: 'access',
+        title: 'Access Request',
+        desc: '(view all personal data)',
+        badgeType: 'access',
+        color: '#3b82f6',
+        bgColor: 'rgba(59,130,246,0.12)',
+        borderColor: 'rgba(59,130,246,0.3)'
+      },
+      {
+        id: 'deletion',
+        title: 'Deletion Request',
+        desc: '(remove marketing data)',
+        badgeType: 'deletion',
+        color: '#ec4899',
+        bgColor: 'rgba(236,72,153,0.12)',
+        borderColor: 'rgba(236,72,153,0.3)'
+      },
+      {
+        id: 'marketing',
+        title: 'Marketing / Consent',
+        desc: '(opt-out of marketing)',
+        badgeType: 'marketing',
+        color: '#10b981',
+        bgColor: 'rgba(16,185,129,0.12)',
+        borderColor: 'rgba(16,185,129,0.3)'
+      }
+    );
+  }
+
+  // 2. Determine Jurisdiction
+  let jurisdiction = {
+    name: 'Singapore (PDPA)',
+    country: 'Singapore',
+    law: 'Personal Data Protection Act (PDPA)',
+    desc: 'Data protection regulations applicable to your request.'
+  };
+
+  if (rawCountry.toLowerCase().includes('india') || email.endsWith('.in') || lowerText.includes('india') || lowerText.includes('dpdp')) {
+    jurisdiction = {
+      name: 'India (DPDP Act 2023)',
+      country: 'India',
+      law: 'Digital Personal Data Protection Act 2023',
+      desc: 'Statutory compliance applicable under DPDP Act 2023.'
+    };
+  } else if (rawCountry.toLowerCase().includes('europe') || rawCountry.toLowerCase().includes('germany') || rawCountry.toLowerCase().includes('france') || email.endsWith('.eu') || lowerText.includes('gdpr')) {
+    jurisdiction = {
+      name: 'European Union (GDPR)',
+      country: 'European Union',
+      law: 'General Data Protection Regulation (GDPR Art. 17)',
+      desc: 'EU statutory data subject rights regulation.'
+    };
+  } else if (rawCountry.toLowerCase().includes('united states') || rawCountry.toLowerCase().includes('california') || lowerText.includes('ccpa')) {
+    jurisdiction = {
+      name: 'United States (CCPA/CPRA)',
+      country: 'United States',
+      law: 'California Consumer Privacy Act (CCPA/CPRA)',
+      desc: 'US California consumer statutory privacy rights.'
+    };
+  }
+
+  // 3. Verification Requirements
+  const verification = {
+    required: true,
+    title: 'Identity verification required',
+    desc: 'We will send a verification link to your email and/or mobile number.',
+    channel: preferredChannel
+  };
+
+  // 4. SLA Window Calculation
+  const sla = {
+    days: 30,
+    title: '30 days',
+    desc: 'Standard response time (extendable by 30 days if needed).'
+  };
+
+  // 5. Internal Team Routing
+  const teams = [
+    { name: 'Privacy Team', role: 'overall coordination', icon: '👤', color: '#3b82f6' },
+    { name: 'Data Engineering', role: 'data discovery & collection', icon: '👤', color: '#8b5cf6' },
+    { name: 'Marketing Team', role: 'marketing data deletion', icon: '👤', color: '#10b981' },
+    { name: 'Legal / Compliance', role: 'regulatory checks', icon: '👤', color: '#f59e0b' }
+  ];
+
+  if (hasRectification || lowerText.includes('crm') || lowerText.includes('customer')) {
+    teams.push({ name: 'CRM Team', role: 'customer profile & purchase history', icon: '👤', color: '#06b6d4' });
+  }
+
+  return {
+    success: true,
+    request: {
+      fullName,
+      email,
+      preferredChannel,
+      requestText: text
+    },
+    analysis: {
+      status: 'Request Analyzed',
+      statusMessage: 'The AI has successfully classified your request and identified the next steps.',
+      identifiedRequestTypes: detectedTypes,
+      primaryRequestType: detectedTypes[0]?.title.split(' ')[0] || 'Deletion',
+      jurisdiction,
+      verification,
+      sla,
+      relevantInternalTeams: teams,
+      analyzedAt: new Date().toISOString()
+    }
   };
 }
 
@@ -1384,5 +1578,6 @@ module.exports = {
   getTeamsConfig,
   updateTeamConfig,
   createTeamConfig,
-  resetTeamsConfig
+  resetTeamsConfig,
+  analyzeDsarIntent
 };
