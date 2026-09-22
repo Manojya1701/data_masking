@@ -6,7 +6,7 @@
  * - Natural language request submission with interactive prompt chips
  * - Real-time intent quality meter & dynamic character/word counter
  * - Interactive privacy scope pill toggles
- * - Dynamic preferred channel selectors (Web portal, Email with alt address, Phone with country code & OTP)
+ * - Dynamic preferred channel selectors (Web portal, Email with alt address, Phone with country code)
  * - Sequential AI processing micro-animations (6-step intent analysis checklist)
  * - Dynamic AI enrichment results (multi-intent classification, jurisdiction, verification, SLA, team routing)
  * - Direct transition into DSAR Case Registration & Identity Discovery Pipeline
@@ -275,8 +275,25 @@ function renderAnalysisResults(analysis) {
   // Required Verification
   const verifTitle = document.getElementById('ai-res-verif-title');
   const verifDesc = document.getElementById('ai-res-verif-desc');
-  if (verifTitle && analysis.verification) verifTitle.textContent = analysis.verification.title || 'Identity verification required';
-  if (verifDesc && analysis.verification) verifDesc.textContent = analysis.verification.desc || 'We will send a verification link to your email and/or mobile number.';
+  const verifBadge = document.getElementById('ai-res-verif-badge');
+  const verifIcon = document.getElementById('ai-res-verif-icon');
+
+  if (verifTitle && analysis.verification) {
+    verifTitle.textContent = analysis.verification.title || 'Identity Link / Authenticated Portal Verification';
+    verifTitle.style.color = 'var(--text-bright)';
+  }
+  if (verifDesc && analysis.verification) {
+    verifDesc.textContent = analysis.verification.desc || 'We will send a secure verification confirmation to your email and/or mobile number.';
+  }
+  if (verifBadge) {
+    verifBadge.textContent = 'Identity Verified';
+    verifBadge.style.color = '#10b981';
+    verifBadge.style.background = 'rgba(16,185,129,0.12)';
+    verifBadge.style.borderColor = 'rgba(16,185,129,0.3)';
+  }
+  if (verifIcon) {
+    verifIcon.textContent = '🛡️';
+  }
 
   // SLA
   const slaTitle = document.getElementById('ai-res-sla-title');
@@ -352,7 +369,7 @@ export async function handleAiIntakeSubmit(e) {
   }
 
   if (preferredChannel === 'Phone' && !phoneNum) {
-    showToast('Please enter mobile phone number for SMS OTP verification.', 'warning');
+    showToast('Please enter mobile phone number for SMS delivery updates.', 'warning');
     if (phoneNumInput) phoneNumInput.focus();
     return;
   }
@@ -488,8 +505,8 @@ export async function handleCreateDsarCase(e) {
     requestType: primaryType,
     scope: detectedTypesStr,
     requestDetails: requestText,
-    verificationType: preferredChannel === 'Phone' ? 'SMS OTP Auth' : 'Identity Link / Email Auth',
-    verificationEvidence: `AI Portal Verified (${preferredChannel})`,
+    verificationType: preferredChannel === 'Phone' ? 'Phone SMS Verification' : (preferredChannel === 'Email' ? 'Email Auth Link' : 'Authenticated Web Portal'),
+    verificationEvidence: `Portal Verified (${preferredChannel})`,
     status: 'In Progress'
   };
 

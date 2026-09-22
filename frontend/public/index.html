@@ -2526,15 +2526,15 @@
               </div>
               
               <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-bottom:10px;">
-                <!-- Channel 1: Web portal -->
-                <label class="channel-tile-option active" id="tile-channel-web">
-                  <input type="radio" name="intake-preferred-channel" id="intake-channel-web" value="Web portal" checked>
+                <!-- Channel 1: Phone / SMS (Default) -->
+                <label class="channel-tile-option active" id="tile-channel-phone">
+                  <input type="radio" name="intake-preferred-channel" id="intake-channel-phone" value="Phone" checked>
                   <div>
-                    <div style="font-weight:700; font-size:0.8rem; color:var(--text-bright);">🌐 Web Portal</div>
-                    <div style="font-size:0.65rem; color:var(--text-muted);">Secure Portal</div>
+                    <div style="font-weight:700; font-size:0.8rem; color:var(--text-bright);">📱 Phone SMS</div>
+                    <div style="font-size:0.65rem; color:var(--text-muted);">SMS Notifications</div>
                   </div>
                 </label>
-                
+
                 <!-- Channel 2: Email -->
                 <label class="channel-tile-option" id="tile-channel-email">
                   <input type="radio" name="intake-preferred-channel" id="intake-channel-email" value="Email">
@@ -2544,40 +2544,25 @@
                   </div>
                 </label>
 
-                <!-- Channel 3: Phone / SMS -->
-                <label class="channel-tile-option" id="tile-channel-phone">
-                  <input type="radio" name="intake-preferred-channel" id="intake-channel-phone" value="Phone">
+                <!-- Channel 3: Web portal -->
+                <label class="channel-tile-option" id="tile-channel-web">
+                  <input type="radio" name="intake-preferred-channel" id="intake-channel-web" value="Web portal">
                   <div>
-                    <div style="font-weight:700; font-size:0.8rem; color:var(--text-bright);">📱 Phone SMS</div>
-                    <div style="font-size:0.65rem; color:var(--text-muted);">Mobile OTP</div>
+                    <div style="font-weight:700; font-size:0.8rem; color:var(--text-bright);">🌐 Web Portal</div>
+                    <div style="font-size:0.65rem; color:var(--text-muted);">Secure Portal</div>
                   </div>
                 </label>
               </div>
 
               <!-- Conditional Channel Details Sub-Boxes -->
-              <!-- Sub-Box 1: Web Portal Note -->
-              <div id="channel-details-web" class="channel-detail-subbox" style="padding:8px 12px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.2); border-radius:6px; font-size:0.72rem; color:var(--text-secondary); display:flex; align-items:center; gap:8px;">
-                <span>🔒</span>
-                <span>Results and certificate will be securely delivered to your authenticated Segmento Privacy Dashboard.</span>
-              </div>
-
-              <!-- Sub-Box 2: Email Note & Alternate Email Input (Hidden by default) -->
-              <div id="channel-details-email" class="channel-detail-subbox hidden" style="padding:10px 12px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2); border-radius:6px; font-size:0.72rem; color:var(--text-secondary);">
-                <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
-                  <span>✉️</span>
-                  <span>Direct delivery to primary email. You may also specify an alternate secure email:</span>
+              <!-- Sub-Box 1: Phone Number Input (Active by default) -->
+              <div id="channel-details-phone" class="channel-detail-subbox" style="padding:12px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.25); border-radius:8px; font-size:0.75rem; color:var(--text-secondary);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <span style="display:flex; align-items:center; gap:6px; font-weight:700; color:var(--text-bright);">📱 Mobile Phone / SMS Updates</span>
+                  <span style="font-size:0.68rem; color:#f59e0b; font-weight:700;">Direct SMS</span>
                 </div>
-                <input type="email" id="intake-alt-email" class="input-field" placeholder="Alternate notification email (optional)" style="width:100%; font-size:0.75rem; padding:4px 8px;">
-              </div>
-
-              <!-- Sub-Box 3: Phone Number Input (Hidden by default, shown when Phone selected) -->
-              <div id="channel-details-phone" class="channel-detail-subbox hidden" style="padding:10px 12px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:6px; font-size:0.72rem; color:var(--text-secondary);">
-                <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
-                  <span>📱</span>
-                  <span>Enter mobile phone number for secure SMS OTP verification:</span>
-                </div>
-                <div style="display:flex; gap:8px;">
-                  <select id="intake-phone-country" class="input-field" style="width:110px; font-size:0.75rem; padding:4px 8px;">
+                <div style="display:flex; gap:8px; margin-bottom:6px;">
+                  <select id="intake-phone-country" class="input-field" style="width:110px; font-size:0.75rem; padding:6px 8px;">
                     <option value="+65">+65 (SG)</option>
                     <option value="+91">+91 (IN)</option>
                     <option value="+1">+1 (US)</option>
@@ -2585,7 +2570,35 @@
                     <option value="+61">+61 (AU)</option>
                     <option value="+49">+49 (DE)</option>
                   </select>
-                  <input type="tel" id="intake-phone-number" class="input-field" value="9123 4567" placeholder="e.g. 9123 4567" style="flex:1; font-size:0.75rem; padding:4px 8px;">
+                  <input type="tel" id="intake-phone-number" class="input-field" value="9123 4567" placeholder="e.g. 9123 4567" style="flex:1; font-size:0.75rem; padding:6px 8px;">
+                </div>
+                <div style="font-size:0.7rem; color:var(--text-muted); line-height:1.3;">
+                  SMS delivery tracking and status dispatch will be routed directly to this registered mobile number.
+                </div>
+              </div>
+
+              <!-- Sub-Box 2: Email Note & Alternate Email Input (Hidden by default) -->
+              <div id="channel-details-email" class="channel-detail-subbox hidden" style="padding:12px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2); border-radius:8px; font-size:0.75rem; color:var(--text-secondary);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <span style="display:flex; align-items:center; gap:6px; font-weight:700; color:var(--text-bright);">✉️ Secure Email Delivery</span>
+                  <span style="font-size:0.68rem; color:#10b981; font-weight:700;">Encrypted Link</span>
+                </div>
+                <div style="margin-bottom:8px;">
+                  <input type="email" id="intake-alt-email" class="input-field" placeholder="Alternate delivery email (optional)" style="width:100%; font-size:0.75rem; padding:6px 8px;">
+                </div>
+                <div style="font-size:0.7rem; color:var(--text-muted); line-height:1.3;">
+                  Encrypted archive download link and statutory audit certificate will be delivered to your primary and alternate email.
+                </div>
+              </div>
+
+              <!-- Sub-Box 3: Web Portal Note (Hidden by default) -->
+              <div id="channel-details-web" class="channel-detail-subbox hidden" style="padding:12px; background:rgba(37,99,235,0.06); border:1px solid rgba(37,99,235,0.2); border-radius:8px; font-size:0.75rem; color:var(--text-secondary);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <span style="display:flex; align-items:center; gap:6px; font-weight:700; color:var(--text-bright);">🌐 Web Portal Authentication</span>
+                  <span style="font-size:0.68rem; color:var(--cyan); font-weight:700;">Authenticated Session</span>
+                </div>
+                <div style="font-size:0.72rem; color:var(--text-secondary); line-height:1.4;">
+                  Results and statutory audit certificate will be securely delivered to your authenticated Segmento Privacy Dashboard.
                 </div>
               </div>
 
@@ -2720,15 +2733,19 @@
 
             <!-- Required Verification Box -->
             <div style="margin-bottom:16px;">
-              <div style="font-size:0.76rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+              <div style="font-size:0.76rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between;">
                 <span>🛡️ Required Verification</span>
+                <span id="ai-res-verif-badge" style="font-size:0.7rem; font-weight:700; color:#10b981; background:rgba(16,185,129,0.12); padding:1px 6px; border-radius:10px; border:1px solid rgba(16,185,129,0.3);">Identity Verified</span>
               </div>
-              <div style="padding:10px 14px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:8px; display:flex; align-items:center; gap:10px;">
-                <div style="font-size:1.1rem; color:#f59e0b;">👤</div>
-                <div>
-                  <div id="ai-res-verif-title" style="font-size:0.83rem; font-weight:700; color:#f59e0b;">Identity verification required</div>
-                  <div id="ai-res-verif-desc" style="font-size:0.72rem; color:var(--text-secondary);">We will send a verification link to your email and/or mobile number.</div>
+              <div style="padding:10px 14px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div style="display:flex; align-items:center; gap:10px; flex:1;">
+                  <div id="ai-res-verif-icon" style="font-size:1.1rem; color:#10b981;">🛡️</div>
+                  <div>
+                    <div id="ai-res-verif-title" style="font-size:0.83rem; font-weight:700; color:var(--text-bright);">Identity Link / Authenticated Portal Verification</div>
+                    <div id="ai-res-verif-desc" style="font-size:0.72rem; color:var(--text-secondary);">We will send a secure verification confirmation to your email and/or mobile number.</div>
+                  </div>
                 </div>
+                <div style="color:#10b981; font-size:1rem; font-weight:700;">✓</div>
               </div>
             </div>
 
@@ -3918,7 +3935,7 @@
     </div>
   </div>
 
-  <!-- ── 11. FRONTEND JS MODULES ────────────────────────────────────────────── -->
+  <!-- ── 12. FRONTEND JS MODULES ────────────────────────────────────────────── -->
   <script type="module" src="js/app.js"></script>
 
 </body>

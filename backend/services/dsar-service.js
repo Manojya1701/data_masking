@@ -53,8 +53,8 @@ const DEFAULT_INITIAL_REQUESTS = [
     request_type: 'Access',
     subject_category: 'customer',
     request_details: 'Export full transaction ledger and profile history.',
-    verification_type: 'Email OTP',
-    verification_evidence: 'Registered Email OTP Verified (#OTP-9921)',
+    verification_type: 'Email Auth Link',
+    verification_evidence: 'Registered Email Auth Link Verified',
     due_date: 'Sep 24, 2026',
     status: 'Assigned',
     assigned_to: 'Sarah Lee',
@@ -158,13 +158,13 @@ const DEFAULT_INITIAL_REQUESTS = [
     request_type: 'full_erasure',
     subject_category: 'customer',
     request_details: 'Full GDPR right to erasure.',
-    verification_type: 'Email OTP',
-    verification_evidence: 'Email OTP Verified (#OTP-334)',
+    verification_type: 'Email Auth Link',
+    verification_evidence: 'Email Auth Link Verified',
     due_date: 'Oct 02, 2026',
     status: 'RECEIVED',
     assigned_to: 'Michael Tan',
     priority: 'Medium',
-    internal_notes: 'Email OTP confirmed. Target profile scan complete.',
+    internal_notes: 'Email auth confirmed. Target profile scan complete.',
     created_at: '2026-09-02T11:15:00.000Z'
   },
   {
@@ -200,8 +200,8 @@ const DEFAULT_INITIAL_REQUESTS = [
     request_type: 'anonymization',
     subject_category: 'customer',
     request_details: 'Anonymize personal data in analytics databases.',
-    verification_type: 'Mobile OTP',
-    verification_evidence: 'Mobile OTP Verified (#OTP-518)',
+    verification_type: 'Mobile SMS Verification',
+    verification_evidence: 'Mobile SMS Auth Verified',
     due_date: 'Oct 04, 2026',
     status: 'RECEIVED',
     assigned_to: 'Alex Chen',
@@ -1370,23 +1370,26 @@ async function analyzeDsarIntent(payload = {}) {
   const email = (payload.email || 'alex.johnson@example.com').trim();
   const preferredChannel = (payload.preferredChannel || payload.channel || 'Web portal').trim();
   const rawCountry = (payload.country || '').trim();
+  const phone = (payload.phone || '').trim();
 
   const lowerText = text.toLowerCase();
 
-  // 1. Detect Multi-Intent Request Types
-  const detectedTypes = [];
+  // 1. Detect Intent Keywords with NLP precision
+  const hasDeletion = /\b(delete|remove|erasure|erase|purge|forget|forgotten|wipe|destroy|clear|shred|trash)\b/i.test(lowerText);
+  const hasAccess = /\b(access|view all|all info|all information|all data|what info|export|copy of|download all|get my data|transparency|give me my data|provide all)\b/i.test(lowerText) || (/\b(access|export|copy)\b/i.test(lowerText) && !hasDeletion);
+  const hasMarketing = /\b(marketing|newsletter|email list|promotional|opt-out|opt out|unsubscribe|ads|campaigns|ad tracking|ad pixel)\b/i.test(lowerText);
+  const hasRectification = /\b(correct|update|rectif|change|fix|modify|inaccurate|wrong|edit|address change)\b/i.test(lowerText);
+  const hasRestriction = /\b(restrict|freeze|halt|stop processing|pause|limit|dispute|objection)\b/i.test(lowerText);
+  const isUrgent = /\b(urgent|critical|immediate|asap|breach|court|subpoena|legal notice)\b/i.test(lowerText);
 
-  const hasAccess = /\b(all info|all information|all data|what info|view|access|export|copy|records|purchase history|download|get my data)\b/i.test(lowerText);
-  const hasDeletion = /\b(delete|remove|erasure|erase|purge|forget|forgotten|wipe|destroy|clear)\b/i.test(lowerText);
-  const hasMarketing = /\b(marketing|newsletter|email list|promotional|consent|opt-out|opt out|unsubscribe|ads|campaigns|telemetry)\b/i.test(lowerText);
-  const hasRectification = /\b(correct|update|rectif|change|fix|modify|inaccurate|wrong|edit)\b/i.test(lowerText);
-  const hasRestriction = /\b(restrict|freeze|halt|stop processing|pause|limit)\b/i.test(lowerText);
+  // 2. Build Specific Detected Type Pills
+  const detectedTypes = [];
 
   if (hasAccess) {
     detectedTypes.push({
       id: 'access',
       title: 'Access Request',
-      desc: '(view all personal data)',
+      desc: '(view & export personal data)',
       badgeType: 'access',
       color: '#3b82f6',
       bgColor: 'rgba(59,130,246,0.12)',
@@ -1398,7 +1401,7 @@ async function analyzeDsarIntent(payload = {}) {
     detectedTypes.push({
       id: 'deletion',
       title: 'Deletion Request',
-      desc: '(remove marketing data)',
+      desc: '(permanent erasure / wipe)',
       badgeType: 'deletion',
       color: '#ec4899',
       bgColor: 'rgba(236,72,153,0.12)',
@@ -1410,7 +1413,7 @@ async function analyzeDsarIntent(payload = {}) {
     detectedTypes.push({
       id: 'marketing',
       title: 'Marketing / Consent',
-      desc: '(opt-out of marketing)',
+      desc: '(opt-out of marketing & ads)',
       badgeType: 'marketing',
       color: '#10b981',
       bgColor: 'rgba(16,185,129,0.12)',
@@ -1421,7 +1424,7 @@ async function analyzeDsarIntent(payload = {}) {
   if (hasRectification) {
     detectedTypes.push({
       id: 'rectification',
-      title: 'Rectification',
+      title: 'Rectification Request',
       desc: '(correct inaccurate records)',
       badgeType: 'rectification',
       color: '#06b6d4',
@@ -1434,7 +1437,7 @@ async function analyzeDsarIntent(payload = {}) {
     detectedTypes.push({
       id: 'restriction',
       title: 'Restrict Processing',
-      desc: '(freeze processing)',
+      desc: '(freeze processing & audit hold)',
       badgeType: 'restriction',
       color: '#f59e0b',
       bgColor: 'rgba(245,158,11,0.12)',
@@ -1442,95 +1445,179 @@ async function analyzeDsarIntent(payload = {}) {
     });
   }
 
-  // Default fallback if no specific keywords matched
+  // If no specific match, default intelligently to general data inquiry
   if (detectedTypes.length === 0) {
-    detectedTypes.push(
-      {
-        id: 'access',
-        title: 'Access Request',
-        desc: '(view all personal data)',
-        badgeType: 'access',
-        color: '#3b82f6',
-        bgColor: 'rgba(59,130,246,0.12)',
-        borderColor: 'rgba(59,130,246,0.3)'
-      },
-      {
-        id: 'deletion',
-        title: 'Deletion Request',
-        desc: '(remove marketing data)',
-        badgeType: 'deletion',
-        color: '#ec4899',
-        bgColor: 'rgba(236,72,153,0.12)',
-        borderColor: 'rgba(236,72,153,0.3)'
-      },
-      {
-        id: 'marketing',
-        title: 'Marketing / Consent',
-        desc: '(opt-out of marketing)',
-        badgeType: 'marketing',
-        color: '#10b981',
-        bgColor: 'rgba(16,185,129,0.12)',
-        borderColor: 'rgba(16,185,129,0.3)'
-      }
-    );
+    detectedTypes.push({
+      id: 'access',
+      title: 'General Data Subject Request',
+      desc: '(inquiry & personal record check)',
+      badgeType: 'access',
+      color: '#3b82f6',
+      bgColor: 'rgba(59,130,246,0.12)',
+      borderColor: 'rgba(59,130,246,0.3)'
+    });
   }
 
-  // 2. Determine Jurisdiction
+  // Primary Request Type
+  let primaryType = 'Access';
+  if (hasDeletion) primaryType = 'Deletion';
+  else if (hasRectification) primaryType = 'Rectification';
+  else if (hasRestriction) primaryType = 'Restrict';
+  else if (hasMarketing) primaryType = 'Marketing';
+  else if (hasAccess) primaryType = 'Access';
+
+  // 3. Dynamic Legal Jurisdiction & Statutory SLA
   let jurisdiction = {
     name: 'Singapore (PDPA)',
     country: 'Singapore',
-    law: 'Personal Data Protection Act (PDPA)',
-    desc: 'Data protection regulations applicable to your request.'
+    law: 'Personal Data Protection Act (PDPA 2020 Amendment)',
+    desc: 'Statutory compliance under Singapore PDPA rules.'
+  };
+  let sla = {
+    days: 30,
+    title: isUrgent ? '7 days (Express)' : '30 days',
+    desc: isUrgent ? 'High priority statutory express turnaround window.' : 'Standard statutory response time (extendable by 30 days if complex).'
   };
 
-  if (rawCountry.toLowerCase().includes('india') || email.endsWith('.in') || lowerText.includes('india') || lowerText.includes('dpdp')) {
+  if (
+    rawCountry.toLowerCase().includes('india') ||
+    email.endsWith('.in') ||
+    phone.startsWith('+91') ||
+    lowerText.includes('india') ||
+    lowerText.includes('dpdp') ||
+    lowerText.includes('aadhaar')
+  ) {
     jurisdiction = {
       name: 'India (DPDP Act 2023)',
       country: 'India',
       law: 'Digital Personal Data Protection Act 2023',
-      desc: 'Statutory compliance applicable under DPDP Act 2023.'
+      desc: 'Statutory compliance under Indian DPDP Act 2023.'
     };
-  } else if (rawCountry.toLowerCase().includes('europe') || rawCountry.toLowerCase().includes('germany') || rawCountry.toLowerCase().includes('france') || email.endsWith('.eu') || lowerText.includes('gdpr')) {
+    sla = {
+      days: isUrgent ? 5 : 15,
+      title: isUrgent ? '5 days (Express)' : '15 days',
+      desc: 'Fast-track statutory compliance window under DPDP rules.'
+    };
+  } else if (
+    rawCountry.toLowerCase().includes('europe') ||
+    rawCountry.toLowerCase().includes('germany') ||
+    rawCountry.toLowerCase().includes('france') ||
+    rawCountry.toLowerCase().includes('uk') ||
+    email.endsWith('.eu') ||
+    email.endsWith('.de') ||
+    email.endsWith('.fr') ||
+    email.endsWith('.uk') ||
+    phone.startsWith('+44') ||
+    phone.startsWith('+49') ||
+    lowerText.includes('gdpr') ||
+    lowerText.includes('art 17') ||
+    lowerText.includes('art 15')
+  ) {
     jurisdiction = {
       name: 'European Union (GDPR)',
       country: 'European Union',
-      law: 'General Data Protection Regulation (GDPR Art. 17)',
-      desc: 'EU statutory data subject rights regulation.'
+      law: 'General Data Protection Regulation (GDPR Art. 15-22)',
+      desc: 'EU statutory data subject rights & cross-border safeguards.'
     };
-  } else if (rawCountry.toLowerCase().includes('united states') || rawCountry.toLowerCase().includes('california') || lowerText.includes('ccpa')) {
+    sla = {
+      days: isUrgent ? 7 : 30,
+      title: isUrgent ? '7 days (Urgent)' : '30 days',
+      desc: 'Standard 1-month statutory window under GDPR Article 12.'
+    };
+  } else if (
+    rawCountry.toLowerCase().includes('united states') ||
+    rawCountry.toLowerCase().includes('california') ||
+    rawCountry.toLowerCase().includes('usa') ||
+    phone.startsWith('+1') ||
+    email.endsWith('.us') ||
+    lowerText.includes('ccpa') ||
+    lowerText.includes('cpra') ||
+    lowerText.includes('california')
+  ) {
     jurisdiction = {
-      name: 'United States (CCPA/CPRA)',
+      name: 'United States (CCPA / CPRA)',
       country: 'United States',
-      law: 'California Consumer Privacy Act (CCPA/CPRA)',
+      law: 'California Consumer Privacy Act & CPRA Regulations',
       desc: 'US California consumer statutory privacy rights.'
+    };
+    sla = {
+      days: isUrgent ? 10 : 45,
+      title: isUrgent ? '10 days (Expedited)' : '45 days',
+      desc: 'Standard 45-day statutory compliance window under CCPA § 1798.130.'
     };
   }
 
-  // 3. Verification Requirements
-  const verification = {
+  // 4. Dynamic Verification Requirements Card
+  let verification = {
     required: true,
-    title: 'Identity verification required',
-    desc: 'We will send a verification link to your email and/or mobile number.',
+    title: 'Identity Verification Required',
+    desc: 'We will send a secure verification confirmation to your email and/or mobile number.',
     channel: preferredChannel
   };
 
-  // 4. SLA Window Calculation
-  const sla = {
-    days: 30,
-    title: '30 days',
-    desc: 'Standard response time (extendable by 30 days if needed).'
-  };
+  if (preferredChannel === 'Phone' || phone.length > 5) {
+    verification = {
+      required: true,
+      title: 'SMS Delivery & Verification Link',
+      desc: `A statutory confirmation link and tracking ID will be dispatched via SMS to ${phone || 'your registered phone number'}.`,
+      channel: 'Phone'
+    };
+  } else if (preferredChannel === 'Email') {
+    verification = {
+      required: true,
+      title: 'Encrypted Magic Link & Email Verification',
+      desc: `A secure statutory confirmation link will be delivered to ${email}.`,
+      channel: 'Email'
+    };
+  } else {
+    verification = {
+      required: true,
+      title: 'Authenticated Portal Verification',
+      desc: 'Verification handled via Segmento single sign-on & verified user session.',
+      channel: 'Web portal'
+    };
+  }
 
-  // 5. Internal Team Routing
-  const teams = [
-    { name: 'Privacy Team', role: 'overall coordination', icon: '👤', color: '#3b82f6' },
-    { name: 'Data Engineering', role: 'data discovery & collection', icon: '👤', color: '#8b5cf6' },
-    { name: 'Marketing Team', role: 'marketing data deletion', icon: '👤', color: '#10b981' },
-    { name: 'Legal / Compliance', role: 'regulatory checks', icon: '👤', color: '#f59e0b' }
-  ];
+  // 5. Dynamic Department Team Routing tailored strictly to the request
+  const teams = [];
 
-  if (hasRectification || lowerText.includes('crm') || lowerText.includes('customer')) {
-    teams.push({ name: 'CRM Team', role: 'customer profile & purchase history', icon: '👤', color: '#06b6d4' });
+  // Privacy Team is always lead coordinator
+  teams.push({ name: 'Privacy Team', role: 'overall coordination & compliance check', icon: '🛡️', color: '#3b82f6' });
+
+  if (hasDeletion) {
+    teams.push({ name: 'Data Engineering', role: 'data lake & database permanent purge', icon: '💾', color: '#8b5cf6' });
+    teams.push({ name: 'Security Operations', role: 'credential revocation & SIEM log wipe', icon: '🔒', color: '#ef4444' });
+  }
+
+  if (hasAccess) {
+    teams.push({ name: 'Data Engineering', role: 'cross-system extraction & ZIP packaging', icon: '📦', color: '#8b5cf6' });
+  }
+
+  if (hasMarketing) {
+    teams.push({ name: 'Marketing Team', role: 'marketing list suppression & ad pixel unlinking', icon: '📢', color: '#10b981' });
+  }
+
+  if (hasRectification || lowerText.includes('crm') || lowerText.includes('profile') || lowerText.includes('customer')) {
+    teams.push({ name: 'CRM Team', role: 'customer profile & billing records update', icon: '👥', color: '#06b6d4' });
+  }
+
+  if (hasRestriction || isUrgent || lowerText.includes('legal') || lowerText.includes('gdpr') || lowerText.includes('dispute')) {
+    teams.push({ name: 'Legal / Compliance', role: 'statutory hold & regulatory review', icon: '⚖️', color: '#f59e0b' });
+  }
+
+  // Ensure at least 2 teams if query was minimal
+  if (teams.length < 2) {
+    teams.push({ name: 'Data Engineering', role: 'data discovery & records verification', icon: '💾', color: '#8b5cf6' });
+  }
+
+  // Deduplicate teams by name
+  const uniqueTeams = [];
+  const seenTeamNames = new Set();
+  for (const t of teams) {
+    if (!seenTeamNames.has(t.name)) {
+      seenTeamNames.add(t.name);
+      uniqueTeams.push(t);
+    }
   }
 
   return {
@@ -1538,18 +1625,19 @@ async function analyzeDsarIntent(payload = {}) {
     request: {
       fullName,
       email,
+      phone,
       preferredChannel,
       requestText: text
     },
     analysis: {
       status: 'Request Analyzed',
-      statusMessage: 'The AI has successfully classified your request and identified the next steps.',
+      statusMessage: `AI successfully analyzed ${detectedTypes.length} intent(s) under ${jurisdiction.name}.`,
       identifiedRequestTypes: detectedTypes,
-      primaryRequestType: detectedTypes[0]?.title.split(' ')[0] || 'Deletion',
+      primaryRequestType: primaryType,
       jurisdiction,
       verification,
       sla,
-      relevantInternalTeams: teams,
+      relevantInternalTeams: uniqueTeams,
       analyzedAt: new Date().toISOString()
     }
   };

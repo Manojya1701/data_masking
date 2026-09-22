@@ -75,8 +75,8 @@ const DEFAULT_STORE = {
       request_type: 'Access',
       subject_category: 'customer',
       request_details: 'Export full transaction ledger and profile history.',
-      verification_type: 'Email OTP',
-      verification_evidence: 'Registered Email OTP Verified (#OTP-9921)',
+      verification_type: 'Email Auth Link',
+      verification_evidence: 'Registered Email Auth Link Verified',
       due_date: 'Sep 24, 2026',
       status: 'Assigned',
       created_at: '2026-08-25T11:20:00.000Z'
@@ -158,7 +158,7 @@ const DEFAULT_STORE = {
       customer_id: 'CUST-9901',
       request_type: 'full_erasure',
       subject_category: 'customer',
-      verification_evidence: 'Email OTP Verified (#OTP-334)',
+      verification_evidence: 'Email Auth Link Verified',
       due_date: 'Oct 02, 2026',
       status: 'RECEIVED',
       created_at: '2026-09-02T11:15:00.000Z'
@@ -186,7 +186,7 @@ const DEFAULT_STORE = {
       customer_id: 'CUST-7712',
       request_type: 'anonymization',
       subject_category: 'customer',
-      verification_evidence: 'Mobile OTP Verified (#OTP-518)',
+      verification_evidence: 'Mobile SMS Auth Verified',
       due_date: 'Oct 04, 2026',
       status: 'RECEIVED',
       created_at: '2026-09-04T09:45:00.000Z'

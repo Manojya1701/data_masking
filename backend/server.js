@@ -16,6 +16,8 @@ const fs = require('fs');
 
 const processRoutes =
   require('./routes/process.routes');
+const deletionRoutes =
+  require('./routes/deletion.routes');
 
 const app = express();
 const {
@@ -121,6 +123,16 @@ app.use(
 /* =========================================================
    API ROUTES
 ========================================================= */
+
+app.use(
+  '/api/v1/deletions',
+  deletionRoutes
+);
+
+app.use(
+  '/api/deletions',
+  deletionRoutes
+);
 
 app.use(
   '/api',
