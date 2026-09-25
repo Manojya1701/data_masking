@@ -18,6 +18,8 @@ const processRoutes =
   require('./routes/process.routes');
 const deletionRoutes =
   require('./routes/deletion.routes');
+const { setupGateway } =
+  require('./gateway');
 
 const app = express();
 const {
@@ -117,8 +119,11 @@ app.use(
 
 
 /* =========================================================
-   STATIC FRONTEND
+   SEGMENTO OAUTH 2.0 / OIDC API GATEWAY
 ========================================================= */
+
+setupGateway(app);
+
 
 /* =========================================================
    API ROUTES
