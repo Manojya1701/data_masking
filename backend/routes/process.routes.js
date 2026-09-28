@@ -469,7 +469,11 @@ router.get('/history', async (req, res) => {
   }
 });
 
-// ── GET /api/db-health ────────────────────────────────────────────────────────
+// ── GET /api/health & /api/db-health ──────────────────────────────────────────
+
+router.get('/health', (req, res) => {
+  return res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 router.get('/db-health', async (req, res) => {
   const health = await db.healthCheck();
