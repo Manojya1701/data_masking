@@ -1169,6 +1169,11 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <span>Team Tasks</span>
           </a>
+          <a class="dsar-sidebar-nav-item" data-tab="consent_hub" style="position:relative;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            <span>Consent Hub</span>
+            <span style="font-size:0.62rem; font-weight:800; padding:1px 5px; background:rgba(139,92,246,0.2); color:#a78bfa; border:1px solid rgba(139,92,246,0.3); border-radius:10px; margin-left:auto;">Art. 7(3)</span>
+          </a>
           <a class="dsar-sidebar-nav-item" data-tab="sla_breaches">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <span>SLA Breaches</span>
@@ -1835,6 +1840,196 @@
 
           </div> <!-- /#dsar-subview-settings -->
 
+          <!-- ── SUB-VIEW 7: CONSENT HUB & SELF-SERVE OPT-OUT MATRIX ──────────── -->
+          <div id="dsar-subview-consent-hub" class="dsar-subview hidden">
+            
+            <!-- Consent Hub Header Banner -->
+            <div class="db-card" style="padding:22px 26px; margin-bottom:20px; border-left:4px solid #8b5cf6;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+                <div>
+                  <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                    <span style="font-size:1.4rem;">✋</span>
+                    <h3 style="font-size:1.18rem; font-weight:800; color:var(--text-bright); margin:0;">Consent Hub &amp; Granular Processing Opt-Out</h3>
+                    <span class="meta-pill" style="background:rgba(139,92,246,0.15); color:#a78bfa; border:1px solid rgba(139,92,246,0.3); font-size:0.72rem; padding:2px 8px;">GDPR Art. 7(3) &bull; DPDP Sec. 6(4)</span>
+                  </div>
+                  <p style="font-size:0.82rem; color:var(--text-muted); margin:0; line-height:1.4;">
+                    Withdraw processing consent without deleting customer accounts. Instantly halts real-time marketing queues, AI LLM model training, and telemetry ingestion while generating immutable SHA-256 proof receipts.
+                  </p>
+                </div>
+                
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <button type="button" class="btn-ghost btn-sm" onclick="if (window.loadSubjectConsentStatus) window.loadSubjectConsentStatus('alex.johnson@example.com');" style="font-size:0.75rem; color:#a78bfa; border-color:rgba(139,92,246,0.3);">Alex Johnson</button>
+                  <button type="button" class="btn-ghost btn-sm" onclick="if (window.loadSubjectConsentStatus) window.loadSubjectConsentStatus('john.smith@example.com');" style="font-size:0.75rem; color:#a78bfa; border-color:rgba(139,92,246,0.3);">John Smith</button>
+                </div>
+              </div>
+
+              <!-- Subject Lookup Search Bar -->
+              <div style="margin-top:18px; padding-top:16px; border-top:1px solid var(--border); display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <div style="position:relative; flex:1; min-width:280px;">
+                  <input type="text" id="consent-lookup-identifier" class="input-field" value="alex.johnson@example.com" placeholder="Enter customer email (e.g. alex.johnson@example.com) or Customer ID (CUST-8842)..." style="width:100%; padding-left:36px; font-size:0.85rem;">
+                  <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:0.9rem; color:var(--text-muted);">👤</span>
+                </div>
+                <button type="button" id="btn-scan-consent-status" class="btn-primary" style="background:#8b5cf6; padding:8px 20px; font-weight:700; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px;">
+                  <span>🔍 Scan Consent Status</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Subject Status Overview KPI Dashboard -->
+            <div class="db-card" style="padding:18px 22px; margin-bottom:20px; background:var(--bg-surface);">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:14px;">
+                <div>
+                  <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Subject Identifier &amp; Account State</div>
+                  <div style="display:flex; align-items:center; gap:8px; margin-top:2px;">
+                    <span id="consent-active-subject-name" style="font-size:1.05rem; font-weight:800; color:var(--text-bright);">Alex Johnson (alex.johnson@example.com)</span>
+                    <span id="consent-active-account-status" class="meta-pill" style="font-size:0.7rem; color:#10b981; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25);">Account: ACTIVE (Retained)</span>
+                  </div>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span id="consent-overall-status-pill" class="meta-pill success" style="font-size:0.78rem; font-weight:800; padding:4px 10px;">All Consents Active</span>
+                </div>
+              </div>
+
+              <!-- 4 Metrics Row -->
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:12px;">
+                <div style="padding:12px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">
+                  <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Granted Categories</div>
+                  <div id="consent-stat-granted" style="font-size:1.4rem; font-weight:800; color:#10b981; margin-top:4px;">5</div>
+                  <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">Active permissions</div>
+                </div>
+
+                <div style="padding:12px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">
+                  <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Withdrawn Queues</div>
+                  <div id="consent-stat-withdrawn" style="font-size:1.4rem; font-weight:800; color:#ef4444; margin-top:4px;">0</div>
+                  <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">Revoked processing</div>
+                </div>
+
+                <div style="padding:12px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">
+                  <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Statutory Legal Basis</div>
+                  <div style="font-size:0.95rem; font-weight:800; color:var(--cyan); margin-top:6px;">GDPR Art. 7(3)</div>
+                  <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">DPDP Sec. 6(4) / PDPA</div>
+                </div>
+
+                <div style="padding:12px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">
+                  <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Suppression Sync</div>
+                  <div style="font-size:0.95rem; font-weight:800; color:#a78bfa; margin-top:6px;">SHA-256 Hashed</div>
+                  <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">CRM, AI &amp; Lakehouse</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Granular 5-Category Matrix Grid -->
+            <div style="margin-bottom:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <div style="font-size:0.88rem; font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:6px;">
+                  <span>🎯 Granular Consent Processing Matrix</span>
+                  <span style="font-size:0.72rem; color:var(--text-muted); font-weight:normal;">(Select categories to withdraw or re-grant)</span>
+                </div>
+              </div>
+
+              <div id="consent-matrix-cards" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+                <!-- Populated dynamically by consent-hub.js -->
+              </div>
+            </div>
+
+            <!-- Bulk Actions & Reason Input -->
+            <div class="db-card" style="padding:18px 22px; margin-bottom:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+                <label for="consent-withdrawal-reason" style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);">Statutory Reason / Notes for Consent Withdrawal</label>
+                <span style="font-size:0.7rem; color:var(--text-muted);">Will be cryptographically bound into SHA-256 receipt</span>
+              </div>
+              <input type="text" id="consent-withdrawal-reason" class="input-field" value="Data subject opted out of AI training and promotional marketing under GDPR Art 7(3)" placeholder="e.g. Data subject opted out of AI training and promotional marketing" style="width:100%; font-size:0.82rem; margin-bottom:14px;">
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+                <button type="button" id="btn-withdraw-all-consent" class="btn-ghost btn-sm" style="color:#ef4444; border-color:rgba(239,68,68,0.35); font-weight:700; padding:8px 16px;">
+                  <span>⚡ Withdraw All Consents (Complete Opt-Out)</span>
+                </button>
+                <button type="button" id="btn-execute-consent-withdraw" class="btn-primary btn-sm" style="background:#8b5cf6; font-weight:700; padding:8px 20px; display:inline-flex; align-items:center; gap:6px;">
+                  <span>✋ Execute Consent Withdrawal</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Cryptographic Proof Receipt Card (Shown on successful withdrawal) -->
+            <div id="consent-proof-receipt-card" class="db-card hidden" style="padding:22px 26px; margin-bottom:20px; background:#061b24; border:2px solid #10b981; border-radius:12px; box-shadow:0 0 25px rgba(16,185,129,0.2);">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div style="width:36px; height:36px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:800;">✓</div>
+                  <div>
+                    <h4 style="font-size:1.08rem; font-weight:800; color:#34d399; margin:0;">Cryptographic Proof of Consent Withdrawal</h4>
+                    <div style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">Statutory compliance receipt generated and verified under SHA-256 standard.</div>
+                  </div>
+                </div>
+                <button type="button" id="btn-close-proof-receipt" class="btn-ghost btn-sm" style="font-size:0.75rem; color:#94a3b8;">✕ Close</button>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-bottom:16px;">
+                <div style="padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid rgba(52,211,153,0.25); border-radius:8px;">
+                  <div style="font-size:0.7rem; color:#94a3b8; font-weight:700; text-transform:uppercase;">Statutory Receipt ID</div>
+                  <div id="proof-receipt-id" style="font-size:0.95rem; font-weight:800; color:#f8fafc; font-family:monospace; margin-top:2px;">WDR-2026-XXXX</div>
+                </div>
+                <div style="padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid rgba(52,211,153,0.25); border-radius:8px;">
+                  <div style="font-size:0.7rem; color:#94a3b8; font-weight:700; text-transform:uppercase;">Timestamp &amp; Legal Basis</div>
+                  <div id="proof-receipt-time" style="font-size:0.82rem; font-weight:700; color:#f8fafc; margin-top:2px;">-</div>
+                  <div id="proof-receipt-basis" style="font-size:0.7rem; color:#34d399; margin-top:1px;">GDPR Art. 7(3) / DPDP Sec. 6(4)</div>
+                </div>
+              </div>
+
+              <!-- Cryptographic Proof Hash -->
+              <div style="margin-bottom:14px; padding:12px 14px; background:rgba(15,23,42,0.8); border:1px dashed rgba(52,211,153,0.4); border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span style="font-size:0.72rem; font-weight:700; color:#34d399; text-transform:uppercase;">🔐 SHA-256 Immutable Proof Hash</span>
+                  <button type="button" id="btn-copy-proof-hash" class="btn-ghost btn-sm" style="font-size:0.68rem; padding:2px 8px; color:#34d399; border-color:rgba(52,211,153,0.35);">📋 Copy Hash</button>
+                </div>
+                <div id="proof-receipt-sha256" style="font-family:monospace; font-size:0.75rem; color:#a7f3d0; word-break:break-all;">-</div>
+              </div>
+
+              <!-- Suppression Hash Token -->
+              <div style="margin-bottom:16px; padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:8px;">
+                <div style="font-size:0.7rem; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-bottom:2px;">Hashed Suppression Token (No Plain PII Stored)</div>
+                <div id="proof-receipt-suppression" style="font-family:monospace; font-size:0.72rem; color:#cbd5e1; word-break:break-all;">-</div>
+              </div>
+
+              <!-- Downstream Synced Systems -->
+              <div>
+                <div style="font-size:0.75rem; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">Synchronized Downstream Processing Queues:</div>
+                <div id="proof-receipt-downstream-list" style="display:flex; flex-direction:column; gap:6px;">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Consent History Audit Trail Table -->
+            <div class="db-card" style="padding:22px 26px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:1.1rem;">📜</span>
+                  <h4 style="font-size:0.98rem; font-weight:700; color:var(--text-bright); margin:0;">Consent Lifecycle Audit Trail</h4>
+                </div>
+                <span class="meta-pill primary" style="font-size:0.7rem;">Immutable Ledger</span>
+              </div>
+
+              <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse;">
+                  <thead>
+                    <tr style="border-bottom:1px solid var(--border); font-size:0.74rem; text-transform:uppercase; color:var(--text-muted);">
+                      <th style="padding:8px 12px; text-align:left;">Timestamp</th>
+                      <th style="padding:8px 12px; text-align:left;">Action</th>
+                      <th style="padding:8px 12px; text-align:left;">Categories Affected</th>
+                      <th style="padding:8px 12px; text-align:left;">Channel / Actor</th>
+                      <th style="padding:8px 12px; text-align:left;">Proof Hash</th>
+                    </tr>
+                  </thead>
+                  <tbody id="consent-history-tbody">
+                    <!-- Dynamic entries -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div> <!-- /#dsar-subview-consent-hub -->
+
         </div>
 
       </div>
@@ -2474,6 +2669,7 @@
               
               <!-- Privacy Rights Tags -->
               <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+                <span class="scope-pill-toggle active" data-intent="consent" title="Withdraw consent for AI training, marketing & telemetry (GDPR Art. 7(3))">✋ Consent Withdraw</span>
                 <span class="scope-pill-toggle active" data-intent="access" title="Request copy of personal data">📦 Access</span>
                 <span class="scope-pill-toggle active" data-intent="deletion" title="Request erasure/deletion">🗑️ Deletion</span>
                 <span class="scope-pill-toggle active" data-intent="marketing" title="Opt out of marketing & newsletters">📢 Marketing</span>
@@ -2481,10 +2677,11 @@
                 <span class="scope-pill-toggle" data-intent="restriction" title="Freeze data processing">⏸️ Restrict</span>
               </div>
 
-              <textarea id="intake-request-text" class="input-field" rows="4" style="width:100%; resize:vertical; font-size:0.85rem; line-height:1.45;" placeholder="I want all information your company holds about me and I also want my marketing data removed.">I want all information your company holds about me and I also want my marketing data removed.</textarea>
+              <textarea id="intake-request-text" class="input-field" rows="4" style="width:100%; resize:vertical; font-size:0.85rem; line-height:1.45;" placeholder="I want to withdraw my consent for AI training on my data and marketing communications under GDPR Art 7(3).">I want to withdraw my consent for AI training on my data and marketing communications under GDPR Art 7(3).</textarea>
               
               <!-- Quick Suggestion Chips -->
               <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                <button type="button" class="btn-ghost btn-sm intake-sample-chip" data-sample="I hereby withdraw my consent for AI model training on my data and opt-out of all marketing communications under GDPR Art 7(3) and DPDP Sec 6(4)." style="font-size:0.7rem; padding:2px 8px; border-radius:12px; color:#8b5cf6; border-color:rgba(139,92,246,0.3);">✋ Withdraw Consent (AI/Mkt)</button>
                 <button type="button" class="btn-ghost btn-sm intake-sample-chip" data-sample="I want all information your company holds about me and I also want my marketing data removed." style="font-size:0.7rem; padding:2px 8px; border-radius:12px; color:var(--cyan); border-color:rgba(6,182,212,0.3);">⚡ Multi-Intent Demo</button>
                 <button type="button" class="btn-ghost btn-sm intake-sample-chip" data-sample="Please permanently delete and erase all my account records, purchase logs, and telemetry under GDPR Art 17." style="font-size:0.7rem; padding:2px 8px; border-radius:12px; color:#ec4899; border-color:rgba(236,72,153,0.3);">🗑️ Pure Deletion</button>
                 <button type="button" class="btn-ghost btn-sm intake-sample-chip" data-sample="Please provide an export of all my personal data, customer transactions, and communications in machine-readable format." style="font-size:0.7rem; padding:2px 8px; border-radius:12px; color:#3b82f6; border-color:rgba(59,130,246,0.3);">📦 Data Access</button>

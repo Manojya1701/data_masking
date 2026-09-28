@@ -142,6 +142,7 @@ export function switchDsarSubView(viewKey) {
     my_tasks: document.getElementById('dsar-subview-my-tasks'),
     team_tasks: document.getElementById('dsar-subview-team-tasks'),
     sla_breaches: document.getElementById('dsar-subview-dashboard'),
+    consent_hub: document.getElementById('dsar-subview-consent-hub'),
     reports: document.getElementById('dsar-subview-reports'),
     team_config: document.getElementById('dsar-subview-team-config'),
     settings: document.getElementById('dsar-subview-settings')
@@ -169,6 +170,9 @@ export function switchDsarSubView(viewKey) {
     if (views.dashboard) views.dashboard.classList.remove('hidden');
     activeFilter = 'sla_breach';
     renderDsarTable();
+  } else if (viewKey === 'consent_hub') {
+    if (views.consent_hub) views.consent_hub.classList.remove('hidden');
+    if (window.loadSubjectConsentStatus) window.loadSubjectConsentStatus();
   } else if (viewKey === 'my_tasks') {
     if (views.my_tasks) views.my_tasks.classList.remove('hidden');
     renderMyTasks();

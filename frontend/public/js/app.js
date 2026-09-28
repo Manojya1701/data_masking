@@ -23,6 +23,7 @@ import { initDsarCertificate } from './dsar-certificate.js';
 import { initDsarTeamConfig } from './dsar-team-config.js';
 import { initDsarSettings } from './dsar-settings.js';
 import { initDsarProfile } from './dsar-profile.js';
+import { initConsentHub } from './consent-hub.js';
 import { initTheme } from './theme.js';
 import { initDashboardStats } from './dashboard-stats.js';
 import { initSearch } from './search.js';
@@ -110,6 +111,7 @@ initDsarCertificate();
 initDsarTeamConfig();
 initDsarSettings();
 initDsarProfile();
+initConsentHub();
 
 initProtectionPreview((method) => {
   const targetOp = (method === 'tokenize') ? 'mask' : method;

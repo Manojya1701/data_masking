@@ -18,6 +18,8 @@ const processRoutes =
   require('./routes/process.routes');
 const deletionRoutes =
   require('./routes/deletion.routes');
+const consentRoutes =
+  require('./routes/consent.routes');
 const { setupGateway } =
   require('./gateway');
 
@@ -137,6 +139,16 @@ app.use(
 app.use(
   '/api/deletions',
   deletionRoutes
+);
+
+app.use(
+  '/api/v1/consent',
+  consentRoutes
+);
+
+app.use(
+  '/api/consent',
+  consentRoutes
 );
 
 app.use(

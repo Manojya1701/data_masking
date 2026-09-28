@@ -1377,6 +1377,7 @@ async function analyzeDsarIntent(payload = {}) {
   // 1. Detect Intent Keywords with NLP precision
   const hasDeletion = /\b(delete|remove|erasure|erase|purge|forget|forgotten|wipe|destroy|clear|shred|trash)\b/i.test(lowerText);
   const hasAccess = /\b(access|view all|all info|all information|all data|what info|export|copy of|download all|get my data|transparency|give me my data|provide all)\b/i.test(lowerText) || (/\b(access|export|copy)\b/i.test(lowerText) && !hasDeletion);
+  const hasConsentWithdrawal = /\b(withdraw consent|withdrawal of consent|consent withdraw|consent withdrawal|revoke consent|consent revocation|opt out of ai|ai opt-out|ai training opt-out|stop training ai|stop sharing|data sharing opt-out|do not sell|do not track|opt-out of telemetry)\b/i.test(lowerText);
   const hasMarketing = /\b(marketing|newsletter|email list|promotional|opt-out|opt out|unsubscribe|ads|campaigns|ad tracking|ad pixel)\b/i.test(lowerText);
   const hasRectification = /\b(correct|update|rectif|change|fix|modify|inaccurate|wrong|edit|address change)\b/i.test(lowerText);
   const hasRestriction = /\b(restrict|freeze|halt|stop processing|pause|limit|dispute|objection)\b/i.test(lowerText);
@@ -1384,6 +1385,18 @@ async function analyzeDsarIntent(payload = {}) {
 
   // 2. Build Specific Detected Type Pills
   const detectedTypes = [];
+
+  if (hasConsentWithdrawal) {
+    detectedTypes.push({
+      id: 'consent_withdrawal',
+      title: 'Consent Withdrawal',
+      desc: '(revoke AI/marketing/telemetry processing)',
+      badgeType: 'consent_withdrawal',
+      color: '#8b5cf6',
+      bgColor: 'rgba(139,92,246,0.12)',
+      borderColor: 'rgba(139,92,246,0.3)'
+    });
+  }
 
   if (hasAccess) {
     detectedTypes.push({
@@ -1409,7 +1422,7 @@ async function analyzeDsarIntent(payload = {}) {
     });
   }
 
-  if (hasMarketing) {
+  if (hasMarketing && !hasConsentWithdrawal) {
     detectedTypes.push({
       id: 'marketing',
       title: 'Marketing / Consent',
@@ -1460,7 +1473,8 @@ async function analyzeDsarIntent(payload = {}) {
 
   // Primary Request Type
   let primaryType = 'Access';
-  if (hasDeletion) primaryType = 'Deletion';
+  if (hasConsentWithdrawal) primaryType = 'Consent Withdrawal';
+  else if (hasDeletion) primaryType = 'Deletion';
   else if (hasRectification) primaryType = 'Rectification';
   else if (hasRestriction) primaryType = 'Restrict';
   else if (hasMarketing) primaryType = 'Marketing';

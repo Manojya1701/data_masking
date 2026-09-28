@@ -54,13 +54,16 @@ function updateLiveIntentPreview() {
   // Detect live intents
   const lower = val.toLowerCase();
   const intents = [];
+  if (/\b(withdraw consent|withdrawal of consent|consent withdraw|revoke consent|opt out of ai|ai opt-out|stop training ai|stop sharing|data sharing opt-out|do not sell)\b/i.test(lower)) {
+    intents.push('Consent Withdraw');
+  }
   if (/\b(access|view|all info|all information|all data|export|copy|records|download)\b/i.test(lower)) {
     intents.push('Access');
   }
   if (/\b(delete|remove|erasure|erase|purge|forget|forgotten|wipe|destroy)\b/i.test(lower)) {
     intents.push('Deletion');
   }
-  if (/\b(marketing|newsletter|email list|promotional|consent|opt-out|opt out|unsubscribe|ads)\b/i.test(lower)) {
+  if (/\b(marketing|newsletter|email list|promotional|opt-out|opt out|unsubscribe|ads)\b/i.test(lower) && !intents.includes('Consent Withdraw')) {
     intents.push('Marketing');
   }
   if (/\b(correct|update|rectif|change|fix|modify|edit)\b/i.test(lower)) {
@@ -84,6 +87,7 @@ function updateLiveIntentPreview() {
   document.querySelectorAll('.scope-pill-toggle').forEach(pill => {
     const intentType = pill.dataset.intent;
     const isMatched = (
+      (intentType === 'consent' && intents.includes('Consent Withdraw')) ||
       (intentType === 'access' && intents.includes('Access')) ||
       (intentType === 'deletion' && intents.includes('Deletion')) ||
       (intentType === 'marketing' && intents.includes('Marketing')) ||
@@ -638,7 +642,9 @@ export function initDsarIntake() {
       const intent = pill.dataset.intent;
       if (!textarea) return;
       let text = textarea.value;
-      if (intent === 'access' && !/access|view|all info/i.test(text)) {
+      if (intent === 'consent' && !/withdraw consent|revoke consent|consent/i.test(text)) {
+        text += (text ? ' ' : '') + 'I hereby withdraw my consent for AI model training and marketing communications.';
+      } else if (intent === 'access' && !/access|view|all info/i.test(text)) {
         text += (text ? ' ' : '') + 'Please provide full access to all personal data.';
       } else if (intent === 'deletion' && !/delete|erasure|remove/i.test(text)) {
         text += (text ? ' ' : '') + 'Please erase and delete my profile records.';

@@ -54,7 +54,13 @@ module.exports = {
     '/.well-known/jwks.json',
     '/oauth/token',
     '/oauth/revoke',
-    '/api/dsar/intake/submit' // Public citizen submission endpoint
+    '/api/dsar/intake/submit',
+    '/api/v1/consent/categories',
+    '/api/v1/consent/withdraw',
+    '/api/v1/consent/status/*',
+    '/api/consent/categories',
+    '/api/consent/withdraw',
+    '/api/consent/status/*'
   ],
 
   // Registered M2M Clients for local testing / development
@@ -75,6 +81,10 @@ module.exports = {
         'deletions:execute',
         'deletions:verify',
         'deletions:cancel',
+        'consent:withdraw',
+        'consent:read',
+        'consent:grant',
+        'consent:admin',
         'audit:read',
         'webhooks:manage',
         'dsar:operator',
