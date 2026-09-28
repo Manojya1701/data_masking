@@ -20,6 +20,7 @@ function isConfigured() {
 }
 
 let pool = null;
+let postgresDisabledDueToError = false;
 
 if (isPostgresConfigured()) {
   const requiresSSL =
@@ -37,6 +38,9 @@ if (isPostgresConfigured()) {
 
   pool.on('error', (err) => {
     console.error('[PostgreSQL Pool Error]', err.message);
+    if (err.code === 'ENOTFOUND' || err.message.includes('ENOTFOUND')) {
+      postgresDisabledDueToError = true;
+    }
   });
   console.log('[Database] Connected to PostgreSQL instance.');
 } else {
@@ -47,11 +51,16 @@ if (isPostgresConfigured()) {
  * Execute a parameterized query using PostgreSQL pool or Local SQL File Database.
  */
 async function query(text, params = []) {
-  if (pool) {
+  if (pool && !postgresDisabledDueToError) {
     try {
       return await pool.query(text, params);
     } catch (err) {
-      console.warn('[PostgreSQL Query Error, falling back to Local DB]:', err.message);
+      if (err.code === 'ENOTFOUND' || err.message.includes('ENOTFOUND')) {
+        postgresDisabledDueToError = true;
+        console.warn('[PostgreSQL Host Unreachable. Switched seamlessly to Local SQL Database]:', err.message);
+      } else {
+        console.warn('[PostgreSQL Query Error, falling back to Local DB]:', err.message);
+      }
     }
   }
   return localDb.query(text, params);
