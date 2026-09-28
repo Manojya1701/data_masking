@@ -27,10 +27,10 @@ const db = require('./db');
 
 async function initializeSchema() {
 
-  if (!db.isConfigured()) {
+  if (!db.isPostgresConfigured()) {
 
     console.log(
-      '[DB Init] DATABASE_URL is not configured. Skipping database initialization.'
+      '[DB Init] PostgreSQL DATABASE_URL not provided. Using Local SQL Database (udps_local_db.json).'
     );
 
     return false;

@@ -187,11 +187,13 @@ async function evaluateLegalPolicy(requestId) {
 
   // 1. Try Python AI Policy Engine
   try {
-    const fetch = global.fetch || require('node-fetch');
+    const fetchFn = typeof fetch === 'function' ? fetch : (typeof globalThis.fetch === 'function' ? globalThis.fetch : null);
+    if (!fetchFn) throw new Error('Native fetch not available');
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3500);
 
-    const pyRes = await fetch(PYTHON_AI_POLICY_URL, {
+    const pyRes = await fetchFn(PYTHON_AI_POLICY_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

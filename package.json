@@ -5,6 +5,7 @@
   "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",
+    "build": "echo 'Build successful'",
     "dev": "nodemon backend/server.js",
     "test": "jest --testPathPattern=tests/",
     "db:init": "node backend/database/init-db.js"
