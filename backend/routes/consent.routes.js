@@ -162,4 +162,73 @@ router.get('/ledger', requireScope('consent:admin'), (req, res) => {
   }
 });
 
+// ── 8. GET /api/v1/consent/kafka/metrics — Kafka Broker & Cluster Health ──────
+router.get('/kafka/metrics', requireScope('consent:read'), (req, res) => {
+  try {
+    const metrics = consentService.getKafkaMetrics();
+    return res.json({
+      success: true,
+      data: metrics
+    });
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── 9. GET /api/v1/consent/kafka/events — Live Kafka Event Stream ─────────────
+router.get('/kafka/events', requireScope('consent:read'), (req, res) => {
+  try {
+    const events = consentService.getKafkaEvents({
+      topic: req.query.topic,
+      limit: req.query.limit || 50
+    });
+    return res.json({
+      success: true,
+      count: events.length,
+      events
+    });
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── 10. GET /api/v1/consent/kafka/connectors — 5 Downstream Connector Status ───
+router.get('/kafka/connectors', requireScope('consent:read'), (req, res) => {
+  try {
+    const connectors = consentService.getDownstreamConnectors();
+    return res.json({
+      success: true,
+      count: connectors.length,
+      connectors
+    });
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── 11. GET /api/v1/consent/kafka/ledger — Downstream Enforcement Ledger ──────
+router.get('/kafka/ledger', requireScope('consent:read'), (req, res) => {
+  try {
+    const ledger = consentService.getEnforcementLedger(req.query.limit || 50);
+    return res.json({
+      success: true,
+      count: ledger.length,
+      ledger
+    });
+  } catch (err) {
+    return jsonError(res, 500, err.message);
+  }
+});
+
+// ── 12. POST /api/v1/consent/kafka/replay — Replay Events from Offset ─────────
+router.post('/kafka/replay', requireScope('consent:withdraw'), async (req, res) => {
+  try {
+    const { topic = 'consent.events.withdrawal', fromOffset = 0, targetGroupId } = req.body || {};
+    const result = await consentService.replayKafkaEvents(topic, parseInt(fromOffset, 10), targetGroupId);
+    return res.json(result);
+  } catch (err) {
+    return jsonError(res, 400, err.message);
+  }
+});
+
 module.exports = router;

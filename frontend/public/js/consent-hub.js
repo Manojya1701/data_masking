@@ -206,8 +206,9 @@ export async function executeWithdrawalAction(categories, reason) {
     if (data && data.success) {
       showToast(`✓ Consent withdrawn successfully! Statutory receipt generated.`, 'success');
       renderProofReceipt(data.receipt, data.downstreamSync);
-      // Reload updated status
+      // Reload updated status & Kafka monitor
       loadSubjectConsentStatus(identifier);
+      loadKafkaClusterMonitor();
     } else {
       showToast(data.error || 'Withdrawal failed.', 'error');
     }
@@ -243,6 +244,7 @@ export async function executeGrantAction(categories, reason) {
     if (data && data.success) {
       showToast(`✓ Re-granted consent for ${categories.join(', ')}`, 'success');
       loadSubjectConsentStatus(identifier);
+      loadKafkaClusterMonitor();
     } else {
       showToast(data.error || 'Re-grant failed.', 'error');
     }
@@ -323,6 +325,162 @@ export function renderConsentHistory(history = []) {
 }
 
 /**
+ * Fetch and render Kafka Streaming Cluster Metrics, Connectors, and Live Event Stream
+ */
+export async function loadKafkaClusterMonitor() {
+  try {
+    // 1. Fetch Cluster Metrics
+    const metricsRes = await fetch(`${window.location.origin}/api/v1/consent/kafka/metrics`);
+    const metricsData = await metricsRes.json();
+
+    if (metricsData && metricsData.success && metricsData.data) {
+      const d = metricsData.data;
+      const statusEl = document.getElementById('kafka-cluster-status');
+      const topicsCountEl = document.getElementById('kafka-topics-count');
+      const totalMsgsEl = document.getElementById('kafka-total-messages');
+      const consumersEl = document.getElementById('kafka-active-consumers');
+      const totalLagEl = document.getElementById('kafka-total-lag');
+
+      if (statusEl) {
+        statusEl.textContent = `${d.status || 'ONLINE'} (Healthy)`;
+        statusEl.style.color = '#10b981';
+      }
+      if (topicsCountEl) topicsCountEl.textContent = `${d.totalTopics || 3} Topics`;
+      if (totalMsgsEl) totalMsgsEl.textContent = `${d.totalMessages || 0} msgs`;
+      if (consumersEl) consumersEl.textContent = `${d.activeConsumersCount || 5} / 5 Online`;
+
+      let totalLag = 0;
+      (d.consumerGroups || []).forEach(g => { totalLag += (g.totalLag || 0); });
+      if (totalLagEl) {
+        totalLagEl.textContent = `${totalLag} msg`;
+        totalLagEl.style.color = totalLag > 0 ? '#f59e0b' : '#10b981';
+      }
+    }
+
+    // 2. Fetch Downstream Connector Statuses
+    const connRes = await fetch(`${window.location.origin}/api/v1/consent/kafka/connectors`);
+    const connData = await connRes.json();
+    const connContainer = document.getElementById('kafka-connector-cards');
+
+    if (connData && connData.success && connContainer) {
+      connContainer.innerHTML = (connData.connectors || []).map(conn => {
+        return `
+          <div style="padding:14px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:1.2rem;">${conn.icon || '🔌'}</span>
+                  <div style="font-size:0.82rem; font-weight:700; color:var(--text-bright);">${escapeHtml(conn.name)}</div>
+                </div>
+                <span class="meta-pill success" style="font-size:0.65rem; padding:1px 6px; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.25);">${conn.status}</span>
+              </div>
+              <div style="font-size:0.7rem; color:var(--text-muted); line-height:1.3; margin-bottom:6px;">${escapeHtml(conn.description)}</div>
+            </div>
+
+            <div style="border-top:1px solid var(--border); padding-top:8px; font-size:0.68rem; display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:var(--text-muted);">Processed: <strong style="color:var(--cyan);">${conn.processedCount || 0}</strong></span>
+              <span style="color:#a78bfa; font-family:monospace; font-size:0.65rem;">${escapeHtml(conn.groupId)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 3. Fetch Live Event Log Stream
+    const eventsRes = await fetch(`${window.location.origin}/api/v1/consent/kafka/events?limit=25`);
+    const eventsData = await eventsRes.json();
+    const eventsTbody = document.getElementById('kafka-events-tbody');
+
+    if (eventsData && eventsData.success && eventsTbody) {
+      if (eventsData.events.length === 0) {
+        eventsTbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:14px; color:var(--text-muted); font-size:0.75rem;">No Kafka events streamed yet. Execute a consent withdrawal above to trigger live streaming.</td></tr>`;
+      } else {
+        eventsTbody.innerHTML = eventsData.events.map(ev => {
+          const isWithdraw = ev.topic === 'consent.events.withdrawal';
+          const topicBadge = isWithdraw
+            ? `<span style="padding:2px 6px; border-radius:4px; font-size:0.68rem; font-weight:700; background:rgba(239,68,68,0.12); color:#ef4444; border:1px solid rgba(239,68,68,0.3);">${escapeHtml(ev.topic)}</span>`
+            : `<span style="padding:2px 6px; border-radius:4px; font-size:0.68rem; font-weight:700; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.3);">${escapeHtml(ev.topic)}</span>`;
+
+          return `
+            <tr style="border-bottom:1px solid var(--border); font-size:0.73rem;">
+              <td style="padding:7px 10px;">${topicBadge}</td>
+              <td style="padding:7px 10px; color:var(--cyan); font-weight:700;">p-${ev.partition}</td>
+              <td style="padding:7px 10px; font-family:monospace; color:var(--text-muted);">#${ev.offset}</td>
+              <td style="padding:7px 10px; color:var(--text-bright); font-weight:600;">${escapeHtml(ev.key)}</td>
+              <td style="padding:7px 10px; font-family:monospace; color:#a78bfa;">${escapeHtml(ev.eventId)}</td>
+              <td style="padding:7px 10px;"><span style="color:#10b981; font-weight:700; font-size:0.68rem;">✓ ${escapeHtml(ev.status)}</span></td>
+              <td style="padding:7px 10px; color:var(--text-muted); font-size:0.7rem;">${new Date(ev.timestamp).toLocaleTimeString()}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
+    // 4. Fetch Downstream Enforcement Ledger
+    const ledgerRes = await fetch(`${window.location.origin}/api/v1/consent/kafka/ledger?limit=25`);
+    const ledgerData = await ledgerRes.json();
+    const enfTbody = document.getElementById('kafka-enforcement-tbody');
+
+    if (ledgerData && ledgerData.success && enfTbody) {
+      if (ledgerData.ledger.length === 0) {
+        enfTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:14px; color:var(--text-muted); font-size:0.75rem;">No downstream enforcement records yet.</td></tr>`;
+      } else {
+        enfTbody.innerHTML = ledgerData.ledger.map(action => {
+          return `
+            <tr style="border-bottom:1px solid var(--border); font-size:0.73rem;">
+              <td style="padding:7px 10px; color:var(--text-muted); font-size:0.7rem;">${new Date(action.enforcedAt).toLocaleTimeString()}</td>
+              <td style="padding:7px 10px; font-weight:700; color:var(--text-bright);">${escapeHtml(action.system)}</td>
+              <td style="padding:7px 10px; color:var(--text-secondary);">${escapeHtml(action.subject)}</td>
+              <td style="padding:7px 10px; color:var(--cyan); font-weight:600;">${escapeHtml(action.action)}</td>
+              <td style="padding:7px 10px; color:var(--text-muted); max-width:320px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(action.details || '')}">${escapeHtml(action.details || '-')}</td>
+              <td style="padding:7px 10px;"><span style="color:#10b981; font-weight:700; font-size:0.68rem;">✓ ${escapeHtml(action.status)}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+  } catch (err) {
+    console.warn('[ConsentHub] Error refreshing Kafka monitor:', err.message);
+  }
+}
+
+/**
+ * Trigger Kafka stream replay from offset 0
+ */
+export async function replayKafkaStream() {
+  const replayBtn = document.getElementById('btn-replay-kafka-stream');
+  if (replayBtn) {
+    replayBtn.disabled = true;
+    replayBtn.innerHTML = '<span>Replaying Kafka Stream...</span>';
+  }
+
+  try {
+    const res = await fetch(`${window.location.origin}/api/v1/consent/kafka/replay`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        topic: 'consent.events.withdrawal',
+        fromOffset: 0
+      })
+    });
+    const data = await res.json();
+    if (data && data.success) {
+      showToast(`✓ Kafka Stream Replayed! (${data.replayedCount} events re-processed across connectors)`, 'success');
+      loadKafkaClusterMonitor();
+    } else {
+      showToast(data.error || 'Replay failed.', 'error');
+    }
+  } catch (err) {
+    showToast(`Network error: ${err.message}`, 'error');
+  } finally {
+    if (replayBtn) {
+      replayBtn.disabled = false;
+      replayBtn.innerHTML = '<span>🔁 Replay Stream (Offset 0)</span>';
+    }
+  }
+}
+
+/**
  * Initialize Consent Hub Module
  */
 export function initConsentHub() {
@@ -332,6 +490,8 @@ export function initConsentHub() {
   const withdrawSelectedBtn = document.getElementById('btn-execute-consent-withdraw');
   const copyHashBtn = document.getElementById('btn-copy-proof-hash');
   const closeReceiptBtn = document.getElementById('btn-close-proof-receipt');
+  const refreshKafkaBtn = document.getElementById('btn-refresh-kafka-stream');
+  const replayKafkaBtn = document.getElementById('btn-replay-kafka-stream');
 
   // Quick lookup scan
   if (scanBtn) {
@@ -386,13 +546,30 @@ export function initConsentHub() {
     });
   }
 
-  // Auto-load default subject
+  // Kafka monitor controls
+  if (refreshKafkaBtn) {
+    refreshKafkaBtn.addEventListener('click', () => {
+      loadKafkaClusterMonitor();
+      showToast('✓ Kafka event stream and connector statuses refreshed', 'info');
+    });
+  }
+
+  if (replayKafkaBtn) {
+    replayKafkaBtn.addEventListener('click', () => {
+      replayKafkaStream();
+    });
+  }
+
+  // Auto-load default subject & Kafka stream
   if (document.getElementById('consent-matrix-cards')) {
     loadSubjectConsentStatus('alex.johnson@example.com');
+    loadKafkaClusterMonitor();
   }
 
   // Expose global methods
   window.loadSubjectConsentStatus = loadSubjectConsentStatus;
   window.executeWithdrawalAction = executeWithdrawalAction;
   window.executeGrantAction = executeGrantAction;
+  window.loadKafkaClusterMonitor = loadKafkaClusterMonitor;
+  window.replayKafkaStream = replayKafkaStream;
 }

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-28T11:31:28.449Z",
+  "updatedAt": "2026-10-01T09:58:05.892Z",
   "records": [
     {
       "identifier": "alex.johnson@example.com",
@@ -507,6 +507,357 @@
           "method": "DYNAMIC_PROVISION"
         }
       ]
+    },
+    {
+      "identifier": "test.user.1790848280383@example.com",
+      "subjectName": "test.user.1790848280383",
+      "jurisdiction": "EU (GDPR)",
+      "accountStatus": "ACTIVE",
+      "consents": {
+        "MARKETING_COMMUNICATIONS": {
+          "state": "WITHDRAWN",
+          "updatedAt": "2026-10-01T09:51:20.446Z",
+          "reason": "Complete opt-out across all categories",
+          "receiptId": "WDR-2026-MUPCTSVY-4E05BD",
+          "proofHash": "76fa2394cf0585ebe9a9d188acb6698f69136c50096950f7d76b8d1543acaf88"
+        },
+        "AI_MODEL_TRAINING": {
+          "state": "GRANTED",
+          "updatedAt": "2026-10-01T09:51:20.535Z",
+          "reason": "Subject voluntarily opted back in to AI features",
+          "receiptId": "GNT-2026-MUPCTSYF-F0DE4D",
+          "proofHash": "a510871a0e7545573b478f2157b8e142170e96221e51e53ad44148987524f1f5"
+        },
+        "BEHAVIORAL_TRACKING": {
+          "state": "WITHDRAWN",
+          "updatedAt": "2026-10-01T09:51:20.446Z",
+          "reason": "Complete opt-out across all categories",
+          "receiptId": "WDR-2026-MUPCTSVY-4E05BD",
+          "proofHash": "76fa2394cf0585ebe9a9d188acb6698f69136c50096950f7d76b8d1543acaf88"
+        },
+        "THIRD_PARTY_SHARING": {
+          "state": "WITHDRAWN",
+          "updatedAt": "2026-10-01T09:51:20.446Z",
+          "reason": "Complete opt-out across all categories",
+          "receiptId": "WDR-2026-MUPCTSVY-4E05BD",
+          "proofHash": "76fa2394cf0585ebe9a9d188acb6698f69136c50096950f7d76b8d1543acaf88"
+        },
+        "BIOMETRIC_TELEMETRY": {
+          "state": "WITHDRAWN",
+          "updatedAt": "2026-10-01T09:51:20.446Z",
+          "reason": "Complete opt-out across all categories",
+          "receiptId": "WDR-2026-MUPCTSVY-4E05BD",
+          "proofHash": "76fa2394cf0585ebe9a9d188acb6698f69136c50096950f7d76b8d1543acaf88"
+        }
+      },
+      "history": [
+        {
+          "action": "CONSENT_GRANTED",
+          "receiptId": "GNT-2026-MUPCTSYF-F0DE4D",
+          "categories": [
+            "AI_MODEL_TRAINING"
+          ],
+          "timestamp": "2026-10-01T09:51:20.535Z",
+          "actor": "data_subject",
+          "method": "SELF_SERVE_UI",
+          "reason": "Subject voluntarily opted back in to AI features",
+          "proofHash": "a510871a0e7545573b478f2157b8e142170e96221e51e53ad44148987524f1f5"
+        },
+        {
+          "action": "WITHDRAWAL",
+          "receiptId": "WDR-2026-MUPCTSVY-4E05BD",
+          "categories": [
+            "MARKETING_COMMUNICATIONS",
+            "AI_MODEL_TRAINING",
+            "BEHAVIORAL_TRACKING",
+            "THIRD_PARTY_SHARING",
+            "BIOMETRIC_TELEMETRY"
+          ],
+          "timestamp": "2026-10-01T09:51:20.446Z",
+          "actor": "data_subject",
+          "method": "DSAR_PORTAL",
+          "reason": "Complete opt-out across all categories",
+          "proofHash": "76fa2394cf0585ebe9a9d188acb6698f69136c50096950f7d76b8d1543acaf88",
+          "ipAddress": "127.0.0.1"
+        },
+        {
+          "action": "WITHDRAWAL",
+          "receiptId": "WDR-2026-MUPCTSV5-C4C5A4",
+          "categories": [
+            "AI_MODEL_TRAINING",
+            "MARKETING_COMMUNICATIONS"
+          ],
+          "timestamp": "2026-10-01T09:51:20.417Z",
+          "actor": "subject",
+          "method": "DSAR_PORTAL",
+          "reason": "Subject requested AI training opt-out and marketing stop",
+          "proofHash": "a3fe5b4297e3e6c20e214a4c115eb08a5dd9c9050ed33b15ecc29d435892b57d",
+          "ipAddress": "127.0.0.1"
+        },
+        {
+          "action": "INITIAL_DEFAULT",
+          "categories": [
+            "MARKETING_COMMUNICATIONS",
+            "AI_MODEL_TRAINING",
+            "BEHAVIORAL_TRACKING",
+            "THIRD_PARTY_SHARING",
+            "BIOMETRIC_TELEMETRY"
+          ],
+          "timestamp": "2026-10-01T09:51:20.405Z",
+          "actor": "system",
+          "method": "DYNAMIC_PROVISION"
+        }
+      ]
+    },
+    {
+      "identifier": "test.user.1790848394072@example.com",
+      "subjectName": "test.user.1790848394072",
+      "jurisdiction": "EU (GDPR)",
+      "accountStatus": "ACTIVE",
+      "consents": {
+        "MARKETING_COMMUNICATIONS": {
+          "state": "WITHDRAWN",
+          "updatedAt": "2026-10-01T09:53:14.212Z",
+          "reason": "Complete opt-out across all categories",
+          "receiptId": "WDR-2026-MUPCW8O4-78F153",
+          "proofHash": "352a32ba44151f59259d446eeef075c0546f8df81d80aa95c3ddcf8ccdbc5461"
+        },
+        "AI_MODEL_TRAINING": {
+          "state": "GRANTED",
+          "updatedAt": "2026-10-01T09:53:14.444Z",
+          "reason": "Subject voluntarily opted back in to AI features",
+          "receiptId": "GNT-2026-MUPCW8UK-034611",
+          "proofHash": "66e41800cb414968150d711ae3bc4773c6598919642396f8bd37cebb8f083f8d"
+        },
+        "BEHAVIORAL_TRACKING": {
+          "state": "WITHDRAWN",
+          "updatedAt": "2026-10-01T09:53:14.212Z",
+          "reason": "Complete opt-out across all categories",
+          "receiptId": "WDR-2026-MUPCW8O4-78F153",
+          "proofHash": "352a32ba44151f59259d446eeef075c0546f8df81d80aa95c3ddcf8ccdbc5461"
+        },
+        "THIRD_PARTY_SHARING": {
+          "state": "WITHDRAWN",
+          "updatedAt": "2026-10-01T09:53:14.212Z",
+          "reason": "Complete opt-out across all categories",
+          "receiptId": "WDR-2026-MUPCW8O4-78F153",
+          "proofHash": "352a32ba44151f59259d446eeef075c0546f8df81d80aa95c3ddcf8ccdbc5461"
+        },
+        "BIOMETRIC_TELEMETRY": {
+          "state": "WITHDRAWN",
+          "updatedAt": "2026-10-01T09:53:14.212Z",
+          "reason": "Complete opt-out across all categories",
+          "receiptId": "WDR-2026-MUPCW8O4-78F153",
+          "proofHash": "352a32ba44151f59259d446eeef075c0546f8df81d80aa95c3ddcf8ccdbc5461"
+        }
+      },
+      "history": [
+        {
+          "action": "CONSENT_GRANTED",
+          "receiptId": "GNT-2026-MUPCW8UK-034611",
+          "categories": [
+            "AI_MODEL_TRAINING"
+          ],
+          "timestamp": "2026-10-01T09:53:14.444Z",
+          "actor": "data_subject",
+          "method": "SELF_SERVE_UI",
+          "reason": "Subject voluntarily opted back in to AI features",
+          "proofHash": "66e41800cb414968150d711ae3bc4773c6598919642396f8bd37cebb8f083f8d"
+        },
+        {
+          "action": "WITHDRAWAL",
+          "receiptId": "WDR-2026-MUPCW8O4-78F153",
+          "categories": [
+            "MARKETING_COMMUNICATIONS",
+            "AI_MODEL_TRAINING",
+            "BEHAVIORAL_TRACKING",
+            "THIRD_PARTY_SHARING",
+            "BIOMETRIC_TELEMETRY"
+          ],
+          "timestamp": "2026-10-01T09:53:14.212Z",
+          "actor": "data_subject",
+          "method": "DSAR_PORTAL",
+          "reason": "Complete opt-out across all categories",
+          "proofHash": "352a32ba44151f59259d446eeef075c0546f8df81d80aa95c3ddcf8ccdbc5461",
+          "ipAddress": "127.0.0.1"
+        },
+        {
+          "action": "WITHDRAWAL",
+          "receiptId": "WDR-2026-MUPCW8M5-56572C",
+          "categories": [
+            "AI_MODEL_TRAINING",
+            "MARKETING_COMMUNICATIONS"
+          ],
+          "timestamp": "2026-10-01T09:53:14.141Z",
+          "actor": "subject",
+          "method": "DSAR_PORTAL",
+          "reason": "Subject requested AI training opt-out and marketing stop",
+          "proofHash": "77cfc262cd5e693dde568a1a859384328540afc95381b557a56e244685e0a539",
+          "ipAddress": "127.0.0.1"
+        },
+        {
+          "action": "INITIAL_DEFAULT",
+          "categories": [
+            "MARKETING_COMMUNICATIONS",
+            "AI_MODEL_TRAINING",
+            "BEHAVIORAL_TRACKING",
+            "THIRD_PARTY_SHARING",
+            "BIOMETRIC_TELEMETRY"
+          ],
+          "timestamp": "2026-10-01T09:53:14.128Z",
+          "actor": "system",
+          "method": "DYNAMIC_PROVISION"
+        }
+      ]
+    },
+    {
+      "identifier": "auditor.kafka@example.com",
+      "subjectName": "auditor.kafka",
+      "jurisdiction": "Global (GDPR / PDPA / DPDP)",
+      "accountStatus": "ACTIVE",
+      "consents": {
+        "MARKETING_COMMUNICATIONS": {
+          "state": "GRANTED",
+          "updatedAt": "2026-10-01T09:57:49.495Z"
+        },
+        "AI_MODEL_TRAINING": {
+          "state": "GRANTED",
+          "updatedAt": "2026-10-01T09:57:49.495Z"
+        },
+        "BEHAVIORAL_TRACKING": {
+          "state": "GRANTED",
+          "updatedAt": "2026-10-01T09:57:49.495Z"
+        },
+        "THIRD_PARTY_SHARING": {
+          "state": "GRANTED",
+          "updatedAt": "2026-10-01T09:57:49.495Z"
+        },
+        "BIOMETRIC_TELEMETRY": {
+          "state": "GRANTED",
+          "updatedAt": "2026-10-01T09:57:49.495Z"
+        }
+      },
+      "history": [
+        {
+          "action": "INITIAL_DEFAULT",
+          "categories": [
+            "MARKETING_COMMUNICATIONS",
+            "AI_MODEL_TRAINING",
+            "BEHAVIORAL_TRACKING",
+            "THIRD_PARTY_SHARING",
+            "BIOMETRIC_TELEMETRY"
+          ],
+          "timestamp": "2026-10-01T09:57:49.495Z",
+          "actor": "system",
+          "method": "DYNAMIC_PROVISION"
+        }
+      ]
+    },
+    {
+      "identifier": "kafka.test.subject@example.com",
+      "subjectName": "kafka.test.subject",
+      "jurisdiction": "Global (GDPR / PDPA / DPDP)",
+      "accountStatus": "ACTIVE",
+      "consents": {
+        "MARKETING_COMMUNICATIONS": {
+          "state": "GRANTED",
+          "updatedAt": "2026-10-01T09:58:05.892Z",
+          "reason": "Re-grant test",
+          "receiptId": "GNT-2026-MUPD2HQC-0A4788",
+          "proofHash": "d80f21ec73517b8c76c575dc2655a94cc43edac8490e88c53cdd9badfb018760"
+        },
+        "AI_MODEL_TRAINING": {
+          "state": "WITHDRAWN",
+          "updatedAt": "2026-10-01T09:58:05.709Z",
+          "reason": "Downstream enforcement verification",
+          "receiptId": "WDR-2026-MUPD2HL9-C059C7",
+          "proofHash": "5a786b02df3f4361d621af47aa80fd777c5064bb9ec71733bd793a02fa410da3"
+        },
+        "BEHAVIORAL_TRACKING": {
+          "state": "WITHDRAWN",
+          "updatedAt": "2026-10-01T09:58:05.709Z",
+          "reason": "Downstream enforcement verification",
+          "receiptId": "WDR-2026-MUPD2HL9-C059C7",
+          "proofHash": "5a786b02df3f4361d621af47aa80fd777c5064bb9ec71733bd793a02fa410da3"
+        },
+        "THIRD_PARTY_SHARING": {
+          "state": "GRANTED",
+          "updatedAt": "2026-10-01T09:57:49.573Z"
+        },
+        "BIOMETRIC_TELEMETRY": {
+          "state": "GRANTED",
+          "updatedAt": "2026-10-01T09:57:49.573Z"
+        }
+      },
+      "history": [
+        {
+          "action": "CONSENT_GRANTED",
+          "receiptId": "GNT-2026-MUPD2HQC-0A4788",
+          "categories": [
+            "MARKETING_COMMUNICATIONS"
+          ],
+          "timestamp": "2026-10-01T09:58:05.892Z",
+          "actor": "data_subject",
+          "method": "SELF_SERVE_UI",
+          "reason": "Re-grant test",
+          "proofHash": "d80f21ec73517b8c76c575dc2655a94cc43edac8490e88c53cdd9badfb018760"
+        },
+        {
+          "action": "WITHDRAWAL",
+          "receiptId": "WDR-2026-MUPD2HL9-C059C7",
+          "categories": [
+            "AI_MODEL_TRAINING",
+            "MARKETING_COMMUNICATIONS",
+            "BEHAVIORAL_TRACKING"
+          ],
+          "timestamp": "2026-10-01T09:58:05.709Z",
+          "actor": "data_subject",
+          "method": "TEST_SUITE",
+          "reason": "Downstream enforcement verification",
+          "proofHash": "5a786b02df3f4361d621af47aa80fd777c5064bb9ec71733bd793a02fa410da3",
+          "ipAddress": "127.0.0.1"
+        },
+        {
+          "action": "CONSENT_GRANTED",
+          "receiptId": "GNT-2026-MUPD25BX-ECCE52",
+          "categories": [
+            "MARKETING_COMMUNICATIONS"
+          ],
+          "timestamp": "2026-10-01T09:57:49.821Z",
+          "actor": "data_subject",
+          "method": "SELF_SERVE_UI",
+          "reason": "Re-grant test",
+          "proofHash": "5b8a7266a2eecd39b824cd9c8525dcb0e26a84a3f52daef2689709cc68dfb31d"
+        },
+        {
+          "action": "WITHDRAWAL",
+          "receiptId": "WDR-2026-MUPD2554-83A299",
+          "categories": [
+            "AI_MODEL_TRAINING",
+            "MARKETING_COMMUNICATIONS",
+            "BEHAVIORAL_TRACKING"
+          ],
+          "timestamp": "2026-10-01T09:57:49.576Z",
+          "actor": "data_subject",
+          "method": "TEST_SUITE",
+          "reason": "Downstream enforcement verification",
+          "proofHash": "a7c862228dc9bca7ff38087e7aeb4e7e6e630d6f820522b5f3d64708a694b555",
+          "ipAddress": "127.0.0.1"
+        },
+        {
+          "action": "INITIAL_DEFAULT",
+          "categories": [
+            "MARKETING_COMMUNICATIONS",
+            "AI_MODEL_TRAINING",
+            "BEHAVIORAL_TRACKING",
+            "THIRD_PARTY_SHARING",
+            "BIOMETRIC_TELEMETRY"
+          ],
+          "timestamp": "2026-10-01T09:57:49.573Z",
+          "actor": "system",
+          "method": "DYNAMIC_PROVISION"
+        }
+      ]
     }
   ],
   "receipts": [
@@ -776,6 +1127,202 @@
       "suppressionToken": "42a60aad8e0e817bd289361d45d903a5f81ca9fd3f620cb9bf2069eb31116de6",
       "legalBasis": "GDPR Art. 7(3) / DPDP Act 2023 Sec. 6(4) / PDPA Sec. 16",
       "downstreamActionsCount": 13,
+      "verified": true
+    },
+    {
+      "receiptId": "WDR-2026-MUPCTSV5-C4C5A4",
+      "identifier": "test.user.1790848280383@example.com",
+      "subjectName": "test.user.1790848280383",
+      "withdrawnCategories": [
+        {
+          "id": "AI_MODEL_TRAINING",
+          "name": "AI & Machine Learning Model Training",
+          "icon": "🧠"
+        },
+        {
+          "id": "MARKETING_COMMUNICATIONS",
+          "name": "Marketing & Promotional Communications",
+          "icon": "📢"
+        }
+      ],
+      "timestamp": "2026-10-01T09:51:20.417Z",
+      "reason": "Subject requested AI training opt-out and marketing stop",
+      "requestedVia": "DSAR_PORTAL",
+      "actor": "subject",
+      "sha256Proof": "a3fe5b4297e3e6c20e214a4c115eb08a5dd9c9050ed33b15ecc29d435892b57d",
+      "suppressionToken": "42fd4f2aad48c581caf4feb8e48984436a8003cc0ba9d989f0d75364ea2fb181",
+      "legalBasis": "GDPR Art. 7(3) / DPDP Act 2023 Sec. 6(4) / PDPA Sec. 16",
+      "downstreamActionsCount": 6,
+      "verified": true
+    },
+    {
+      "receiptId": "WDR-2026-MUPCTSVY-4E05BD",
+      "identifier": "test.user.1790848280383@example.com",
+      "subjectName": "test.user.1790848280383",
+      "withdrawnCategories": [
+        {
+          "id": "MARKETING_COMMUNICATIONS",
+          "name": "Marketing & Promotional Communications",
+          "icon": "📢"
+        },
+        {
+          "id": "AI_MODEL_TRAINING",
+          "name": "AI & Machine Learning Model Training",
+          "icon": "🧠"
+        },
+        {
+          "id": "BEHAVIORAL_TRACKING",
+          "name": "Behavioral Tracking & Web Telemetry",
+          "icon": "📊"
+        },
+        {
+          "id": "THIRD_PARTY_SHARING",
+          "name": "Third-Party & Affiliate Data Sharing",
+          "icon": "🤝"
+        },
+        {
+          "id": "BIOMETRIC_TELEMETRY",
+          "name": "Biometric & Voice Telemetry",
+          "icon": "🛡️"
+        }
+      ],
+      "timestamp": "2026-10-01T09:51:20.446Z",
+      "reason": "Complete opt-out across all categories",
+      "requestedVia": "DSAR_PORTAL",
+      "actor": "data_subject",
+      "sha256Proof": "76fa2394cf0585ebe9a9d188acb6698f69136c50096950f7d76b8d1543acaf88",
+      "suppressionToken": "42fd4f2aad48c581caf4feb8e48984436a8003cc0ba9d989f0d75364ea2fb181",
+      "legalBasis": "GDPR Art. 7(3) / DPDP Act 2023 Sec. 6(4) / PDPA Sec. 16",
+      "downstreamActionsCount": 13,
+      "verified": true
+    },
+    {
+      "receiptId": "WDR-2026-MUPCW8M5-56572C",
+      "identifier": "test.user.1790848394072@example.com",
+      "subjectName": "test.user.1790848394072",
+      "withdrawnCategories": [
+        {
+          "id": "AI_MODEL_TRAINING",
+          "name": "AI & Machine Learning Model Training",
+          "icon": "🧠"
+        },
+        {
+          "id": "MARKETING_COMMUNICATIONS",
+          "name": "Marketing & Promotional Communications",
+          "icon": "📢"
+        }
+      ],
+      "timestamp": "2026-10-01T09:53:14.141Z",
+      "reason": "Subject requested AI training opt-out and marketing stop",
+      "requestedVia": "DSAR_PORTAL",
+      "actor": "subject",
+      "sha256Proof": "77cfc262cd5e693dde568a1a859384328540afc95381b557a56e244685e0a539",
+      "suppressionToken": "93e7b41babb478fba5d312eef842a788d177a1460bea879fee5a8c9419c1e775",
+      "legalBasis": "GDPR Art. 7(3) / DPDP Act 2023 Sec. 6(4) / PDPA Sec. 16",
+      "downstreamActionsCount": 6,
+      "verified": true
+    },
+    {
+      "receiptId": "WDR-2026-MUPCW8O4-78F153",
+      "identifier": "test.user.1790848394072@example.com",
+      "subjectName": "test.user.1790848394072",
+      "withdrawnCategories": [
+        {
+          "id": "MARKETING_COMMUNICATIONS",
+          "name": "Marketing & Promotional Communications",
+          "icon": "📢"
+        },
+        {
+          "id": "AI_MODEL_TRAINING",
+          "name": "AI & Machine Learning Model Training",
+          "icon": "🧠"
+        },
+        {
+          "id": "BEHAVIORAL_TRACKING",
+          "name": "Behavioral Tracking & Web Telemetry",
+          "icon": "📊"
+        },
+        {
+          "id": "THIRD_PARTY_SHARING",
+          "name": "Third-Party & Affiliate Data Sharing",
+          "icon": "🤝"
+        },
+        {
+          "id": "BIOMETRIC_TELEMETRY",
+          "name": "Biometric & Voice Telemetry",
+          "icon": "🛡️"
+        }
+      ],
+      "timestamp": "2026-10-01T09:53:14.212Z",
+      "reason": "Complete opt-out across all categories",
+      "requestedVia": "DSAR_PORTAL",
+      "actor": "data_subject",
+      "sha256Proof": "352a32ba44151f59259d446eeef075c0546f8df81d80aa95c3ddcf8ccdbc5461",
+      "suppressionToken": "93e7b41babb478fba5d312eef842a788d177a1460bea879fee5a8c9419c1e775",
+      "legalBasis": "GDPR Art. 7(3) / DPDP Act 2023 Sec. 6(4) / PDPA Sec. 16",
+      "downstreamActionsCount": 13,
+      "verified": true
+    },
+    {
+      "receiptId": "WDR-2026-MUPD2554-83A299",
+      "identifier": "kafka.test.subject@example.com",
+      "subjectName": "kafka.test.subject",
+      "withdrawnCategories": [
+        {
+          "id": "AI_MODEL_TRAINING",
+          "name": "AI & Machine Learning Model Training",
+          "icon": "🧠"
+        },
+        {
+          "id": "MARKETING_COMMUNICATIONS",
+          "name": "Marketing & Promotional Communications",
+          "icon": "📢"
+        },
+        {
+          "id": "BEHAVIORAL_TRACKING",
+          "name": "Behavioral Tracking & Web Telemetry",
+          "icon": "📊"
+        }
+      ],
+      "timestamp": "2026-10-01T09:57:49.576Z",
+      "reason": "Downstream enforcement verification",
+      "requestedVia": "TEST_SUITE",
+      "actor": "data_subject",
+      "sha256Proof": "a7c862228dc9bca7ff38087e7aeb4e7e6e630d6f820522b5f3d64708a694b555",
+      "suppressionToken": "22dcd0ca1142c5a27b0e1b1bf33ff0fce96650ba26d624246f520f6c35c64fc6",
+      "legalBasis": "GDPR Art. 7(3) / DPDP Act 2023 Sec. 6(4) / PDPA Sec. 16",
+      "downstreamActionsCount": 9,
+      "verified": true
+    },
+    {
+      "receiptId": "WDR-2026-MUPD2HL9-C059C7",
+      "identifier": "kafka.test.subject@example.com",
+      "subjectName": "kafka.test.subject",
+      "withdrawnCategories": [
+        {
+          "id": "AI_MODEL_TRAINING",
+          "name": "AI & Machine Learning Model Training",
+          "icon": "🧠"
+        },
+        {
+          "id": "MARKETING_COMMUNICATIONS",
+          "name": "Marketing & Promotional Communications",
+          "icon": "📢"
+        },
+        {
+          "id": "BEHAVIORAL_TRACKING",
+          "name": "Behavioral Tracking & Web Telemetry",
+          "icon": "📊"
+        }
+      ],
+      "timestamp": "2026-10-01T09:58:05.709Z",
+      "reason": "Downstream enforcement verification",
+      "requestedVia": "TEST_SUITE",
+      "actor": "data_subject",
+      "sha256Proof": "5a786b02df3f4361d621af47aa80fd777c5064bb9ec71733bd793a02fa410da3",
+      "suppressionToken": "22dcd0ca1142c5a27b0e1b1bf33ff0fce96650ba26d624246f520f6c35c64fc6",
+      "legalBasis": "GDPR Art. 7(3) / DPDP Act 2023 Sec. 6(4) / PDPA Sec. 16",
+      "downstreamActionsCount": 9,
       "verified": true
     }
   ]

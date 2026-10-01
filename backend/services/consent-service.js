@@ -14,6 +14,8 @@
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
+const kafkaService = require('./kafka-service');
+const kafkaConsumers = require('./kafka-consumers');
 
 const CONSENT_LEDGER_FILE = path.join(__dirname, '../database/consent-ledger.json');
 
@@ -404,11 +406,43 @@ class ConsentService {
     this.receipts.set(receiptId, receiptRecord);
     this._saveLedger();
 
+    // Publish event to Kafka stream (Segmento Event & Integration Layer)
+    let kafkaPublishResult = null;
+    try {
+      kafkaPublishResult = await kafkaService.publishEvent({
+        topic: 'consent.events.withdrawal',
+        key: record.identifier,
+        value: {
+          receiptId,
+          subjectId: record.identifier,
+          subjectName: record.subjectName,
+          customerId: record.customerId,
+          withdrawnCategories: targetCats,
+          reason,
+          requestedVia,
+          actor,
+          sha256Proof,
+          suppressionToken,
+          jurisdiction: record.jurisdiction || 'Global (GDPR / PDPA / DPDP)',
+          timestamp
+        },
+        headers: {
+          'x-correlation-id': `corr_${crypto.randomBytes(6).toString('hex')}`,
+          'schema-version': '1.0.0',
+          'source': 'segmento.consent.management.service',
+          'statutory-basis': 'GDPR_ART_7_3'
+        }
+      });
+    } catch (kErr) {
+      console.warn('[ConsentService] Kafka publish warning:', kErr.message);
+    }
+
     return {
       success: true,
       message: `Successfully processed consent withdrawal for ${targetCats.length} categories under GDPR Art. 7(3) / DPDP Sec. 6(4).`,
       receipt: receiptRecord,
       downstreamSync: downstreamActions,
+      kafkaEvent: kafkaPublishResult,
       currentStatus: this.getConsentStatus(identifier)
     };
   }
@@ -485,11 +519,39 @@ class ConsentService {
 
     this._saveLedger();
 
+    // Publish grant event to Kafka stream
+    let kafkaPublishResult = null;
+    try {
+      kafkaPublishResult = await kafkaService.publishEvent({
+        topic: 'consent.events.grant',
+        key: record.identifier,
+        value: {
+          receiptId,
+          subjectId: record.identifier,
+          subjectName: record.subjectName,
+          grantedCategories: targetCats,
+          reason,
+          requestedVia,
+          actor,
+          sha256Proof,
+          timestamp
+        },
+        headers: {
+          'x-correlation-id': `corr_${crypto.randomBytes(6).toString('hex')}`,
+          'schema-version': '1.0.0',
+          'source': 'segmento.consent.management.service'
+        }
+      });
+    } catch (kErr) {
+      console.warn('[ConsentService] Kafka publish warning:', kErr.message);
+    }
+
     return {
       success: true,
       message: `Consent granted for ${targetCats.length} categories.`,
       receiptId,
       proofHash: sha256Proof,
+      kafkaEvent: kafkaPublishResult,
       currentStatus: this.getConsentStatus(identifier)
     };
   }
@@ -536,6 +598,41 @@ class ConsentService {
     }
 
     return list;
+  }
+
+  /**
+   * Get Kafka Cluster Metrics & Consumer Lag
+   */
+  getKafkaMetrics() {
+    return kafkaService.getClusterMetrics();
+  }
+
+  /**
+   * Get Live Kafka Event Stream
+   */
+  getKafkaEvents(options = {}) {
+    return kafkaService.getEventStream(options);
+  }
+
+  /**
+   * Get 5 Downstream Connector Consumers Status
+   */
+  getDownstreamConnectors() {
+    return kafkaConsumers.getConnectorStatuses();
+  }
+
+  /**
+   * Get Downstream Enforcement Action Ledger
+   */
+  getEnforcementLedger(limit = 50) {
+    return kafkaConsumers.getEnforcementLedger(limit);
+  }
+
+  /**
+   * Replay Kafka events from a specific offset
+   */
+  async replayKafkaEvents(topic, fromOffset = 0, targetGroupId = null) {
+    return kafkaService.replayEvents(topic, fromOffset, targetGroupId);
   }
 }
 

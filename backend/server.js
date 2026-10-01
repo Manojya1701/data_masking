@@ -22,6 +22,7 @@ const consentRoutes =
   require('./routes/consent.routes');
 const { setupGateway } =
   require('./gateway');
+require('./services/kafka-consumers');
 
 const app = express();
 const {

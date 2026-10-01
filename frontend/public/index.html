@@ -2028,6 +2028,128 @@
               </div>
             </div>
 
+            <!-- ── 8. KAFKA EVENT STREAM & DOWNSTREAM ENFORCEMENT MONITOR ──────── -->
+            <div class="db-card" style="padding:22px 26px; margin-top:20px; border-top:3px solid #06b6d4;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:14px; margin-bottom:18px;">
+                <div>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.3rem;">⚡</span>
+                    <h4 style="font-size:1.05rem; font-weight:800; color:var(--text-bright); margin:0;">Kafka Message Queue &amp; Downstream Enforcement Monitor</h4>
+                    <span class="meta-pill" style="background:rgba(6,182,212,0.15); color:var(--cyan); border:1px solid rgba(6,182,212,0.3); font-size:0.72rem; padding:2px 8px;">Event &amp; Integration Layer</span>
+                  </div>
+                  <p style="font-size:0.78rem; color:var(--text-muted); margin:4px 0 0 0;">
+                    Key-partitioned event stream (<code style="color:var(--cyan);">consent.events.withdrawal</code>) synchronizing consent revocations to 5 enterprise downstream connectors in real time.
+                  </p>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                  <button type="button" id="btn-refresh-kafka-stream" class="btn-ghost btn-sm" style="font-size:0.75rem; display:inline-flex; align-items:center; gap:5px;">
+                    <span>🔄 Refresh Stream</span>
+                  </button>
+                  <button type="button" id="btn-replay-kafka-stream" class="btn-ghost btn-sm" style="color:var(--cyan); border-color:rgba(6,182,212,0.35); font-size:0.75rem; display:inline-flex; align-items:center; gap:5px;">
+                    <span>🔁 Replay Stream (Offset 0)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Cluster Health & Metrics Grid -->
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:12px; margin-bottom:20px;">
+                <div style="padding:12px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">
+                  <div style="font-size:0.68rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Kafka Cluster Status</div>
+                  <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
+                    <span style="width:8px; height:8px; border-radius:50%; background:#10b981; display:inline-block; box-shadow:0 0 8px #10b981;"></span>
+                    <span id="kafka-cluster-status" style="font-size:0.95rem; font-weight:800; color:#10b981;">ONLINE (Healthy)</span>
+                  </div>
+                  <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">3 Brokers &bull; 3 Partitions</div>
+                </div>
+
+                <div style="padding:12px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">
+                  <div style="font-size:0.68rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Topics &amp; Queues</div>
+                  <div id="kafka-topics-count" style="font-size:1.3rem; font-weight:800; color:var(--text-bright); margin-top:2px;">3 Topics</div>
+                  <div style="font-size:0.68rem; color:var(--cyan); margin-top:2px;">withdrawal &bull; grant &bull; dlq</div>
+                </div>
+
+                <div style="padding:12px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">
+                  <div style="font-size:0.68rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Published Messages</div>
+                  <div id="kafka-total-messages" style="font-size:1.3rem; font-weight:800; color:#a78bfa; margin-top:2px;">0</div>
+                  <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">High-watermark count</div>
+                </div>
+
+                <div style="padding:12px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">
+                  <div style="font-size:0.68rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Consumer Groups</div>
+                  <div id="kafka-active-consumers" style="font-size:1.3rem; font-weight:800; color:#10b981; margin-top:2px;">5 / 5 Online</div>
+                  <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">Lag: <span id="kafka-total-lag" style="color:#10b981; font-weight:700;">0 msg</span></div>
+                </div>
+              </div>
+
+              <!-- 5 Downstream Connector Consumer Cards -->
+              <div style="margin-bottom:20px;">
+                <div style="font-size:0.85rem; font-weight:700; color:var(--text-bright); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                  <span>🔌 5 Downstream Connector Consumers (Kafka Consumer Groups)</span>
+                </div>
+                <div id="kafka-connector-cards" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap:12px;">
+                  <!-- Dynamically populated by consent-hub.js -->
+                </div>
+              </div>
+
+              <!-- Real-time Kafka Topic Event Log Table -->
+              <div style="margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                  <div style="font-size:0.85rem; font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:6px;">
+                    <span>📡 Live Kafka Event Stream</span>
+                    <span style="font-size:0.7rem; color:var(--text-muted);">(Partitioned by Subject ID Hash)</span>
+                  </div>
+                  <span class="meta-pill" style="font-size:0.68rem; background:rgba(6,182,212,0.1); color:var(--cyan);">ACK_COMMITTED</span>
+                </div>
+
+                <div style="overflow-x:auto; max-height:260px; border:1px solid var(--border); border-radius:8px;">
+                  <table style="width:100%; border-collapse:collapse; font-size:0.75rem;">
+                    <thead>
+                      <tr style="border-bottom:1px solid var(--border); background:var(--bg-input); text-transform:uppercase; color:var(--text-muted); font-size:0.7rem;">
+                        <th style="padding:8px 10px; text-align:left;">Topic</th>
+                        <th style="padding:8px 10px; text-align:left;">Partition</th>
+                        <th style="padding:8px 10px; text-align:left;">Offset</th>
+                        <th style="padding:8px 10px; text-align:left;">Message Key (Subject)</th>
+                        <th style="padding:8px 10px; text-align:left;">Event ID</th>
+                        <th style="padding:8px 10px; text-align:left;">Status</th>
+                        <th style="padding:8px 10px; text-align:left;">Published At</th>
+                      </tr>
+                    </thead>
+                    <tbody id="kafka-events-tbody">
+                      <!-- Dynamic entries -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Downstream Enforcement Action Ledger -->
+              <div>
+                <div style="font-size:0.85rem; font-weight:700; color:var(--text-bright); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                  <span>📋 Downstream Enforcement Action Ledger</span>
+                  <span style="font-size:0.7rem; color:var(--text-muted);">(Automated Downstream System Actions)</span>
+                </div>
+
+                <div style="overflow-x:auto; max-height:220px; border:1px solid var(--border); border-radius:8px;">
+                  <table style="width:100%; border-collapse:collapse; font-size:0.75rem;">
+                    <thead>
+                      <tr style="border-bottom:1px solid var(--border); background:var(--bg-input); text-transform:uppercase; color:var(--text-muted); font-size:0.7rem;">
+                        <th style="padding:8px 10px; text-align:left;">Enforced At</th>
+                        <th style="padding:8px 10px; text-align:left;">Target System</th>
+                        <th style="padding:8px 10px; text-align:left;">Subject</th>
+                        <th style="padding:8px 10px; text-align:left;">Action Executed</th>
+                        <th style="padding:8px 10px; text-align:left;">Details</th>
+                        <th style="padding:8px 10px; text-align:left;">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="kafka-enforcement-tbody">
+                      <!-- Dynamic entries -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+
           </div> <!-- /#dsar-subview-consent-hub -->
 
         </div>
