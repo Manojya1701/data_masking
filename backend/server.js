@@ -179,6 +179,9 @@ app.use(
   )
 );
 
+const DOCS_DIR = path.join(__dirname, '../docs');
+app.use('/docs', express.static(DOCS_DIR));
+
 
 /* =========================================================
    SPA FALLBACK
