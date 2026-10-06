@@ -5,6 +5,10 @@ A complete enterprise-grade application providing:
 2. **Automated DSAR Lifecycle & Privacy Deletion**: End-to-end Data Subject Access Request orchestration compliant with **DPDP Act 2023**, **GDPR Art. 17**, and **RBI / GST statutory locks**.
 3. **Multi-Department Task Assignment & Real Live Email Notifications**: Automatic task distribution to CRM, Marketing, Data Engineering, Security, and DPO leads with **Nodemailer live SMTP** and zero-config **Ethereal webmail test inboxes**.
 4. **Interactive Operator Profiles & Settings Hub**: Custom operator identity switcher, SLA configurations, and platform preferences.
+5. **Consent Hub & Granular Opt-Out (GDPR Art. 7(3) / DPDP Sec. 6(4))**: Withdraw processing permissions while retaining active customer accounts, verified with SHA-256 cryptographic proof receipts.
+6. **Kafka Event-Driven Downstream Enforcement**: Real-time key-partitioned event queue via Apache Kafka synchronizing revocations to 5 downstream connector consumers (Salesforce, SendGrid, Snowflake Lakehouse, Vertex AI, and Ad Exchanges).
+
+📖 **Comprehensive Documentation**: [DSAR Portal Architecture & End-to-End Flow Guide](docs/DSAR_PORTAL_ARCHITECTURE_AND_FLOW.md)
 
 ---
 
