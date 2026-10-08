@@ -10,20 +10,6 @@ import { initHistory, refreshHistory } from './history.js';
 import { initDbProtection } from './db-protection.js';
 import { initPrivacyDeletion } from './privacy-deletion.js';
 import { initEmailSearch } from './email-search.js';
-import { initDsarIntake } from './dsar-intake.js';
-import { initDsarDashboard } from './dsar-dashboard.js';
-import { initDsarDiscovery } from './dsar-discovery.js';
-import { initDsarDetail } from './dsar-detail.js';
-import { initDsarAssignment } from './dsar-assignment.js';
-import { initDsarImpact } from './dsar-impact.js';
-import { initDsarPolicy } from './dsar-policy.js';
-import { initDsarExecution } from './dsar-execution.js';
-import { initDsarVerification } from './dsar-verification.js';
-import { initDsarCertificate } from './dsar-certificate.js';
-import { initDsarTeamConfig } from './dsar-team-config.js';
-import { initDsarSettings } from './dsar-settings.js';
-import { initDsarProfile } from './dsar-profile.js';
-import { initConsentHub } from './consent-hub.js';
 import { initTheme } from './theme.js';
 import { initDashboardStats } from './dashboard-stats.js';
 import { initSearch } from './search.js';
@@ -568,17 +554,3 @@ if (mobileMenuBtn && headerNav) {
   });
 }
 
-// Initialize DSAR Intake, Dashboard, Identity Discovery, Impact Analysis, Legal Policy, Execution, Verification & Certificate Controllers
-initDsarIntake();
-initDsarDashboard();
-initDsarDetail();
-initDsarAssignment();
-initDsarDiscovery();
-initDsarImpact();
-initDsarPolicy();
-initDsarExecution();
-initDsarVerification();
-initDsarCertificate();
-initDsarTeamConfig();
-initDsarSettings();
-initDsarProfile();
