@@ -12,13 +12,13 @@
  * 7. Physical Row Deletion (Right to Erasure)
  * 8. Segmento 6-Action Deletion Platform (Delete, Anonymize, Mask, Restrict, Retain, Exclude)
  *
- * Run: node demo-all-operations.js
+ * Run: node scripts/demo-all-operations.js
  */
 
-const hashingService = require('./backend/services/hashing-service');
-const encryptionService = require('./backend/services/encryption-service');
-const privacyDeletionService = require('./backend/services/privacy-deletion-service');
-const dataDeletionService = require('./backend/services/data-deletion-service');
+const hashingService = require('../backend/services/hashing-service');
+const encryptionService = require('../backend/services/encryption-service');
+const privacyDeletionService = require('../backend/services/privacy-deletion-service');
+const dataDeletionService = require('../backend/services/data-deletion-service');
 
 const c = {
   reset: '\x1b[0m',

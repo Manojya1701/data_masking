@@ -2,12 +2,12 @@
 
 /**
  * Segmento Data Deletion API Platform - Live Interactive Demo Script
- * Run: node demo-apis.js
+ * Run: node scripts/demo-apis.js
  * Demonstrates the 6 Deletion Actions (Delete, Anonymize, Mask, Hash/Restrict, Retain, Exclude).
  */
 
-const dataDeletionService = require('./backend/services/data-deletion-service');
-const webhookService = require('./backend/services/webhook-service');
+const dataDeletionService = require('../backend/services/data-deletion-service');
+const webhookService = require('../backend/services/webhook-service');
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));

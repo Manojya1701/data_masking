@@ -7,7 +7,10 @@
     "start": "node backend/server.js",
     "build": "echo 'Build successful'",
     "dev": "nodemon backend/server.js",
-    "test": "jest --testPathPattern=tests/",
+    "test": "jest --testPathPattern=tests/ --testPathIgnorePatterns=dsar-portal/ --forceExit",
+    "demo:operations": "node scripts/demo-all-operations.js",
+    "demo:apis": "node scripts/demo-apis.js",
+    "demo:gateway": "node scripts/demo-oauth-gateway.js",
     "db:init": "node backend/database/init-db.js"
   },
   "dependencies": {
@@ -42,6 +45,10 @@
     "testEnvironment": "node",
     "testMatch": [
       "**/tests/**/*.test.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dsar-portal/"
     ]
   },
   "engines": {

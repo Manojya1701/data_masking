@@ -12,12 +12,12 @@
  * 7. Sliding-Window Rate Limiter & Distributed Tracing
  */
 
-const keyManager = require('./backend/gateway/crypto/key-manager');
-const oidcProvider = require('./backend/gateway/services/oidc-provider-service');
-const rateLimiter = require('./backend/gateway/middleware/rate-limiter');
-const oidcVerifier = require('./backend/gateway/middleware/oidc-verifier');
-const { requireScope } = require('./backend/gateway/middleware/scope-guard');
-const { verifyRS256, decode } = require('./backend/gateway/crypto/jwt-helper');
+const keyManager = require('../backend/gateway/crypto/key-manager');
+const oidcProvider = require('../backend/gateway/services/oidc-provider-service');
+const rateLimiter = require('../backend/gateway/middleware/rate-limiter');
+const oidcVerifier = require('../backend/gateway/middleware/oidc-verifier');
+const { requireScope } = require('../backend/gateway/middleware/scope-guard');
+const { verifyRS256, decode } = require('../backend/gateway/crypto/jwt-helper');
 const crypto = require('crypto');
 
 const c = {
