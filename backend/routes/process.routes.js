@@ -32,8 +32,10 @@ const dsarVerificationService = require('../services/dsar-verification-service')
 const dsarCertificateService = require('../services/dsar-certificate-service');
 const emailNotificationService = require('../services/email-notification-service');
 const dsarSettingsService = require('../services/dsar-settings-service');
+const emailHashRoutes = require('./email-hash.routes');
 
 const router = express.Router();
+router.use('/email-hash', emailHashRoutes);
 
 const UPLOAD_DIR = path.join(__dirname, '../uploads');
 const OUTPUT_DIR = path.join(__dirname, '../output');

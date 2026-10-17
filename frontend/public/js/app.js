@@ -10,6 +10,7 @@ import { initHistory, refreshHistory } from './history.js';
 import { initDbProtection } from './db-protection.js';
 import { initPrivacyDeletion } from './privacy-deletion.js';
 import { initEmailSearch } from './email-search.js';
+import { initEmailHashVerify } from './email-hash-verify.js';
 import { initTheme } from './theme.js';
 import { initDashboardStats } from './dashboard-stats.js';
 import { initSearch } from './search.js';
@@ -82,6 +83,7 @@ initHistory();
 initDbProtection();
 initPrivacyDeletion();
 initEmailSearch();
+initEmailHashVerify();
 
 // ── DSAR Automation & Lifecycle Modules ──────────────────────────────
 initDsarIntake();

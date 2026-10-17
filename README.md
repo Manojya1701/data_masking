@@ -2,7 +2,7 @@
 
 [![Node.js CI](https://img.shields.io/badge/Node.js-18%2B-brightgreen.svg)](https://nodejs.org/)
 [![Status](https://img.shields.io/badge/Protection%20Engine-Production%20Ready-blue.svg)]()
-[![Tests](https://img.shields.io/badge/Tests-234%20Passed%20(20%20Suites)-success.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-257%20Passed%20(21%20Suites)-success.svg)]()
 [![Compliance](https://img.shields.io/badge/Compliance-GDPR%20%7C%20DPDP%202023%20%7C%20AES--256--GCM-orange.svg)]()
 
 > **Segmento Protection Engine**: An enterprise-grade, high-throughput data privacy and cryptographic transformation system. Protects sensitive personally identifiable information (PII) across **13+ structured, semi-structured, and binary file formats** and live relational databases.
@@ -179,6 +179,47 @@ Authenticated reversible whole-file encryption:
 | `/api/download/:token` | `GET` | Binary Stream | Download transformed file using single-use 10-minute token |
 | `/api/formats` | `GET` | `application/json` | Return capabilities and metadata for all 13+ supported formats |
 | `/api/health` | `GET` | `application/json` | Healthcheck and active database status |
+| `/api/email-hash/process` | `POST` | `application/json` | Complete email hash, candidate recovery, and Base64 round-trip verification |
+| `/api/email-hash/hash` | `POST` | `application/json` | Calculate SHA-256 in hexadecimal (64 chars) and raw Base64 (44 chars) |
+| `/api/email-hash/verify-candidates` | `POST` | `application/json` | Local candidate matching against target SHA-256 digest |
+| `/api/email-hash/base64-test` | `POST` | `application/json` | Mode A (Email ↔ Base64) & Mode B (32-byte Hash Bytes ↔ Base64) testing |
+| `/api/email-hash/research` | `GET` | `application/json` | Documented external lookup research and GDPR/DPDP compliance findings |
+| `/api/email-hash/comparison` | `GET` | `application/json` | Cryptographic comparison matrix (SHA-256 vs Base64 vs AES-256-GCM) |
+
+---
+
+## 🔐 Email SHA-256 Hashing, Candidate Recovery & Base64 Verification Module
+
+This module implements a rigorous, privacy-compliant cryptographic verification workbench:
+
+1. **Email Acceptance & Normalization**:
+   - RFC 5322 email format validation with informative error reporting.
+   - Explicit normalization policies: `Standard (Trim + Lowercase)`, `Trim Only (Preserve Case)`, or `Exact Raw Input (No Normalization)`. Normalization is never applied silently.
+
+2. **One-Way SHA-256 Hashing**:
+   - Generates 256-bit cryptographic digest.
+   - Outputs both 64-character hexadecimal representation and 44-character standard Base64 representation of the raw 32 bytes.
+   - Clarifies the critical distinction: Base64 of raw 32 bytes (44 chars) vs. Base64 of the 64-char hex string (88 chars).
+   - Explains in UI that SHA-256 is an irreversible compression function with no decryption operation.
+
+3. **Candidate Recovery & External Research**:
+   - **Local Candidate Matching**: Safely tests synthetic candidate emails against the target hash. Demonstrates that candidate matching is a dictionary equality check, **NOT** mathematical hash reversal.
+   - **External Lookup Research**: Evaluates public lookup tools (CrackStation, VirusTotal, HIBP, Gravatar). Confirms that no external service supports mathematical SHA-256 inversion. External transmission is disabled by default to protect personal data under GDPR Art. 4(1) and DPDP Act 2023 Sec. 4.
+
+4. **Base64 Reversible Encoding & Decoding**:
+   - **Mode A (Original Email to Base64)**: Encodes UTF-8 string to standard Base64, decodes back, and verifies 100% round-trip identity.
+   - **Mode B (SHA-256 Hash Bytes to Base64)**: Encodes raw 32-byte digest to 44-char Base64, decodes back into binary buffer, and verifies byte-for-byte exact equality.
+   - Explains that Base64 is reversible encoding, not encryption, and provides zero confidentiality.
+
+5. **Cryptographic Comparison Matrix**:
+
+| Method | Reversible? | Purpose | Key Required? | Confidentiality Level |
+|---|---|---|---|---|
+| **SHA-256** | No direct reversal | One-way hashing | None (unkeyed) | Pre-image resistant. Fixed 256-bit digest. |
+| **Base64** | Yes | Data encoding | None | None (0% security). Simple binary-to-text mapping. |
+| **AES-256-GCM** | Yes, with key and parameters | Authenticated encryption | 256-bit Secret Key + 96-bit IV | Highest military-grade cryptographic confidentiality & integrity. |
+
+> **Security Note:** A successful candidate match in a dictionary test does **NOT** mean SHA-256 was reversed. SHA-256 is mathematically one-way. Candidate testing merely evaluates whether a known candidate produces the identical hash value.
 
 ---
 

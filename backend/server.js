@@ -20,6 +20,8 @@ const deletionRoutes =
   require('./routes/deletion.routes');
 const consentRoutes =
   require('./routes/consent.routes');
+const emailHashRoutes =
+  require('./routes/email-hash.routes');
 const { setupGateway } =
   require('./gateway');
 require('./services/kafka-consumers');
@@ -150,6 +152,11 @@ app.use(
 app.use(
   '/api/consent',
   consentRoutes
+);
+
+app.use(
+  '/api/email-hash',
+  emailHashRoutes
 );
 
 app.use(

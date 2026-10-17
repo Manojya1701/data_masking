@@ -28,6 +28,7 @@
           <li><a href="#file-protection-section" class="nav-link nav-core-link">File Protection</a></li>
           <li><a href="#db-protection-section" class="nav-link nav-core-link">Database</a></li>
           <li><a href="#privacy-deletion-section" class="nav-link nav-core-link">Privacy Deletion</a></li>
+          <li><a href="#email-hash-section" class="nav-link nav-core-link" style="color:var(--green); font-weight:700;">Email Hash &amp; Verify</a></li>
           <li><a href="#restore-section" class="nav-link nav-core-link">Restore</a></li>
           <li><a href="/docs/Segmento_UDPS_Protection_Engine_Documentation.pdf" target="_blank" class="nav-link nav-core-link" style="color:var(--cyan); font-weight:700;">UDPS Docs</a></li>
         </ul>
@@ -986,6 +987,333 @@
       </div>
 
     </section>
+
+        <!-- ── 5.3 EMAIL SHA-256 HASHING, CANDIDATE RECOVERY & BASE64 WORKSPACE ───── -->
+    <section id="email-hash-section" class="section email-hash-section">
+      
+      <div class="section-header">
+        <h2 class="section-title" style="display:flex; align-items:center; gap:10px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3"/></svg>
+          <span>Email SHA-256 Hashing, Candidate Recovery &amp; Base64 Verification</span>
+        </h2>
+        <p class="section-desc">Cryptographic identity verification workbench: One-way pre-image resistant hashing, local candidate dictionary matching, reversible Base64 encoding round-trips, and cryptographic comparative analysis.</p>
+      </div>
+
+      <!-- ── CARD 1: ACCEPT EMAIL & GENERATE SHA-256 HASH ───────────────────── -->
+      <div class="db-card" style="margin-bottom:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:8px; margin:0;">
+            <span>1. Accept Email Address &amp; Generate SHA-256 Hash</span>
+          </h3>
+          <span class="meta-pill" style="background:rgba(74,222,128,0.15); color:var(--green); font-weight:700;">One-Way Hash</span>
+        </div>
+
+        <form id="email-hash-form">
+          <div style="display:grid; grid-template-columns:1fr minmax(260px, 340px); gap:14px; margin-bottom:12px;">
+            <div>
+              <label for="email-hash-input" style="display:block; font-size:0.82rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">
+                Email Address Input (Validated RFC 5322)
+              </label>
+              <div style="position:relative;">
+                <input type="email" 
+                       id="email-hash-input" 
+                       class="form-input" 
+                       placeholder="Enter email to hash (e.g. alice.smith@segmento.io)" 
+                       required
+                       style="width:100%; padding-left:38px; font-family:'JetBrains Mono', monospace; font-size:0.9rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none;">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+              </div>
+            </div>
+
+            <div>
+              <label for="email-hash-policy" style="display:block; font-size:0.82rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">
+                Explicit Normalization Policy
+              </label>
+              <select id="email-hash-policy" class="form-input" style="width:100%; font-size:0.85rem;">
+                <option value="standard" selected>Standard Privacy Normalization (Trim + Lowercase)</option>
+                <option value="trim_only">Trim Whitespace Only (Preserve Case)</option>
+                <option value="exact">Exact Raw Input (No Normalization)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Quick Synthetic Sample Pills -->
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:16px; font-size:0.8rem; color:var(--text-muted);">
+            <span>Synthetic sample inputs:</span>
+            <button type="button" class="hash-sample-pill meta-pill primary" data-email="alice.smith@segmento.io" style="cursor:pointer;">alice.smith@segmento.io</button>
+            <button type="button" class="hash-sample-pill meta-pill primary" data-email="bob.security@segmento-corp.org" style="cursor:pointer;">bob.security@segmento-corp.org</button>
+            <button type="button" class="hash-sample-pill meta-pill primary" data-email="carol.compliance@segmento.test" style="cursor:pointer;">carol.compliance@segmento.test</button>
+            <button type="button" class="hash-sample-pill meta-pill neutral" data-email="dpo.officer@domain.example" style="cursor:pointer;">dpo.officer@domain.example</button>
+          </div>
+
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button type="submit" id="btn-email-hash-submit" class="btn-primary" style="padding:9px 20px; display:inline-flex; align-items:center; gap:8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Process Email</span>
+            </button>
+            <button type="button" id="btn-email-hash-clear" class="btn-ghost" style="padding:9px 16px;">Clear</button>
+          </div>
+        </form>
+
+        <div id="email-hash-error" class="hidden" style="margin-top:14px; padding:12px 16px; background:rgba(244,63,94,0.1); border:1px solid var(--red); border-radius:var(--radius-md); color:var(--red); font-size:0.85rem;"></div>
+
+        <!-- Hash Output Display Card -->
+        <div id="email-hash-output-card" class="hidden" style="margin-top:18px; border-top:1px solid var(--border); padding-top:16px;">
+          
+          <!-- Cryptographic Alert -->
+          <div style="background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.25); border-left:4px solid var(--cyan); border-radius:6px; padding:12px 16px; margin-bottom:16px; font-size:0.82rem; color:var(--text-secondary); line-height:1.5;">
+            <strong style="color:var(--cyan);">ℹ️ Cryptographic Principle:</strong> SHA-256 is a <strong>one-way cryptographic hash function</strong> with pre-image resistance. It does <em>not</em> encrypt data, has <em>no decryption key</em>, and does <em>not</em> possess an inverse operation.
+          </div>
+
+          <!-- Metadata Badges -->
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-bottom:16px;">
+            <div style="background:var(--bg-input); padding:10px 12px; border-radius:8px; border:1px solid var(--border);">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Algorithm</div>
+              <div id="meta-hash-algo" style="font-size:0.95rem; font-weight:700; color:var(--green); margin-top:2px;">SHA-256</div>
+            </div>
+            <div style="background:var(--bg-input); padding:10px 12px; border-radius:8px; border:1px solid var(--border);">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Input Length</div>
+              <div id="meta-hash-length" style="font-size:0.95rem; font-weight:700; color:var(--cyan); margin-top:2px;">—</div>
+            </div>
+            <div style="background:var(--bg-input); padding:10px 12px; border-radius:8px; border:1px solid var(--border);">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Digest Size</div>
+              <div id="meta-hash-bytes" style="font-size:0.95rem; font-weight:700; color:var(--purple); margin-top:2px;">256 bits (32 bytes)</div>
+            </div>
+            <div style="background:var(--bg-input); padding:10px 12px; border-radius:8px; border:1px solid var(--border);">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Policy Applied</div>
+              <div id="meta-hash-policy" style="font-size:0.85rem; font-weight:600; color:var(--text-primary); margin-top:2px;">Standard</div>
+            </div>
+          </div>
+
+          <!-- Hexadecimal Output Box -->
+          <div style="margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:0.82rem; font-weight:600; color:var(--text-secondary);">Hexadecimal Digest String (64 characters):</span>
+              <button type="button" id="btn-copy-hex" class="btn-ghost btn-sm" style="font-size:0.75rem; padding:3px 10px;">📋 Copy Hex</button>
+            </div>
+            <div id="hash-hex-value" style="font-family:'JetBrains Mono', monospace; font-size:0.86rem; background:var(--bg-input); border:1px solid var(--border); padding:10px 14px; border-radius:6px; color:var(--cyan); word-break:break-all; user-select:all;"></div>
+          </div>
+
+          <!-- Raw 32-Byte Hash in Base64 Box -->
+          <div style="margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:0.82rem; font-weight:600; color:var(--text-secondary);">Raw 32-Byte Hash in Standard Base64 (44 characters):</span>
+              <button type="button" id="btn-copy-raw-b64" class="btn-ghost btn-sm" style="font-size:0.75rem; padding:3px 10px;">📋 Copy Base64</button>
+            </div>
+            <div id="hash-raw-b64-value" style="font-family:'JetBrains Mono', monospace; font-size:0.86rem; background:var(--bg-input); border:1px solid var(--border); padding:10px 14px; border-radius:6px; color:var(--purple); word-break:break-all; user-select:all;"></div>
+            <div style="font-size:0.73rem; color:var(--text-muted); margin-top:4px;">Direct Base64 encoding of the raw 32 binary bytes produced by the SHA-256 compression function.</div>
+          </div>
+
+          <!-- Hex String in Base64 (Clarified Differentiation) -->
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:0.82rem; font-weight:600; color:var(--text-secondary);">Hex String in Base64 (88 characters — contrast distinction):</span>
+              <button type="button" id="btn-copy-hex-b64" class="btn-ghost btn-sm" style="font-size:0.75rem; padding:3px 10px;">📋 Copy</button>
+            </div>
+            <div id="hash-hex-b64-value" style="font-family:'JetBrains Mono', monospace; font-size:0.8rem; background:var(--bg-input); border:1px solid var(--border); padding:8px 12px; border-radius:6px; color:var(--text-muted); word-break:break-all; user-select:all;"></div>
+            <div style="font-size:0.73rem; color:var(--text-muted); margin-top:4px;">Notice: Encoding the 64-character ASCII hex string results in 88 characters. This is distinct from encoding the raw 32 binary bytes (44 chars).</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── CARD 2: RESEARCH & CANDIDATE RECOVERY ───────────────────────────── -->
+      <div class="db-card" style="margin-bottom:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-primary); margin:0;">
+            2. Candidate Recovery Research &amp; Local Verification
+          </h3>
+          <span class="meta-pill" style="background:rgba(56,189,248,0.15); color:var(--cyan); font-weight:700;">Dictionary Matching</span>
+        </div>
+
+        <div style="font-size:0.84rem; color:var(--text-secondary); line-height:1.5; margin-bottom:16px;">
+          <strong>Direct Hash Reversal vs. Candidate Matching:</strong>
+          <ul style="margin:6px 0 0 20px; font-size:0.82rem;">
+            <li><strong>Direct Reversal:</strong> Impossible. SHA-256 cannot be mathematically inverted.</li>
+            <li><strong>Candidate Matching:</strong> Computes the SHA-256 hash for candidate inputs and tests for equality against the target hash.</li>
+            <li><strong>External Rainbow Lookup:</strong> Limited to pre-calculated lookup tables of leaked strings; creates privacy risks under GDPR/DPDP.</li>
+          </ul>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+          <div>
+            <label for="candidate-target-hash" style="display:block; font-size:0.82rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">
+              Target SHA-256 Hash (64-char Hex)
+            </label>
+            <input type="text" id="candidate-target-hash" class="form-input" placeholder="Enter or paste 64-character hex hash" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:0.84rem;">
+          </div>
+          <div>
+            <label for="candidate-emails-input" style="display:block; font-size:0.82rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">
+              Candidate Emails (One per line)
+            </label>
+            <textarea id="candidate-emails-input" class="form-input" rows="4" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:0.82rem;" placeholder="alice.smith@segmento.io&#10;user.external@example.com&#10;admin@segmento.io">alice.smith@segmento.io&#10;user.external@example.com&#10;admin@segmento.io&#10;dpo.team@segmento.test&#10;compliance.lead@privacy.org</textarea>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <button type="button" id="btn-verify-candidates" class="btn-primary" style="padding:8px 18px;">Test Candidate Matches</button>
+          
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" id="chk-external-consent" style="cursor:pointer;">
+            <label for="chk-external-consent" style="font-size:0.8rem; color:var(--text-muted); cursor:pointer;">
+              Explicit consent for External Research Mode (Simulated)
+            </label>
+            <button type="button" id="btn-query-external" class="btn-ghost btn-sm" style="padding:6px 12px; font-size:0.78rem;">Query External Research</button>
+          </div>
+        </div>
+
+        <!-- Candidate Match Banner -->
+        <div id="candidate-match-alert" class="hidden" style="margin-bottom:14px; border-radius:8px; padding:14px 18px;"></div>
+
+        <!-- Candidate Results Table -->
+        <div id="candidate-results-table"></div>
+
+        <!-- External Research Results Container -->
+        <div id="external-lookup-results" class="hidden"></div>
+      </div>
+
+      <!-- ── CARD 3: BASE64 ENCODING & DECODING WORKSPACE ────────────────────── -->
+      <div class="db-card" style="margin-bottom:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-primary); margin:0;">
+            3. Base64 Reversible Encoding &amp; Decoding Tests
+          </h3>
+          <span class="meta-pill" style="background:rgba(129,140,248,0.15); color:var(--purple); font-weight:700;">Reversible Encoding</span>
+        </div>
+
+        <div style="background:rgba(129,140,248,0.08); border:1px solid rgba(129,140,248,0.25); border-left:4px solid var(--purple); border-radius:6px; padding:10px 14px; margin-bottom:16px; font-size:0.82rem; color:var(--text-secondary); line-height:1.5;">
+          <strong style="color:var(--purple);">Critical Distinction:</strong> Base64 is a <strong>reversible binary-to-text encoding scheme</strong> (RFC 4648). It provides <em>zero cryptographic confidentiality</em> and is <em>not encryption</em>. Decoding Base64 is <em>not</em> SHA-256 decryption.
+        </div>
+
+        <!-- Grid of Mode A & Mode B -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:20px; margin-bottom:16px;">
+          
+          <!-- Mode A Box -->
+          <div style="background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <strong style="font-size:0.9rem; color:var(--cyan);">Mode A: Original Email ↔ Base64</strong>
+              <span class="meta-pill" style="font-size:0.7rem; background:rgba(56,189,248,0.12); color:var(--cyan);">UTF-8 Text</span>
+            </div>
+
+            <label for="b64-email-input" style="display:block; font-size:0.78rem; color:var(--text-muted); margin-bottom:4px;">Email Input</label>
+            <input type="email" id="b64-email-input" class="form-input" placeholder="e.g. alice.smith@segmento.io" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:0.84rem; margin-bottom:10px;">
+
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+              <button type="button" id="btn-b64-encode-email" class="btn-primary btn-sm" style="flex:1;">1. Encode to Base64</button>
+              <button type="button" id="btn-b64-decode-email" class="btn-ghost btn-sm" style="flex:1;">2. Decode Back</button>
+            </div>
+
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">Base64 Encoded Representation:</div>
+            <div id="b64-email-encoded" style="font-family:'JetBrains Mono', monospace; font-size:0.8rem; background:var(--bg-card); border:1px solid var(--border); padding:8px 10px; border-radius:6px; color:var(--cyan); word-break:break-all; min-height:36px; margin-bottom:10px;">—</div>
+
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">Decoded Plaintext Output:</div>
+            <div id="b64-email-decoded" style="font-family:'JetBrains Mono', monospace; font-size:0.8rem; background:var(--bg-card); border:1px solid var(--border); padding:8px 10px; border-radius:6px; color:var(--text-primary); word-break:break-all; min-height:36px; margin-bottom:10px;">—</div>
+
+            <div id="b64-mode-a-verify" class="hidden" style="font-size:0.8rem; padding:8px 12px; background:rgba(74,222,128,0.1); border-radius:6px;"></div>
+          </div>
+
+          <!-- Mode B Box -->
+          <div style="background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <strong style="font-size:0.9rem; color:var(--purple);">Mode B: SHA-256 Hash Bytes ↔ Base64</strong>
+              <span class="meta-pill" style="font-size:0.7rem; background:rgba(129,140,248,0.12); color:var(--purple);">32 Raw Bytes</span>
+            </div>
+
+            <label for="b64-hash-input" style="display:block; font-size:0.78rem; color:var(--text-muted); margin-bottom:4px;">Email Input for Hash Generation</label>
+            <input type="email" id="b64-hash-input" class="form-input" placeholder="e.g. alice.smith@segmento.io" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:0.84rem; margin-bottom:10px;">
+
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+              <button type="button" id="btn-b64-hash-bytes" class="btn-primary btn-sm" style="flex:1;">1. Hash &amp; Encode Bytes</button>
+              <button type="button" id="btn-b64-decode-hash" class="btn-ghost btn-sm" style="flex:1;">2. Decode to Bytes</button>
+            </div>
+
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">Calculated SHA-256 Hex (64 chars):</div>
+            <div id="b64-hash-hex" style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; background:var(--bg-card); border:1px solid var(--border); padding:6px 10px; border-radius:6px; color:var(--cyan); word-break:break-all; margin-bottom:8px;">—</div>
+
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">Raw 32-Byte Hash in Base64 (44 chars):</div>
+            <div id="b64-hash-raw-b64" style="font-family:'JetBrains Mono', monospace; font-size:0.8rem; background:var(--bg-card); border:1px solid var(--border); padding:6px 10px; border-radius:6px; color:var(--purple); word-break:break-all; margin-bottom:8px;">—</div>
+
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">Decoded Bytes (Reconstructed Hex):</div>
+            <div id="b64-hash-decoded-hex" style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; background:var(--bg-card); border:1px solid var(--border); padding:6px 10px; border-radius:6px; color:var(--text-primary); word-break:break-all; margin-bottom:10px;">—</div>
+
+            <div id="b64-mode-b-verify" class="hidden" style="font-size:0.8rem; padding:8px 12px; background:rgba(74,222,128,0.1); border-radius:6px;"></div>
+          </div>
+
+        </div>
+
+        <!-- Custom Base64 Decoder -->
+        <div style="border-top:1px solid var(--border); padding-top:14px;">
+          <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:8px;">Custom Base64 String Validator &amp; Decoder:</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <input type="text" id="b64-custom-input" class="form-input" placeholder="Paste custom Base64 string to decode (e.g. U2VnbWVudG8gUHJvdGVjdA==)" style="flex:1; min-width:280px; font-family:'JetBrains Mono', monospace; font-size:0.84rem;">
+            <button type="button" id="btn-b64-custom-decode" class="btn-ghost" style="padding:8px 16px;">Validate &amp; Decode</button>
+          </div>
+          <div id="b64-custom-result" class="hidden" style="margin-top:10px;"></div>
+        </div>
+
+      </div>
+
+      <!-- ── CARD 4: RESULTS SUMMARY & COMPARATIVE ANALYSIS ──────────────────── -->
+      <div class="db-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-primary); margin:0;">
+            4. Verification Results &amp; Cryptographic Comparison
+          </h3>
+          <span class="meta-pill" style="background:rgba(251,191,36,0.15); color:var(--amber); font-weight:700;">Security Matrix</span>
+        </div>
+
+        <div id="summary-results-grid"></div>
+
+        <!-- Required Comparison Table -->
+        <div style="overflow-x:auto; margin-bottom:16px;">
+          <table class="data-table" style="width:100%; font-size:0.85rem; border-collapse:collapse;">
+            <thead>
+              <tr style="background:var(--bg-input); border-bottom:1px solid var(--border); text-align:left;">
+                <th style="padding:10px 14px;">Method</th>
+                <th style="padding:10px 14px;">Reversible?</th>
+                <th style="padding:10px 14px;">Purpose</th>
+                <th style="padding:10px 14px;">Key Required?</th>
+                <th style="padding:10px 14px;">Confidentiality Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+                <td style="padding:10px 14px; font-weight:700; color:var(--cyan);">SHA-256</td>
+                <td style="padding:10px 14px; color:var(--red); font-weight:600;">No direct reversal</td>
+                <td style="padding:10px 14px;">One-way hashing</td>
+                <td style="padding:10px 14px; color:var(--text-muted);">None (unkeyed)</td>
+                <td style="padding:10px 14px;">High pre-image resistance. Fixed 256-bit digest.</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+                <td style="padding:10px 14px; font-weight:700; color:var(--purple);">Base64</td>
+                <td style="padding:10px 14px; color:var(--green); font-weight:600;">Yes</td>
+                <td style="padding:10px 14px;">Data encoding</td>
+                <td style="padding:10px 14px; color:var(--text-muted);">None</td>
+                <td style="padding:10px 14px; color:var(--amber);">None (0% security). Simple binary-to-text mapping.</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 14px; font-weight:700; color:var(--green);">AES-256-GCM</td>
+                <td style="padding:10px 14px; color:var(--green); font-weight:600;">Yes, with the required key and parameters</td>
+                <td style="padding:10px 14px;">Authenticated encryption</td>
+                <td style="padding:10px 14px; color:var(--green); font-weight:600;">256-bit Secret Key + 96-bit IV</td>
+                <td style="padding:10px 14px;">Highest military-grade cryptographic confidentiality &amp; integrity.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Security Note -->
+        <div style="background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.3); border-left:4px solid var(--amber); border-radius:6px; padding:12px 16px; font-size:0.83rem; color:var(--text-secondary); line-height:1.5;">
+          <strong style="color:var(--amber);">Security Note:</strong> A successful candidate match in a dictionary test does <strong>NOT</strong> mean SHA-256 was reversed. SHA-256 is mathematically one-way. Candidate testing merely evaluates whether a known candidate produces the identical hash value.
+        </div>
+
+      </div>
+
+    </section>
+
 
     <!-- ── 6. RESTORE ENCRYPTED FILE WORKSPACE ───────────────────────────────── -->
     <section id="restore-section" class="section">
