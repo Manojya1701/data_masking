@@ -18,6 +18,7 @@ const { processFile, scanFile } = require('../services/privacy-engine');
 const { decrypt }               = require('../services/encryption-service');
 const { detectFormat, formatLabel } = require('../services/file-type-detector');
 const { createToken, redeemToken, revokeToken } = require('../services/token-store');
+const { detokenizeFile } = require('../handlers/mask-utils');
 const db           = require('../database/db');
 const auditService = require('../services/audit-service');
 const dbProtectionService = require('../services/db-protection-service');
@@ -49,7 +50,7 @@ const ALLOWED_EXTENSIONS = new Set([
   '.yaml', '.yml', '.xml', '.html', '.htm',
   '.pdf', '.parquet', '.avro', '.orc',
   '.jpg', '.jpeg', '.png',
-  '.enc',
+  '.enc', '.txt',
 ]);
 
 const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE || '104857600', 10); // 100 MB
@@ -319,6 +320,55 @@ router.post('/restore-file', upload.single('file'), async (req, res) => {
     cleanupUpload(uploadedPath);
     console.error('[Routes] restore-file error:', err.message);
     // Do NOT return a corrupt file — return clear error
+    return jsonError(res, 422, err.message);
+  }
+});
+
+// ── POST /api/detokenize-file ─────────────────────────────────────────────────
+
+router.post('/detokenize-file', upload.single('file'), async (req, res) => {
+  if (!req.file) return jsonError(res, 400, 'No file uploaded.');
+
+  const uploadedPath = req.file.path;
+  const originalName = req.file.originalname;
+  const fileSize     = req.file.size || 0;
+  const jobId        = uuidv4();
+
+  console.log(`[Routes] detokenize-file: originalName=${originalName} size=${fileSize}`);
+
+  try {
+    const rawBuffer = fs.readFileSync(uploadedPath);
+    const { restoredContent, count } = detokenizeFile(rawBuffer, originalName);
+
+    // Compute clean download name
+    const ext = path.extname(originalName) || '.txt';
+    let base = path.basename(originalName, ext);
+    if (base.endsWith('_masked')) {
+      base = base.replace(/_masked$/, '');
+    }
+    const downloadName = `${base}_restored${ext}`;
+    const outFileName  = `${uuidv4()}_restored${ext}`;
+    const outPath      = path.join(OUTPUT_DIR, outFileName);
+
+    fs.writeFileSync(outPath, restoredContent);
+    const writtenSize = fs.statSync(outPath).size;
+
+    console.log(`[Routes] Detokenized: ${downloadName} (${writtenSize} bytes), tokensRestored=${count}`);
+
+    const token = createToken(outPath, downloadName);
+    cleanupUpload(uploadedPath);
+
+    return res.json({
+      success:          true,
+      jobId,
+      token,
+      downloadName,
+      detokenizedCount: count,
+      restoredSize:     writtenSize,
+    });
+  } catch (err) {
+    cleanupUpload(uploadedPath);
+    console.error('[Routes] detokenize-file error:', err.message);
     return jsonError(res, 422, err.message);
   }
 });

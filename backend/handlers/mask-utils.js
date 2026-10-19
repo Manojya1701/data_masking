@@ -168,6 +168,127 @@ function tokenMask(value, tokenMap, piiType) {
   return token;
 }
 
+// ── Base64 Reversible Tokenization ───────────────────────────────────────────
+
+function base64Tokenize(value) {
+  if (typeof value !== 'string' || value === '') return value;
+  const encoded = Buffer.from(value, 'utf8').toString('base64');
+  return `BASE64[${encoded}]`;
+}
+
+function detokenizeBase64Text(content) {
+  if (typeof content !== 'string') return { text: content, count: 0 };
+  let count = 0;
+  const restored = content.replace(/BASE64\[([A-Za-z0-9+/=]+)\]/g, (match, b64) => {
+    try {
+      const decoded = Buffer.from(b64, 'base64').toString('utf8');
+      count++;
+      return decoded;
+    } catch {
+      return match;
+    }
+  });
+  return { text: restored, count };
+}
+
+/**
+ * Format-aware detokenization for files (CSV, JSON, text).
+ * Preserves CSV column quoting and JSON structure.
+ *
+ * @param {Buffer|string} contentBuffer
+ * @param {string} fileName
+ * @returns {{ restoredContent: Buffer, count: number }}
+ */
+function detokenizeFile(contentBuffer, fileName = '') {
+  const ext = (fileName ? fileName.slice(fileName.lastIndexOf('.')).toLowerCase() : '');
+  const text = Buffer.isBuffer(contentBuffer) ? contentBuffer.toString('utf8') : String(contentBuffer);
+  let count = 0;
+
+  // Format-aware handling for CSV
+  if (ext === '.csv') {
+    try {
+      const { parse } = require('csv-parse/sync');
+      const { stringify } = require('csv-stringify/sync');
+      const records = parse(text, { columns: true, skip_empty_lines: true, relax_column_count: true });
+      if (records.length > 0) {
+        const headers = Object.keys(records[0]);
+        const processed = records.map(row => {
+          const newRow = {};
+          for (const col of headers) {
+            const val = row[col];
+            if (typeof val === 'string' && val.includes('BASE64[')) {
+              newRow[col] = val.replace(/BASE64\[([A-Za-z0-9+/=]+)\]/g, (match, b64) => {
+                try {
+                  const decoded = Buffer.from(b64, 'base64').toString('utf8');
+                  count++;
+                  return decoded;
+                } catch {
+                  return match;
+                }
+              });
+            } else {
+              newRow[col] = val;
+            }
+          }
+          return newRow;
+        });
+        const outCsv = stringify(processed, { header: true, columns: headers });
+        return { restoredContent: Buffer.from(outCsv, 'utf8'), count };
+      }
+    } catch {
+      // Fallback to text regex
+    }
+  }
+
+  // Format-aware handling for JSON
+  if (ext === '.json') {
+    try {
+      const obj = JSON.parse(text);
+      function traverse(o) {
+        if (typeof o === 'string' && o.includes('BASE64[')) {
+          return o.replace(/BASE64\[([A-Za-z0-9+/=]+)\]/g, (match, b64) => {
+            try {
+              const decoded = Buffer.from(b64, 'base64').toString('utf8');
+              count++;
+              return decoded;
+            } catch {
+              return match;
+            }
+          });
+        }
+        if (Array.isArray(o)) {
+          return o.map(traverse);
+        }
+        if (o !== null && typeof o === 'object') {
+          const res = {};
+          for (const k of Object.keys(o)) {
+            res[k] = traverse(o[k]);
+          }
+          return res;
+        }
+        return o;
+      }
+      const restoredObj = traverse(obj);
+      return { restoredContent: Buffer.from(JSON.stringify(restoredObj, null, 2), 'utf8'), count };
+    } catch {
+      // Fallback to text regex
+    }
+  }
+
+  // Generic text replacement for XML, YAML, TSV, TXT, etc.
+  const restoredText = text.replace(/BASE64\[([A-Za-z0-9+/=]+)\]/g, (match, b64) => {
+    try {
+      const decoded = Buffer.from(b64, 'base64').toString('utf8');
+      count++;
+      return decoded;
+    } catch {
+      return match;
+    }
+  });
+
+  return { restoredContent: Buffer.from(restoredText, 'utf8'), count };
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 /**
@@ -175,7 +296,7 @@ function tokenMask(value, tokenMap, piiType) {
  *
  * @param {string} value        The raw sensitive value
  * @param {string} [fieldName]  Column/field name hint
- * @param {string} [maskingType] 'partial' | 'redact' | 'character' | 'pseudo' | 'tokenization'
+ * @param {string} [maskingType] 'partial' | 'redact' | 'character' | 'pseudo' | 'tokenization' | 'base64'
  * @param {object} [pseudoMap]   Shared map for pseudonymization / tokenization consistency
  * @param {string} [piiType]     Detected PII type from sensitive-data-detector
  * @returns {string}
@@ -195,11 +316,25 @@ function maskValue(value, fieldName, maskingType, pseudoMap, piiType) {
     case 'token':
     case 'tokenization':
       return tokenMask(value, pseudoMap, piiType);
+    case 'base64':
+    case 'base64_tokenize':
+    case 'base64-tokenize':
+      return base64Tokenize(value);
     case 'partial':
     default:
       return partialMask(value, fieldName);
   }
 }
 
-module.exports = { maskValue, partialMask, redactFull, characterMask, pseudoMask, tokenMask };
+module.exports = {
+  maskValue,
+  partialMask,
+  redactFull,
+  characterMask,
+  pseudoMask,
+  tokenMask,
+  base64Tokenize,
+  detokenizeBase64Text,
+  detokenizeFile,
+};
 

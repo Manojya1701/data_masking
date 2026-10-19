@@ -48,6 +48,18 @@ export function initDownload() {
   }
 
   // Restore flow
+  let restoreMode = 'enc'; // 'enc' | 'base64'
+  const restoreModeEncBtn    = document.getElementById('restore-mode-enc-btn');
+  const restoreModeBase64Btn = document.getElementById('restore-mode-base64-btn');
+  const restoreDropTitle     = document.getElementById('restore-drop-title');
+  const restoreDropDesc      = document.getElementById('restore-drop-desc');
+  const restorePasswordRow   = document.getElementById('restore-password-row');
+  const restoreBase64Row     = document.getElementById('restore-base64-row');
+  const detokenizeBtn        = document.getElementById('detokenize-btn');
+  const detokenizeBtnText    = document.getElementById('detokenize-btn-text');
+  const restoreResultTitle   = document.getElementById('restore-result-title');
+  const restoreResultDesc    = document.getElementById('restore-result-desc');
+
   const restoreDropZone    = document.getElementById('restore-drop-zone');
   const restoreFileInput   = document.getElementById('restore-file-input');
   const restoreFileInfo    = document.getElementById('restore-file-info');
@@ -107,6 +119,56 @@ export function initDownload() {
     restoreError.classList.add('hidden');
     if (integrityBadge) integrityBadge.classList.add('hidden');
   }
+
+  function switchRestoreMode(mode) {
+    restoreMode = mode;
+    restoreFile = null;
+    restoreToken = null;
+    restoreFileInput.value = '';
+    restoreFileInfo.classList.add('hidden');
+    restoreDropZone.classList.remove('hidden');
+    restoreResult.classList.add('hidden');
+    restoreError.classList.add('hidden');
+
+    if (mode === 'enc') {
+      if (restoreModeEncBtn) {
+        restoreModeEncBtn.style.color = 'var(--cyan)';
+        restoreModeEncBtn.style.borderColor = 'var(--cyan)';
+        restoreModeEncBtn.style.background = 'rgba(6,182,212,0.1)';
+      }
+      if (restoreModeBase64Btn) {
+        restoreModeBase64Btn.style.color = 'var(--text-secondary)';
+        restoreModeBase64Btn.style.borderColor = 'var(--border)';
+        restoreModeBase64Btn.style.background = 'transparent';
+      }
+      if (restoreDropTitle) restoreDropTitle.textContent = 'Upload Encrypted File (.enc)';
+      if (restoreDropDesc) restoreDropDesc.textContent = 'Select or drop the encrypted container file created by UDPS';
+      restoreFileInput.accept = '.enc,*/*';
+
+      if (restorePasswordRow) restorePasswordRow.classList.remove('hidden');
+      if (restoreBase64Row) restoreBase64Row.classList.add('hidden');
+    } else {
+      if (restoreModeBase64Btn) {
+        restoreModeBase64Btn.style.color = 'var(--cyan)';
+        restoreModeBase64Btn.style.borderColor = 'var(--cyan)';
+        restoreModeBase64Btn.style.background = 'rgba(6,182,212,0.1)';
+      }
+      if (restoreModeEncBtn) {
+        restoreModeEncBtn.style.color = 'var(--text-secondary)';
+        restoreModeEncBtn.style.borderColor = 'var(--border)';
+        restoreModeEncBtn.style.background = 'transparent';
+      }
+      if (restoreDropTitle) restoreDropTitle.textContent = 'Upload Base64-Tokenized File (.csv, .json, .txt, etc.)';
+      if (restoreDropDesc) restoreDropDesc.textContent = 'Select or drop any file protected with Base64 Tokenization';
+      restoreFileInput.accept = '.csv,.tsv,.json,.jsonl,.yaml,.xml,.txt,*/*';
+
+      if (restorePasswordRow) restorePasswordRow.classList.add('hidden');
+      if (restoreBase64Row) restoreBase64Row.classList.remove('hidden');
+    }
+  }
+
+  if (restoreModeEncBtn) restoreModeEncBtn.addEventListener('click', () => switchRestoreMode('enc'));
+  if (restoreModeBase64Btn) restoreModeBase64Btn.addEventListener('click', () => switchRestoreMode('base64'));
 
   // Toggle restore password
   toggleRestorePw.addEventListener('click', () => {
@@ -180,6 +242,53 @@ export function initDownload() {
       restoreBtnText.textContent = 'Decrypt & Restore';
     }
   });
+
+  // Base64 Detokenize Button
+  if (detokenizeBtn) {
+    detokenizeBtn.addEventListener('click', async () => {
+      if (!restoreFile) {
+        showRestoreError('Please upload a Base64-tokenized file (.csv, .json, .txt, etc.).');
+        return;
+      }
+
+      detokenizeBtn.disabled = true;
+      detokenizeBtnText.textContent = 'De-Tokenizing…';
+      restoreResult.classList.add('hidden');
+      restoreError.classList.add('hidden');
+      if (integrityBadge) integrityBadge.classList.add('hidden');
+
+      const formData = new FormData();
+      formData.append('file', restoreFile);
+
+      try {
+        const resp = await fetch(`${API_BASE_URL}/api/detokenize-file`, {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await resp.json();
+        if (!resp.ok || !data.success) {
+          showRestoreError(data.error || 'De-tokenization failed.');
+        } else {
+          restoreToken = data.token;
+          if (restoreResultTitle) restoreResultTitle.textContent = 'De-Tokenization Successful!';
+          if (restoreResultDesc) {
+            restoreResultDesc.textContent = `Successfully restored ${data.detokenizedCount || 0} sensitive field(s) back to original plaintext.`;
+          }
+          if (integrityBadge) {
+            integrityBadge.textContent = '✓ Base64 Tokens Restored';
+            integrityBadge.classList.remove('hidden');
+          }
+          restoreResult.classList.remove('hidden');
+          showToast(`✓ Restored ${data.detokenizedCount || 0} Base64 tokens`, 'success');
+        }
+      } catch (e) {
+        showRestoreError('Network error: ' + e.message);
+      } finally {
+        detokenizeBtn.disabled = false;
+        detokenizeBtnText.textContent = 'De-Tokenize & Restore';
+      }
+    });
+  }
 
   restoreDownloadBtn.addEventListener('click', () => {
     if (restoreToken) triggerDownload(restoreToken);

@@ -151,7 +151,7 @@ describe('Encryption Service', () => {
 
 // ── Mask Utils Tests ──────────────────────────────────────────────────────────
 describe('Mask Utils — 4 Masking Types', () => {
-  const { maskValue } = require('../backend/handlers/mask-utils');
+  const { maskValue, base64Tokenize, detokenizeBase64Text, detokenizeFile } = require('../backend/handlers/mask-utils');
 
   const email = 'ram@example.com';
   const name  = 'Ram Kumar';
@@ -257,6 +257,55 @@ describe('Mask Utils — 4 Masking Types', () => {
       expect(maskValue(name,  null, 'tokenization', map, 'name')).toMatch(/^TKN_NAME_[A-F0-9]{6}$/);
       expect(maskValue(phone, null, 'tokenization', map, 'phone')).toMatch(/^TKN_PHONE_[A-F0-9]{6}$/);
       expect(maskValue(pan,   null, 'tokenization', map, 'pan')).toMatch(/^TKN_PAN_[A-F0-9]{6}$/);
+    });
+  });
+
+  describe('Base64 Reversible Tokenization & Detokenization', () => {
+    test('base64Tokenize produces BASE64[...] token', () => {
+      const token = base64Tokenize('test@example.com');
+      expect(token).toBe('BASE64[dGVzdEBleGFtcGxlLmNvbQ==]');
+    });
+
+    test('maskValue with base64 produces reversible token', () => {
+      const masked = maskValue(email, null, 'base64');
+      expect(masked).toBe(`BASE64[${Buffer.from(email).toString('base64')}]`);
+    });
+
+    test('detokenizeBase64Text restores tokens in raw text', () => {
+      const raw = 'User BASE64[UmFtIEt1bWFy] has email BASE64[cmFtQGV4YW1wbGUuY29t]';
+      const result = detokenizeBase64Text(raw);
+      expect(result.count).toBe(2);
+      expect(result.text).toBe('User Ram Kumar has email ram@example.com');
+    });
+
+    test('detokenizeFile restores CSV and preserves row/column structure', () => {
+      const csv = 'name,email,role\nBASE64[Sm9obiBEb2U=],BASE64[am9obkBleGFtcGxlLmNvbQ==],Admin\n';
+      const res = detokenizeFile(Buffer.from(csv), 'users.csv');
+      expect(res.count).toBe(2);
+      expect(res.restoredContent.toString('utf8')).toContain('John Doe');
+      expect(res.restoredContent.toString('utf8')).toContain('john@example.com');
+      expect(res.restoredContent.toString('utf8')).toContain('Admin');
+    });
+
+    test('detokenizeFile restores JSON structured data', () => {
+      const json = JSON.stringify({ user: { name: 'BASE64[QWxpY2U=]', email: 'BASE64[YWxpY2VAZXhhbXBsZS5jb20=]' } });
+      const res = detokenizeFile(Buffer.from(json), 'data.json');
+      expect(res.count).toBe(2);
+      const parsed = JSON.parse(res.restoredContent.toString('utf8'));
+      expect(parsed.user.name).toBe('Alice');
+      expect(parsed.user.email).toBe('alice@example.com');
+    });
+
+    test('All 6 masking types produce distinct outputs', () => {
+      const results = new Set([
+        maskValue(email, null, 'partial'),
+        maskValue(email, null, 'redact'),
+        maskValue(email, null, 'character'),
+        maskValue(email, null, 'pseudo', {}, 'email'),
+        maskValue(email, null, 'tokenization', {}, 'email'),
+        maskValue(email, null, 'base64'),
+      ]);
+      expect(results.size).toBe(6);
     });
   });
 });
