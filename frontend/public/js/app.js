@@ -18,6 +18,7 @@ import { showToast } from './toast.js';
 import { updateWorkflowProgress } from './workflow-step.js';
 import { initDemoModal } from './demo-modal.js';
 import { initProtectionPreview, renderPreviewComparison } from './protection-preview.js';
+import { initPrivacySandbox } from './privacy-sandbox.js';
 
 const API_BASE_URL = window.location.origin;
 // State
@@ -84,6 +85,7 @@ initDbProtection();
 initPrivacyDeletion();
 initEmailSearch();
 initEmailHashVerify();
+initPrivacySandbox();
 
 // ── DSAR Automation & Lifecycle Modules ──────────────────────────────
 initDsarIntake();

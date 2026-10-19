@@ -26,6 +26,7 @@
       <nav id="header-nav" class="app-header__nav">
         <ul class="nav-links">
           <li><a href="#file-protection-section" class="nav-link nav-core-link">File Protection</a></li>
+          <li><a href="#privacy-sandbox-section" class="nav-link nav-core-link" style="color:var(--cyan); font-weight:700;">⚡ Live Sandbox</a></li>
           <li><a href="#db-protection-section" class="nav-link nav-core-link">Database</a></li>
           <li><a href="#privacy-deletion-section" class="nav-link nav-core-link">Privacy Deletion</a></li>
           <li><a href="#email-hash-section" class="nav-link nav-core-link" style="color:var(--green); font-weight:700;">Email Hash &amp; Verify</a></li>
@@ -706,6 +707,193 @@
         </div>
       </div>
 
+    </section>
+
+    <!-- ── 4B. LIVE PRIVACY SANDBOX & 6-WAY MATRIX ────────────────────────── -->
+    <section id="privacy-sandbox-section" class="section">
+      <div class="section-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <h2 class="section-title" style="margin:0;">Live Privacy Sandbox & 6-Way Matrix</h2>
+        </div>
+        <p class="section-desc">Type, paste, or test any sensitive PII string or JSON record in real time. Watch all 6 data protection and tokenization algorithms transform data on the fly with instant zero-latency decode.</p>
+      </div>
+
+      <div class="sandbox-container" style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-md);">
+        
+        <!-- Presets and Controls Bar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <span style="font-size:0.82rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">Quick Presets:</span>
+            <button type="button" class="btn-ghost btn-sm sandbox-preset-btn" data-preset="customer" style="font-size:0.8rem; padding:4px 10px; border-radius:var(--radius-sm);">
+              👤 Customer Record
+            </button>
+            <button type="button" class="btn-ghost btn-sm sandbox-preset-btn" data-preset="financial" style="font-size:0.8rem; padding:4px 10px; border-radius:var(--radius-sm);">
+              💳 Financial & PAN
+            </button>
+            <button type="button" class="btn-ghost btn-sm sandbox-preset-btn" data-preset="identity" style="font-size:0.8rem; padding:4px 10px; border-radius:var(--radius-sm);">
+              🆔 Aadhaar & IP
+            </button>
+            <button type="button" class="btn-ghost btn-sm sandbox-preset-btn" data-preset="json" style="font-size:0.8rem; padding:4px 10px; border-radius:var(--radius-sm);">
+              📦 JSON Payload
+            </button>
+          </div>
+          <button type="button" id="sandbox-clear-btn" class="btn-ghost btn-sm" style="font-size:0.78rem; padding:4px 10px; color:var(--text-muted);">
+            Clear Input
+          </button>
+        </div>
+
+        <!-- Live Input Area -->
+        <div style="margin-bottom:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.85rem; font-weight:600;">
+            <span>Raw Plaintext Input</span>
+            <span id="sandbox-char-count" style="font-size:0.78rem; color:var(--text-muted);">0 chars</span>
+          </div>
+          <textarea id="sandbox-input" class="form-input" rows="3" style="width:100%; font-family:var(--font-mono, monospace); font-size:0.9rem; line-height:1.5; resize:vertical; padding:12px;" placeholder="Type or paste any sensitive text, e.g. Vikram Patel, vikram.p@example.com, +91 9876543210, ABCDE1234F"></textarea>
+        </div>
+
+        <!-- Real-Time Detection Telemetry Bar -->
+        <div id="sandbox-telemetry" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding:12px 16px; background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:24px;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span id="sandbox-detected-badge" class="meta-pill success" style="font-weight:700;">
+              ✓ 4 Sensitive Entities Detected
+            </span>
+            <div id="sandbox-chips-container" style="display:flex; gap:6px; flex-wrap:wrap;">
+              <!-- Dynamic PII entity chips -->
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:0.8rem; color:var(--text-secondary); font-weight:600;">Live Risk:</span>
+            <span id="sandbox-risk-pill" class="meta-pill danger" style="font-weight:700; font-size:0.78rem;">HIGH RISK (85/100)</span>
+          </div>
+        </div>
+
+        <!-- 6-Way Output Comparison Grid -->
+        <div style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+            <h4 style="font-size:0.95rem; font-weight:700; margin:0; display:flex; align-items:center; gap:8px; color:var(--text-primary);">
+              <span>Real-Time 6-Way Transformation Grid</span>
+              <span style="font-size:0.75rem; font-weight:600; color:var(--cyan); background:rgba(6,182,212,0.1); padding:2px 8px; border-radius:12px;">Live 60 FPS</span>
+            </h4>
+            <span style="font-size:0.8rem; color:var(--text-secondary);">Direct client-side crypto preview synced with UDPS engine</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px;">
+            
+            <!-- Card 1: Partial Masking -->
+            <div class="sandbox-card" style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <span style="font-weight:700; font-size:0.88rem; color:var(--cyan); display:flex; align-items:center; gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    1. Partial Masking
+                  </span>
+                  <span class="meta-pill neutral" style="font-size:0.7rem;">Irreversible</span>
+                </div>
+                <div id="sandbox-out-partial" style="font-family:var(--font-mono, monospace); font-size:0.84rem; color:var(--text-primary); word-break:break-all; min-height:48px; background:var(--bg-input); padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border);"></div>
+              </div>
+              <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                <button type="button" class="btn-ghost btn-sm sandbox-copy-btn" data-target="sandbox-out-partial" style="font-size:0.75rem; padding:3px 8px;">Copy</button>
+              </div>
+            </div>
+
+            <!-- Card 2: Full Redaction -->
+            <div class="sandbox-card" style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <span style="font-weight:700; font-size:0.88rem; color:var(--red); display:flex; align-items:center; gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+                    2. Full Redaction
+                  </span>
+                  <span class="meta-pill danger" style="font-size:0.7rem;">Destructive</span>
+                </div>
+                <div id="sandbox-out-redact" style="font-family:var(--font-mono, monospace); font-size:0.84rem; color:var(--text-primary); word-break:break-all; min-height:48px; background:var(--bg-input); padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border);"></div>
+              </div>
+              <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                <button type="button" class="btn-ghost btn-sm sandbox-copy-btn" data-target="sandbox-out-redact" style="font-size:0.75rem; padding:3px 8px;">Copy</button>
+              </div>
+            </div>
+
+            <!-- Card 3: Character Masking -->
+            <div class="sandbox-card" style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <span style="font-weight:700; font-size:0.88rem; color:var(--purple, #a855f7); display:flex; align-items:center; gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16M4 12h16M6 6l12 12M6 18L18 6"/></svg>
+                    3. Character Masking
+                  </span>
+                  <span class="meta-pill neutral" style="font-size:0.7rem;">Format-Preserved</span>
+                </div>
+                <div id="sandbox-out-character" style="font-family:var(--font-mono, monospace); font-size:0.84rem; color:var(--text-primary); word-break:break-all; min-height:48px; background:var(--bg-input); padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border);"></div>
+              </div>
+              <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                <button type="button" class="btn-ghost btn-sm sandbox-copy-btn" data-target="sandbox-out-character" style="font-size:0.75rem; padding:3px 8px;">Copy</button>
+              </div>
+            </div>
+
+            <!-- Card 4: Pseudonymization -->
+            <div class="sandbox-card" style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <span style="font-weight:700; font-size:0.88rem; color:var(--orange, #f97316); display:flex; align-items:center; gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    4. Pseudonymization
+                  </span>
+                  <span class="meta-pill warning" style="font-size:0.7rem;">Deterministic</span>
+                </div>
+                <div id="sandbox-out-pseudo" style="font-family:var(--font-mono, monospace); font-size:0.84rem; color:var(--text-primary); word-break:break-all; min-height:48px; background:var(--bg-input); padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border);"></div>
+              </div>
+              <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                <button type="button" class="btn-ghost btn-sm sandbox-copy-btn" data-target="sandbox-out-pseudo" style="font-size:0.75rem; padding:3px 8px;">Copy</button>
+              </div>
+            </div>
+
+            <!-- Card 5: Crypto Tokenization -->
+            <div class="sandbox-card" style="background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <span style="font-weight:700; font-size:0.88rem; color:var(--yellow, #eab308); display:flex; align-items:center; gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    5. Crypto Tokenization
+                  </span>
+                  <span class="meta-pill neutral" style="font-size:0.7rem;">Random Hex</span>
+                </div>
+                <div id="sandbox-out-token" style="font-family:var(--font-mono, monospace); font-size:0.84rem; color:var(--text-primary); word-break:break-all; min-height:48px; background:var(--bg-input); padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border);"></div>
+              </div>
+              <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                <button type="button" class="btn-ghost btn-sm sandbox-copy-btn" data-target="sandbox-out-token" style="font-size:0.75rem; padding:3px 8px;">Copy</button>
+              </div>
+            </div>
+
+            <!-- Card 6: Base64 Reversible Tokenize (HERO CARD!) -->
+            <div class="sandbox-card" style="background:var(--bg-primary); border:2px solid var(--green); border-radius:var(--radius-md); padding:16px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 0 15px rgba(34,197,94,0.15);">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <span style="font-weight:700; font-size:0.88rem; color:var(--green); display:flex; align-items:center; gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    6. Base64 Tokenize (Reversible)
+                  </span>
+                  <span class="meta-pill success" style="font-size:0.7rem; font-weight:700;">Zero-Password Restore</span>
+                </div>
+                <div id="sandbox-out-base64" style="font-family:var(--font-mono, monospace); font-size:0.84rem; color:var(--green); word-break:break-all; min-height:48px; background:rgba(34,197,94,0.06); padding:8px 10px; border-radius:var(--radius-sm); border:1px solid rgba(34,197,94,0.3); transition:all 0.3s ease;"></div>
+                <div id="sandbox-decoded-preview" class="hidden" style="margin-top:8px; font-size:0.8rem; color:var(--cyan); background:rgba(6,182,212,0.08); padding:6px 10px; border-radius:var(--radius-sm); border:1px solid rgba(6,182,212,0.25);">
+                  <strong>Restored:</strong> <span id="sandbox-decoded-text"></span>
+                </div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                <button type="button" id="sandbox-decode-btn" class="btn-primary btn-sm" style="font-size:0.78rem; padding:4px 12px; background:var(--green); border-color:var(--green); color:#fff; display:inline-flex; align-items:center; gap:6px;">
+                  <span>⚡ Live Decode</span>
+                </button>
+                <button type="button" class="btn-ghost btn-sm sandbox-copy-btn" data-target="sandbox-out-base64" style="font-size:0.75rem; padding:3px 8px;">Copy</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
     </section>
 
     <!-- ── 5. DATABASE TABLE PROTECTION WORKSPACE ────────────────────────────── -->
